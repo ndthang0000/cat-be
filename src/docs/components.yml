@@ -1,5 +1,36 @@
 components:
   schemas:
+    TranslationMemory:
+      type: object
+      properties:
+        user_id:
+          type: string
+        word:
+          type: string
+        translate:
+          type: string
+      example:
+        id: 5ebac534954b54139806c112
+        word: A dog
+        mean: Một con chó
+
+    Dictionary:
+      type: object
+      properties:
+        user_id:
+          type: string
+        word:
+          type: string
+        wordtype:
+          type: string
+        mean:
+          type: string
+      example:
+        id: 5ebac534954b54139806c112
+        word: dog
+        wordtype: /n/
+        mean: chó
+
     User:
       type: object
       properties:

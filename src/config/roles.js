@@ -1,5 +1,5 @@
 const allRoles = {
-  user: ['getDictionaries', 'manageDictionaries'],
+  user: ['getTranslation','getDictionaries', 'manageDictionaries','getTranslationMemories', 'manageTranslationMemories'],
   admin: ['getTranslation','getUsers', 'manageUsers','getDictionaries', 'manageDictionaries','getTranslationMemories', 'manageTranslationMemories']
 };
 

@@ -20,7 +20,7 @@ const createTranslationMemory = async (TranslationMemoryBody) => {
    * @param {number} [options.page] - Current page (default = 1)
    * @returns {Promise<QueryResult>}
    */
-  const queryTranslationMemorys = async (filter, options) => {
+  const queryTranslationMemories = async (filter, options) => {
     const TranslationMemories = await TranslationMemory.paginate(filter, options);
     return TranslationMemories;
   };
@@ -75,7 +75,7 @@ const createTranslationMemory = async (TranslationMemoryBody) => {
   
   module.exports = {
     createTranslationMemory,
-    queryTranslationMemorys,
+    queryTranslationMemories,
     getTranslationMemoryByWord,
     getTranslationMemoryById,
     updateTranslationMemoryById,

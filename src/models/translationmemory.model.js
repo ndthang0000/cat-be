@@ -3,16 +3,16 @@ const { toJSON, paginate } = require('./plugins');
 
 const translationMemorySchema = mongoose.Schema(
     {
-        user_id:{
+        translation_memory_code:{
             type: String,
             required: true,
         },
-        word: {
+        source: {
             type: String,
             required: true,
             index: true,
         },
-        translate: {
+        target: {
             type: String,
             required: true,
         },

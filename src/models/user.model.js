@@ -7,7 +7,7 @@ const crypto = require('crypto');
 
 const userSchema = mongoose.Schema(
   {
-    name: {
+    user_name: {
       type: String,
       required: true,
       trim: true,
@@ -40,10 +40,6 @@ const userSchema = mongoose.Schema(
       type: String,
       enum: roles,
       default: 'user',
-    },
-    isEmailVerified: {
-      type: Boolean,
-      default: false,
     },
     personalCodeDictionary: {
       type: String,

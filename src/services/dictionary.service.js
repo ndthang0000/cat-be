@@ -20,7 +20,7 @@ const createDictionary = async (DictionaryBody) => {
    * @param {number} [options.page] - Current page (default = 1)
    * @returns {Promise<QueryResult>}
    */
-  const queryDictionarys = async (filter, options) => {
+  const queryDictionaries = async (filter, options) => {
     const Dictionaries = await Dictionary.paginate(filter, options);
     return Dictionaries;
   };
@@ -75,7 +75,7 @@ const createDictionary = async (DictionaryBody) => {
   
   module.exports = {
     createDictionary,
-    queryDictionarys,
+    queryDictionaries,
     getDictionaryByWord,
     getDictionaryById,
     updateDictionaryById,

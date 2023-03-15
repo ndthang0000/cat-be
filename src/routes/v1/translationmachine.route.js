@@ -7,6 +7,6 @@ const router = express.Router();
 
 router
   .route('/')
-  .get(translationMachineController.getWordMean);
+  .get(auth('getTranslation'), translationMachineController.getWordMean);
 
 module.exports = router;

@@ -1,7 +1,8 @@
 const express = require('express');
 const authRoute = require('./auth.route');
 const userRoute = require('./user.route');
-const dictionaryRoute = require('./dictionary.route');
+const wordRoute = require('./word.route');
+const translateRoute = require('./translate.route');
 const translationMemoryRoute = require('./translationmemory.route');
 const translationMachineRoute = require('./translationmachine.route');
 const docsRoute = require('./docs.route');
@@ -19,16 +20,20 @@ const defaultRoutes = [
     route: userRoute,
   },
   {
-    path: '/Dictionaries',
-    route: dictionaryRoute,
+    path: '/word',
+    route: wordRoute,
   },
   {
     path: '/TranslationMemories',
     route: translationMemoryRoute,
   },
+  // {
+  //   path: '/translation',
+  //   route: translationMachineRoute,
+  // },
   {
     path: '/translate',
-    route: translationMachineRoute,
+    route: translateRoute,
   },
 ];
 

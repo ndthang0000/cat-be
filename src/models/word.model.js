@@ -1,9 +1,9 @@
 const mongoose = require('mongoose');
 const { toJSON, paginate } = require('./plugins');
 
-const dictionarySchema = mongoose.Schema(
+const wordSchema = mongoose.Schema(
     {
-        user_id:{
+        dictionary_id:{
             type: String,
             required: true,
         },
@@ -12,9 +12,6 @@ const dictionarySchema = mongoose.Schema(
             required: true,
             index: true,
         },
-        wordtype: {
-            type: String,
-        },
         mean: {
             type: String,
             required: true,
@@ -22,9 +19,9 @@ const dictionarySchema = mongoose.Schema(
     }
 )
 
-dictionarySchema.plugin(toJSON);
-dictionarySchema.plugin(paginate);
+wordSchema.plugin(toJSON);
+wordSchema.plugin(paginate);
 
-const Dictionary = mongoose.model('Dictionary', dictionarySchema)
+const word = mongoose.model('Word', wordSchema)
 
-module.exports = Dictionary
+module.exports = word

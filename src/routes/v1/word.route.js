@@ -1,38 +1,38 @@
 const express = require('express');
 const auth = require('../../middlewares/auth');
 const validate = require('../../middlewares/validate');
-const DictionaryValidation = require('../../validations/dictionary.validation');
-const DictionaryController = require('../../controllers/dictionary.controller');
+const wordValidation = require('../../validations/word.validation');
+const wordController = require('../../controllers/word.controller');
 
 const router = express.Router();
 
 router
   .route('/')
-  .post(auth('manageDictionaries'), validate(DictionaryValidation.createDictionary), DictionaryController.createDictionary)
-  .get(auth('getDictionaries'), validate(DictionaryValidation.getDictionaries), DictionaryController.getDictionaries);
+  .post(auth(''), validate(wordValidation.createWord), wordController.createWord)
+  .get(auth(''), validate(wordValidation.getWords), wordController.getWords);
 
 router
-  .route('/:DictionaryId')
-  .get(auth('getDictionaries'), validate(DictionaryValidation.getDictionary), DictionaryController.getDictionary)
-  .patch(auth('manageDictionaries'), validate(DictionaryValidation.updateDictionary), DictionaryController.updateDictionary)
-  .delete(auth('manageDictionaries'), validate(DictionaryValidation.deleteDictionary), DictionaryController.deleteDictionary);
+  .route('/:wordId')
+  .get(auth(''), validate(wordValidation.getWord), wordController.getWord)
+  .patch(auth(''), validate(wordValidation.updateWord), wordController.updateWord)
+  .delete(auth(''), validate(wordValidation.deleteWord), wordController.deleteWord);
 
 module.exports = router;
 
 /**
  * @swagger
  * tags:
- *   name: Dictionaries
- *   description: Dictionary management and retrieval
+ *   name: words
+ *   description: word management and retrieval
  */
 
 /**
  * @swagger
- * /Dictionaries:
+ * /word:
  *   post:
- *     summary: Create a Dictionary
- *     description: User can add dictionary to use.
- *     tags: [Dictionaries]
+ *     summary: Create a word
+ *     description: User can add word to use.
+ *     tags: [words]
  *     security:
  *       - bearerAuth: []
  *     requestBody:
@@ -42,23 +42,19 @@ module.exports = router;
  *           schema:
  *             type: object
  *             required:
- *               - user_id
+ *               - dictionary_id
  *               - word
- *               - wordtype
  *               - mean
  *             properties:
- *               user_id:
+ *               dictionary_id:
  *                 type: string
  *               word:
- *                 type: string
- *               wordtype:
  *                 type: string
  *               mean:
  *                 type: string
  *             example:
- *               user_id: 5ebac534954b54139806c112
+ *               dictionary_id: 5ebac534954b54139806c112
  *               word: dog
- *               wordtype: /n/
  *               mean: chó
  *     responses:
  *       "201":
@@ -66,16 +62,15 @@ module.exports = router;
  *         content:
  *           application/json:
  *             schema:
- *                $ref: '#/components/schemas/Dictionary'
+ *                $ref: '#/components/schemas/word'
  *       "401":
  *         $ref: '#/components/responses/Unauthorized'
  *       "403":
  *         $ref: '#/components/responses/Forbidden'
  *
  *   get:
- *     summary: Get all Dictionaries
- *     description: Only admins can retrieve all Dictionaries.
- *     tags: [Dictionaries]
+ *     summary: Get all words
+ *     tags: [words]
  *     security:
  *       - bearerAuth: []
  *     parameters:
@@ -83,7 +78,7 @@ module.exports = router;
  *         name: name
  *         schema:
  *           type: string
- *         description: Dictionary name
+ *         description: word name
  *       - in: query
  *         name: sortBy
  *         schema:
@@ -95,7 +90,7 @@ module.exports = router;
  *           type: integer
  *           minimum: 1
  *         default: 10
- *         description: Maximum number of Dictionaries
+ *         description: Maximum number of words
  *       - in: query
  *         name: page
  *         schema:
@@ -114,7 +109,7 @@ module.exports = router;
  *                 results:
  *                   type: array
  *                   items:
- *                     $ref: '#/components/schemas/Dictionary'
+ *                     $ref: '#/components/schemas/word'
  *                 page:
  *                   type: integer
  *                   example: 1
@@ -135,11 +130,11 @@ module.exports = router;
 
 /**
  * @swagger
- * /Dictionaries/{id}:
+ * /word/{id}:
  *   get:
- *     summary: Get a Dictionary
- *     description: Logged in user can fetch only their own Dictionary information. Only admins can fetch other Dictionaries.
- *     tags: [Dictionaries]
+ *     summary: Get a word
+ *     description: Logged in user can fetch only their own word information. Only admins can fetch other words.
+ *     tags: [words]
  *     security:
  *       - bearerAuth: []
  *     parameters:
@@ -148,14 +143,14 @@ module.exports = router;
  *         required: true
  *         schema:
  *           type: string
- *         description: Dictionary id
+ *         description: word id
  *     responses:
  *       "200":
  *         description: OK
  *         content:
  *           application/json:
  *             schema:
- *                $ref: '#/components/schemas/Dictionary'
+ *                $ref: '#/components/schemas/word'
  *       "401":
  *         $ref: '#/components/responses/Unauthorized'
  *       "403":
@@ -164,9 +159,9 @@ module.exports = router;
  *         $ref: '#/components/responses/NotFound'
  *
  *   patch:
- *     summary: Update a Dictionary
- *     description: Logged in user can only update their own information. Only admins can update other Dictionaries.
- *     tags: [Dictionaries]
+ *     summary: Update a word
+ *     description: Logged in user can only update their own information. Only admins can update other words.
+ *     tags: [words]
  *     security:
  *       - bearerAuth: []
  *     parameters:
@@ -175,7 +170,7 @@ module.exports = router;
  *         required: true
  *         schema:
  *           type: string
- *         description: Dictionary id
+ *         description: word id
  *     requestBody:
  *       required: true
  *       content:
@@ -183,18 +178,15 @@ module.exports = router;
  *           schema:
  *             type: object
  *             properties:
- *               user_id:
+ *               dictionary_id:
  *                 type:string
  *               word:
- *                 type: string
- *               wordtype:
  *                 type: string
  *               mean:
  *                 type: string
  *             example:
- *                 user_id: 5ebac534954b54139806c112
+ *                 dictionary_id: 5ebac534954b54139806c112
  *                 word: dog
- *                 wordtype: /n/
  *                 mean: chó
  *     responses:
  *       "200":
@@ -202,7 +194,7 @@ module.exports = router;
  *         content:
  *           application/json:
  *             schema:
- *                $ref: '#/components/schemas/Dictionary'
+ *                $ref: '#/components/schemas/word'
  *       "400":
  *         $ref: '#/components/responses/DuplicateEmail'
  *       "401":
@@ -213,9 +205,9 @@ module.exports = router;
  *         $ref: '#/components/responses/NotFound'
  *
  *   delete:
- *     summary: Delete a Dictionary
- *     description: Logged in user can delete only themselves. Only admins can delete other Dictionaries.
- *     tags: [Dictionaries]
+ *     summary: Delete a word
+ *     description: Logged in user can delete only themselves. Only admins can delete other words.
+ *     tags: [words]
  *     security:
  *       - bearerAuth: []
  *     parameters:
@@ -224,7 +216,7 @@ module.exports = router;
  *         required: true
  *         schema:
  *           type: string
- *         description: Dictionary id
+ *         description: word id
  *     responses:
  *       "200":
  *         description: No content

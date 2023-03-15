@@ -3,8 +3,10 @@ const authRoute = require('./auth.route');
 const userRoute = require('./user.route');
 const wordRoute = require('./word.route');
 const translateRoute = require('./translate.route');
+const projectRoute = require('./project.route');
 const translationMemoryRoute = require('./translationmemory.route');
-const translationMachineRoute = require('./translationmachine.route');
+const dictionaryRoute = require('./dictionary.route');
+// const translationMachineRoute = require('./translationmachine.route');
 const docsRoute = require('./docs.route');
 const config = require('../../config/config');
 
@@ -34,6 +36,14 @@ const defaultRoutes = [
   {
     path: '/translate',
     route: translateRoute,
+  },
+  {
+    path: '/project',
+    route: projectRoute,
+  },
+  {
+    path: '/dictionary',
+    route: dictionaryRoute,
   },
 ];
 

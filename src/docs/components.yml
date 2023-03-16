@@ -14,7 +14,57 @@ components:
         word: A dog
         mean: Một con chó
 
-    word:
+    Project:
+      type: object
+      properties:
+        project_name:
+          type: string
+        user_id:
+          type: string
+        source_language:
+          type: string
+        target_language:
+          type: string
+        date_modified:
+          type: date
+      example:
+        project_name: test
+        user_id: 5ebac534954b54139806c112
+        source_language: english
+        target_language: vietnamese
+
+    Translate:
+      type: object
+      properties:
+        project_id:
+          type: string
+        source:
+          type: string
+        target:
+          type: string
+      example:
+        project_id: 5ebac534954b54139806c112
+        source: dog
+        target: chó
+
+    Dictionary:
+      type: object
+      properties:
+        dictionary_name:
+          type: string
+        dictionary_code:
+          type: string
+        source_language:
+          type: string
+        target_language:
+          type: string
+      example:
+        dictionary_name: english_to_vietnamese
+        dictionary_code: 5ebac534954b54139806c112
+        source_language: english
+        target_language: vietnamese
+
+    Word:
       type: object
       properties:
         dictionary_id:
@@ -24,7 +74,7 @@ components:
         mean:
           type: string
       example:
-        id: 5ebac534954b54139806c112
+        dictionary_id: 5ebac534954b54139806c112
         word: dog
         mean: chó
 

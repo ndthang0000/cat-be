@@ -29,9 +29,9 @@ const updateTranslationMemory = {
   }),
   body: Joi.object()
     .keys({
-        user_id: Joi.string(),
-        word: Joi.string(),
-        translate: Joi.string(),
+      user_id: Joi.string(),
+      word: Joi.string(),
+      translate: Joi.string(),
     })
     .min(1),
 };

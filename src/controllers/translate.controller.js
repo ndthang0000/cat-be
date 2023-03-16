@@ -35,9 +35,9 @@ const deleteWordTrans = catchAsync(async (req, res) => {
 });
 
 module.exports = {
-    createWordTrans,
-    getWordsTrans,
-    getWordTrans,
-    updateWordTrans,
-    deleteWordTrans,
-  };
+  createWordTrans,
+  getWordsTrans,
+  getWordTrans,
+  updateWordTrans,
+  deleteWordTrans,
+};

@@ -42,20 +42,27 @@ module.exports = router;
  *           schema:
  *             type: object
  *             required:
- *               - user_id
+ *               - project_name
  *               - word
- *               - translate
+ *               - source_language
+ *               - target_language
+ *               - date_modified
  *             properties:
+ *               project_name:
+ *                type: string
  *               user_id:
  *                 type: string
- *               word:
+ *               source_language:
  *                 type: string
- *               translate:
+ *               target_language:
  *                 type: string
+ *               date_modified:
+ *                 type: date
  *             example:
+ *               project_name: test
  *               user_id: 5ebac534954b54139806c112
- *               word: A dog
- *               translate: Một con chó
+ *               source_language: english
+ *               target_language: vietnamese
  *     responses:
  *       "201":
  *         description: Created
@@ -179,16 +186,19 @@ module.exports = router;
  *           schema:
  *             type: object
  *             properties:
- *               user_id:
+ *               dictionary_name:
  *                 type: string
- *               word:
+ *               dictionary_code:
  *                 type: string
- *               translate:
+ *               source_language:
+ *                 type: string
+ *               target_language:
  *                 type: string
  *             example:
- *                 user_id: 5ebac534954b54139806c112
- *                 word: A dog
- *                 translate: Một con chó
+ *               project_name: test
+ *               user_id: 5ebac534954b54139806c112
+ *               source_language: english
+ *               target_language: vietnamese
  *     responses:
  *       "200":
  *         description: OK

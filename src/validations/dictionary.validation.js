@@ -31,10 +31,10 @@ const updateDictionary = {
   }),
   body: Joi.object()
     .keys({
-        dictionary_name: Joi.string(),
-        dictionary_code: Joi.string().required(),
-        source_language: Joi.string().required(),
-        target_language: Joi.string().required(),
+      dictionary_name: Joi.string(),
+      dictionary_code: Joi.string().required(),
+      source_language: Joi.string().required(),
+      target_language: Joi.string().required(),
     })
     .min(1),
 };

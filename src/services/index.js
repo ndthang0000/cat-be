@@ -6,4 +6,4 @@ module.exports.wordService = require('./word.service');
 module.exports.translateService = require('./translate.service');
 module.exports.projectService = require('./project.service');
 module.exports.dictionaryService = require('./dictionary.service');
-module.exports.TranslationMemoryService = require('./translationmemory.service')
+module.exports.TranslationMemoryService = require('./translationmemory.service');

@@ -35,9 +35,9 @@ const deleteDictionary = catchAsync(async (req, res) => {
 });
 
 module.exports = {
-    createDictionary,
-    getDictionaries,
-    getDictionary,
-    updateDictionary,
-    deleteDictionary,
-  };
+  createDictionary,
+  getDictionaries,
+  getDictionary,
+  updateDictionary,
+  deleteDictionary,
+};

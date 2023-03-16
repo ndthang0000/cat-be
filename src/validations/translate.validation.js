@@ -13,7 +13,7 @@ const getWordsTrans = {
   query: Joi.object().keys({
     project_id: Joi.string().required(),
     source: Joi.string(),
-    target: Joi.string()
+    target: Joi.string(),
   }),
 };
 
@@ -29,9 +29,9 @@ const updateWordTrans = {
   }),
   body: Joi.object()
     .keys({
-        project_id: Joi.string().required(),
-        source: Joi.string(),
-        target: Joi.string(),
+      project_id: Joi.string().required(),
+      source: Joi.string(),
+      target: Joi.string(),
     })
     .min(1),
 };

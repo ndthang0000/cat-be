@@ -35,9 +35,9 @@ const deleteWord = catchAsync(async (req, res) => {
 });
 
 module.exports = {
-    createWord,
-    getWords,
-    getWord,
-    updateWord,
-    deleteWord,
-  };
+  createWord,
+  getWords,
+  getWord,
+  updateWord,
+  deleteWord,
+};

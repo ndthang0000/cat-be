@@ -22,17 +22,17 @@ module.exports = router;
 /**
  * @swagger
  * tags:
- *   name: words
- *   description: word management and retrieval
+ *   name: translate
+ *   description: translate management and retrieval
  */
 
 /**
  * @swagger
- * /word:
+ * /translate:
  *   post:
- *     summary: Create a word
- *     description: User can add word to use.
- *     tags: [words]
+ *     summary: Create a translate
+ *     description: User can add translate to use.
+ *     tags: [translate]
  *     security:
  *       - bearerAuth: []
  *     requestBody:
@@ -42,35 +42,35 @@ module.exports = router;
  *           schema:
  *             type: object
  *             required:
- *               - dictionary_id
- *               - word
- *               - mean
+ *               - project_id
+ *               - source
+ *               - target
  *             properties:
- *               dictionary_id:
+ *               project_id:
  *                 type: string
- *               word:
+ *               source:
  *                 type: string
- *               mean:
+ *               target:
  *                 type: string
  *             example:
- *               dictionary_id: 5ebac534954b54139806c112
- *               word: dog
- *               mean: chó
+ *               project_id: 5ebac534954b54139806c112
+ *               source: dog
+ *               target: chó
  *     responses:
  *       "201":
  *         description: Created
  *         content:
  *           application/json:
  *             schema:
- *                $ref: '#/components/schemas/word'
+ *                $ref: '#/components/schemas/translate'
  *       "401":
  *         $ref: '#/components/responses/Unauthorized'
  *       "403":
  *         $ref: '#/components/responses/Forbidden'
  *
  *   get:
- *     summary: Get all words
- *     tags: [words]
+ *     summary: Get all translate
+ *     tags: [translate]
  *     security:
  *       - bearerAuth: []
  *     parameters:
@@ -78,7 +78,7 @@ module.exports = router;
  *         name: name
  *         schema:
  *           type: string
- *         description: word name
+ *         description: translate name
  *       - in: query
  *         name: sortBy
  *         schema:
@@ -90,7 +90,7 @@ module.exports = router;
  *           type: integer
  *           minimum: 1
  *         default: 10
- *         description: Maximum number of words
+ *         description: Maximum number of translate
  *       - in: query
  *         name: page
  *         schema:
@@ -109,7 +109,7 @@ module.exports = router;
  *                 results:
  *                   type: array
  *                   items:
- *                     $ref: '#/components/schemas/word'
+ *                     $ref: '#/components/schemas/translate'
  *                 page:
  *                   type: integer
  *                   example: 1
@@ -130,11 +130,11 @@ module.exports = router;
 
 /**
  * @swagger
- * /word/{id}:
+ * /translate/{id}:
  *   get:
- *     summary: Get a word
- *     description: Logged in user can fetch only their own word information. Only admins can fetch other words.
- *     tags: [words]
+ *     summary: Get a translate
+ *     description: Logged in user can fetch only their own translate information. Only admins can fetch other translate.
+ *     tags: [translate]
  *     security:
  *       - bearerAuth: []
  *     parameters:
@@ -143,14 +143,14 @@ module.exports = router;
  *         required: true
  *         schema:
  *           type: string
- *         description: word id
+ *         description: translate id
  *     responses:
  *       "200":
  *         description: OK
  *         content:
  *           application/json:
  *             schema:
- *                $ref: '#/components/schemas/word'
+ *                $ref: '#/components/schemas/translate'
  *       "401":
  *         $ref: '#/components/responses/Unauthorized'
  *       "403":
@@ -159,9 +159,9 @@ module.exports = router;
  *         $ref: '#/components/responses/NotFound'
  *
  *   patch:
- *     summary: Update a word
- *     description: Logged in user can only update their own information. Only admins can update other words.
- *     tags: [words]
+ *     summary: Update a translate
+ *     description: Logged in user can only update their own information. Only admins can update other translate.
+ *     tags: [translate]
  *     security:
  *       - bearerAuth: []
  *     parameters:
@@ -170,7 +170,7 @@ module.exports = router;
  *         required: true
  *         schema:
  *           type: string
- *         description: word id
+ *         description: translate id
  *     requestBody:
  *       required: true
  *       content:
@@ -178,23 +178,23 @@ module.exports = router;
  *           schema:
  *             type: object
  *             properties:
- *               dictionary_id:
- *                 type:string
- *               word:
+ *               project_id:
  *                 type: string
- *               mean:
+ *               source:
+ *                 type: string
+ *               target:
  *                 type: string
  *             example:
- *                 dictionary_id: 5ebac534954b54139806c112
- *                 word: dog
- *                 mean: chó
+ *               project_id: 5ebac534954b54139806c112
+ *               source: dog
+ *               target: chó
  *     responses:
  *       "200":
  *         description: OK
  *         content:
  *           application/json:
  *             schema:
- *                $ref: '#/components/schemas/word'
+ *                $ref: '#/components/schemas/translate'
  *       "400":
  *         $ref: '#/components/responses/DuplicateEmail'
  *       "401":
@@ -205,9 +205,9 @@ module.exports = router;
  *         $ref: '#/components/responses/NotFound'
  *
  *   delete:
- *     summary: Delete a word
- *     description: Logged in user can delete only themselves. Only admins can delete other words.
- *     tags: [words]
+ *     summary: Delete a translate
+ *     description: Logged in user can delete only themselves. Only admins can delete other translate.
+ *     tags: [translate]
  *     security:
  *       - bearerAuth: []
  *     parameters:
@@ -216,7 +216,7 @@ module.exports = router;
  *         required: true
  *         schema:
  *           type: string
- *         description: word id
+ *         description: translate id
  *     responses:
  *       "200":
  *         description: No content

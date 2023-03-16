@@ -25,7 +25,10 @@ const getTranslationMemory = catchAsync(async (req, res) => {
 });
 
 const updateTranslationMemory = catchAsync(async (req, res) => {
-  const TranslationMemory = await TranslationMemoryService.updateTranslationMemoryById(req.params.TranslationMemoryId, req.body);
+  const TranslationMemory = await TranslationMemoryService.updateTranslationMemoryById(
+    req.params.TranslationMemoryId,
+    req.body
+  );
   res.send(TranslationMemory);
 });
 
@@ -35,9 +38,9 @@ const deleteTranslationMemory = catchAsync(async (req, res) => {
 });
 
 module.exports = {
-    createTranslationMemory,
-    getTranslationMemories,
-    getTranslationMemory,
-    updateTranslationMemory,
-    deleteTranslationMemory,
-  };
+  createTranslationMemory,
+  getTranslationMemories,
+  getTranslationMemory,
+  updateTranslationMemory,
+  deleteTranslationMemory,
+};

@@ -8,14 +8,34 @@ const router = express.Router();
 
 router
   .route('/')
-  .post(auth('manageTranslationMemories'), validate(TranslationMemoryValidation.createTranslationMemory), TranslationMemoryController.createTranslationMemory)
-  .get(auth('getTranslationMemories'), validate(TranslationMemoryValidation.getTranslationMemories), TranslationMemoryController.getTranslationMemories);
+  .post(
+    auth('manageTranslationMemories'),
+    validate(TranslationMemoryValidation.createTranslationMemory),
+    TranslationMemoryController.createTranslationMemory
+  )
+  .get(
+    auth('getTranslationMemories'),
+    validate(TranslationMemoryValidation.getTranslationMemories),
+    TranslationMemoryController.getTranslationMemories
+  );
 
 router
   .route('/:TranslationMemoryId')
-  .get(auth('getTranslationMemories'), validate(TranslationMemoryValidation.getTranslationMemory), TranslationMemoryController.getTranslationMemory)
-  .patch(auth('manageTranslationMemories'), validate(TranslationMemoryValidation.updateTranslationMemory), TranslationMemoryController.updateTranslationMemory)
-  .delete(auth('manageTranslationMemories'), validate(TranslationMemoryValidation.deleteTranslationMemory), TranslationMemoryController.deleteTranslationMemory);
+  .get(
+    auth('getTranslationMemories'),
+    validate(TranslationMemoryValidation.getTranslationMemory),
+    TranslationMemoryController.getTranslationMemory
+  )
+  .patch(
+    auth('manageTranslationMemories'),
+    validate(TranslationMemoryValidation.updateTranslationMemory),
+    TranslationMemoryController.updateTranslationMemory
+  )
+  .delete(
+    auth('manageTranslationMemories'),
+    validate(TranslationMemoryValidation.deleteTranslationMemory),
+    TranslationMemoryController.deleteTranslationMemory
+  );
 
 module.exports = router;
 

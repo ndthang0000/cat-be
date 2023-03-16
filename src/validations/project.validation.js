@@ -33,11 +33,11 @@ const updateProject = {
   }),
   body: Joi.object()
     .keys({
-        project_name: Joi.string().required(),
-        user_id: Joi.string().required(),
-        source_language: Joi.string().required(),
-        target_language: Joi.string().required(),
-        date_modified: Joi.date(),
+      project_name: Joi.string().required(),
+      user_id: Joi.string().required(),
+      source_language: Joi.string().required(),
+      target_language: Joi.string().required(),
+      date_modified: Joi.date(),
     })
     .min(1),
 };

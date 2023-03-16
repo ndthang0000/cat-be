@@ -13,7 +13,7 @@ const getWords = {
   query: Joi.object().keys({
     dictionary_id: Joi.string().required(),
     source: Joi.string(),
-    target: Joi.string()
+    target: Joi.string(),
   }),
 };
 
@@ -29,9 +29,9 @@ const updateWord = {
   }),
   body: Joi.object()
     .keys({
-        dictionary_id: Joi.string().required(),
-        source: Joi.string(),
-        target: Joi.string(),
+      dictionary_id: Joi.string().required(),
+      source: Joi.string(),
+      target: Joi.string(),
     })
     .min(1),
 };

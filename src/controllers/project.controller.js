@@ -35,9 +35,9 @@ const deleteProject = catchAsync(async (req, res) => {
 });
 
 module.exports = {
-    createProject,
-    getProjects,
-    getProject,
-    updateProject,
-    deleteProject,
-  };
+  createProject,
+  getProjects,
+  getProject,
+  updateProject,
+  deleteProject,
+};

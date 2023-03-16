@@ -42,20 +42,24 @@ module.exports = router;
  *           schema:
  *             type: object
  *             required:
- *               - user_id
- *               - word
- *               - translate
+ *               - dictionary_name
+ *               - dictionary_code
+ *               - source_language
+ *               - target_language
  *             properties:
- *               user_id:
+ *               dictionary_name:
  *                 type: string
- *               word:
+ *               dictionary_code:
  *                 type: string
- *               translate:
+ *               source_language:
+ *                 type: string
+ *               target_language:
  *                 type: string
  *             example:
- *               user_id: 5ebac534954b54139806c112
- *               word: A dog
- *               translate: Một con chó
+ *               dictionary_name: english_to_vietnamese
+ *               dictionary_code: 5ebac534954b54139806c112
+ *               source_language: english
+ *               target_language: vietnamese
  *     responses:
  *       "201":
  *         description: Created
@@ -179,16 +183,19 @@ module.exports = router;
  *           schema:
  *             type: object
  *             properties:
- *               user_id:
+ *               dictionary_name:
  *                 type: string
- *               word:
+ *               dictionary_code:
  *                 type: string
- *               translate:
+ *               source_language:
+ *                 type: string
+ *               target_language:
  *                 type: string
  *             example:
- *                 user_id: 5ebac534954b54139806c112
- *                 word: A dog
- *                 translate: Một con chó
+ *               dictionary_name: english_to_vietnamese
+ *               dictionary_code: 5ebac534954b54139806c112
+ *               source_language: english
+ *               target_language: vietnamese
  *     responses:
  *       "200":
  *         description: OK

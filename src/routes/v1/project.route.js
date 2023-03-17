@@ -12,12 +12,16 @@ router
   .get(auth(''), validate(projectValidation.getProjects), projectController.getProjects);
 
 router
-  .route('/:projectId')
+  .route('/objectid/:projectId')
   .get(auth(''), validate(projectValidation.getProject), projectController.getProject)
   .patch(auth(''), validate(projectValidation.updateProject), projectController.updateProject)
   .delete(auth(''), validate(projectValidation.deleteProject), projectController.deleteProject);
 
-module.exports = router;
+  router
+  .route('/userid/:userId')
+  .get(auth(''), validate(projectValidation.getProjects), projectController.getProjectsByUserID)
+
+  module.exports = router;
 
 /**
  * @swagger
@@ -135,7 +139,7 @@ module.exports = router;
 
 /**
  * @swagger
- * /projects/{id}:
+ * /projects/objectid/{project_id}:
  *   get:
  *     summary: Get a project
  *     description: Logged in user can fetch only their own project information. Only admins can fetch other projects.
@@ -228,6 +232,37 @@ module.exports = router;
  *     responses:
  *       "200":
  *         description: No content
+ *       "401":
+ *         $ref: '#/components/responses/Unauthorized'
+ *       "403":
+ *         $ref: '#/components/responses/Forbidden'
+ *       "404":
+ *         $ref: '#/components/responses/NotFound'
+ */
+
+/**
+ * @swagger
+ * /project/userid/{user_id}:
+ *   get:
+ *     summary: Get all translate with user id
+ *     description: get all translation by user id
+ *     tags: [projects]
+ *     security:
+ *       - bearerAuth: []
+ *     parameters:
+ *       - in: path
+ *         name: id
+ *         required: true
+ *         schema:
+ *           type: string
+ *         description: user id
+ *     responses:
+ *       "200":
+ *         description: OK
+ *         content:
+ *           application/json:
+ *             schema:
+ *                $ref: '#/components/schemas/translate'
  *       "401":
  *         $ref: '#/components/responses/Unauthorized'
  *       "403":

@@ -12,10 +12,14 @@ router
   .get(auth(''), validate(dictionaryValidation.getDictionaries), dictionaryController.getDictionaries);
 
 router
-  .route('/:DictionaryId')
+  .route('/objectid/:DictionaryId')
   .get(auth(''), validate(dictionaryValidation.getDictionary), dictionaryController.getDictionary)
   .patch(auth(''), validate(dictionaryValidation.updateDictionary), dictionaryController.updateDictionary)
   .delete(auth(''), validate(dictionaryValidation.deleteDictionary), dictionaryController.deleteDictionary);
+
+  router
+  .route('/codedictionary/:codeDic')
+  .get(auth(''), validate(dictionaryValidation.getDictionaries), dictionaryController.getDictionariesByCode);
 
 module.exports = router;
 
@@ -135,7 +139,7 @@ module.exports = router;
 
 /**
  * @swagger
- * /dictionaries/{id}:
+ * /dictionaries/objectid/{dictionary_id}:
  *   get:
  *     summary: Get a dictionary
  *     description: Logged in user can fetch only their own dictionary information. Only admins can fetch other dictionaries.
@@ -228,6 +232,37 @@ module.exports = router;
  *     responses:
  *       "200":
  *         description: No content
+ *       "401":
+ *         $ref: '#/components/responses/Unauthorized'
+ *       "403":
+ *         $ref: '#/components/responses/Forbidden'
+ *       "404":
+ *         $ref: '#/components/responses/NotFound'
+ */
+
+/**
+ * @swagger
+ * /dictionaries/codedictionary/{dictionary_code}:
+ *   get:
+ *     summary: Get all dictionary with dictionary code
+ *     description: get all dictionary by dictionary code
+ *     tags: [dictionaries]
+ *     security:
+ *       - bearerAuth: []
+ *     parameters:
+ *       - in: path
+ *         name: id
+ *         required: true
+ *         schema:
+ *           type: string
+ *         description: dictionary id
+ *     responses:
+ *       "200":
+ *         description: OK
+ *         content:
+ *           application/json:
+ *             schema:
+ *                $ref: '#/components/schemas/translate'
  *       "401":
  *         $ref: '#/components/responses/Unauthorized'
  *       "403":

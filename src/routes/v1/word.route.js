@@ -134,7 +134,7 @@ module.exports = router;
 
 /**
  * @swagger
- * /word/{id}:
+ * /word/objectid/{word_id}:
  *   get:
  *     summary: Get a word
  *     description: Logged in user can fetch only their own word information. Only admins can fetch other words.
@@ -234,11 +234,11 @@ module.exports = router;
 
 /**
  * @swagger
- * /dictionaries/dictionaryid/{word_id}:
+ * /word/dictionaryid/{word_id}:
  *   get:
  *     summary: Get all translate with dictionary id
  *     description: get all translation by dictionary id
- *     tags: [translate]
+ *     tags: [words]
  *     security:
  *       - bearerAuth: []
  *     parameters:

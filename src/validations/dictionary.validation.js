@@ -13,9 +13,9 @@ const createDictionary = {
 const getDictionaries = {
   query: Joi.object().keys({
     dictionary_name: Joi.string(),
-    dictionary_code: Joi.string().required(),
-    source_language: Joi.string().required(),
-    target_language: Joi.string().required(),
+    dictionary_code: Joi.string(),
+    source_language: Joi.string(),
+    target_language: Joi.string(),
   }),
 };
 

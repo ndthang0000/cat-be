@@ -16,6 +16,14 @@ const getDictionaries = catchAsync(async (req, res) => {
   res.send(result);
 });
 
+const getDictionariesByCode = catchAsync(async (req, res) => {
+  const result = await translateService.getDictionariesByCode(req.params.codeDic);
+  if (!result) {
+    throw new ApiError(httpStatus.NOT_FOUND, 'dictionary not found');
+  }
+  res.send(result);
+});
+
 const getDictionary = catchAsync(async (req, res) => {
   const dictionary = await projectService.getDictionaryById(req.params.projectId);
   if (!dictionary) {
@@ -38,6 +46,7 @@ module.exports = {
   createDictionary,
   getDictionaries,
   getDictionary,
+  getDictionariesByCode,
   updateDictionary,
   deleteDictionary,
 };

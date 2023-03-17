@@ -25,14 +25,14 @@ const queryDictionaries = async (filter, options) => {
   return dictionaries;
 };
 
-//   /**
-//    * Get dictionary by name
-//    * @param {string} name
-//    * @returns {Promise<dictionary>}
-//    */
-//   const getdictionaryByName = async (name) => {
-//     return dictionary.findOne({ name });
-//   };
+/**
+ * Get dictionary by code
+ * @param {string} codeDic
+ * @returns {Promise<dictionary>}
+ */
+const getDictionariesByCode = async (codeDic) => {
+  return dictionary.find({ dictionary_code: codeDic});
+};
 
 /**
  * Get dictionary by ID
@@ -76,7 +76,7 @@ const deleteDictionaryById = async (dictionaryID) => {
 module.exports = {
   createDictionary,
   queryDictionaries,
-  // getdictionaryByWord,
+  getDictionariesByCode,
   getDictionaryById,
   updateDictionaryById,
   deleteDictionaryById,

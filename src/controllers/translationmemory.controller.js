@@ -24,6 +24,14 @@ const getTranslationMemory = catchAsync(async (req, res) => {
   res.send(TranslationMemory);
 });
 
+const getTranslationMemoryByCode = catchAsync(async (req, res) => {
+  const TranslationMemory = await TranslationMemoryService.getTranslationMemoryByCode(req.params.codeTrans);
+  if (!TranslationMemory) {
+    throw new ApiError(httpStatus.NOT_FOUND, 'TranslationMemory not found');
+  }
+  res.send(TranslationMemory);
+});
+
 const updateTranslationMemory = catchAsync(async (req, res) => {
   const TranslationMemory = await TranslationMemoryService.updateTranslationMemoryById(
     req.params.TranslationMemoryId,
@@ -41,6 +49,7 @@ module.exports = {
   createTranslationMemory,
   getTranslationMemories,
   getTranslationMemory,
+  getTranslationMemoryByCode,
   updateTranslationMemory,
   deleteTranslationMemory,
 };

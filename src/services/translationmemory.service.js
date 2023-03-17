@@ -26,12 +26,12 @@ const queryTranslationMemories = async (filter, options) => {
 };
 
 /**
- * Get TranslationMemory by word
- * @param {string} word
+ * Get TranslationMemory by code
+ * @param {string} codeTrans
  * @returns {Promise<TranslationMemory>}
  */
-const getTranslationMemoryByWord = async (word) => {
-  return TranslationMemory.findOne({ word });
+const getTranslationMemoryByCode = async (codeTrans) => {
+  return TranslationMemory.find({ translationmemory_code: codeTrans });
 };
 
 /**
@@ -76,7 +76,7 @@ const deleteTranslationMemoryById = async (TranslationMemoryID) => {
 module.exports = {
   createTranslationMemory,
   queryTranslationMemories,
-  getTranslationMemoryByWord,
+  getTranslationMemoryByCode,
   getTranslationMemoryById,
   updateTranslationMemoryById,
   deleteTranslationMemoryById,

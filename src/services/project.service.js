@@ -25,14 +25,14 @@ const queryProjects = async (filter, options) => {
   return projects;
 };
 
-//   /**
-//    * Get project by name
-//    * @param {string} name
-//    * @returns {Promise<project>}
-//    */
-//   const getprojectByName = async (name) => {
-//     return project.findOne({ name });
-//   };
+/**
+ * Get word trans by pj id
+ * @param {string} userID
+ * @returns {Promise<project>}
+ */
+const getProjectByUserID = async (userID) => {
+  return project.find({ user_id: userID});
+};
 
 /**
  * Get project by ID
@@ -76,7 +76,7 @@ const deleteProjectById = async (projectID) => {
 module.exports = {
   createProject,
   queryProjects,
-  // getProjectByWord,
+  getProjectByUserID,
   getProjectById,
   updateProjectById,
   deleteProjectById,

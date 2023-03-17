@@ -9,33 +9,41 @@ const router = express.Router();
 router
   .route('/')
   .post(
-    auth('manageTranslationMemories'),
+    auth(''),
     validate(TranslationMemoryValidation.createTranslationMemory),
     TranslationMemoryController.createTranslationMemory
   )
   .get(
-    auth('getTranslationMemories'),
+    auth(''),
     validate(TranslationMemoryValidation.getTranslationMemories),
     TranslationMemoryController.getTranslationMemories
   );
 
 router
-  .route('/:TranslationMemoryId')
+  .route('/objectid/:TranslationMemoryId')
   .get(
-    auth('getTranslationMemories'),
+    auth(''),
     validate(TranslationMemoryValidation.getTranslationMemory),
     TranslationMemoryController.getTranslationMemory
   )
   .patch(
-    auth('manageTranslationMemories'),
+    auth(''),
     validate(TranslationMemoryValidation.updateTranslationMemory),
     TranslationMemoryController.updateTranslationMemory
   )
   .delete(
-    auth('manageTranslationMemories'),
+    auth(''),
     validate(TranslationMemoryValidation.deleteTranslationMemory),
     TranslationMemoryController.deleteTranslationMemory
   );
+
+  router
+  .route('/codetranslationmemory/:codeTrans')
+  .get(
+    auth(''),
+    validate(TranslationMemoryValidation.getTranslationMemories),
+    TranslationMemoryController.getTranslationMemoryByCode
+  )
 
 module.exports = router;
 
@@ -151,7 +159,7 @@ module.exports = router;
 
 /**
  * @swagger
- * /TranslationMemories/{id}:
+ * /TranslationMemories/objectid/{translationmemory_id}:
  *   get:
  *     summary: Get a TranslationMemory
  *     description: Logged in user can fetch only their own TranslationMemory information. Only admins can fetch other TranslationMemories.
@@ -241,6 +249,37 @@ module.exports = router;
  *     responses:
  *       "200":
  *         description: No content
+ *       "401":
+ *         $ref: '#/components/responses/Unauthorized'
+ *       "403":
+ *         $ref: '#/components/responses/Forbidden'
+ *       "404":
+ *         $ref: '#/components/responses/NotFound'
+ */
+
+/**
+ * @swagger
+ * /TranslationMemories/codetranslationmemory/{translationmemory_code}:
+ *   get:
+ *     summary: Get all translationmemory with translationmemory code
+ *     description: get all translationmemory by translationmemory code
+ *     tags: [translationmemory]
+ *     security:
+ *       - bearerAuth: []
+ *     parameters:
+ *       - in: path
+ *         name: id
+ *         required: true
+ *         schema:
+ *           type: string
+ *         description: translationmemory id
+ *     responses:
+ *       "200":
+ *         description: OK
+ *         content:
+ *           application/json:
+ *             schema:
+ *                $ref: '#/components/schemas/translate'
  *       "401":
  *         $ref: '#/components/responses/Unauthorized'
  *       "403":

@@ -16,6 +16,14 @@ const getProjects = catchAsync(async (req, res) => {
   res.send(result);
 });
 
+const getProjectsByUserID = catchAsync(async (req, res) => {
+  const result = await projectService.getProjectByUserID(req.params.userId);
+  if (!result) {
+    throw new ApiError(httpStatus.NOT_FOUND, 'project not found');
+  }
+  res.send(result);
+});
+
 const getProject = catchAsync(async (req, res) => {
   const project = await projectService.getProjectById(req.params.projectId);
   if (!project) {
@@ -37,6 +45,7 @@ const deleteProject = catchAsync(async (req, res) => {
 module.exports = {
   createProject,
   getProjects,
+  getProjectsByUserID,
   getProject,
   updateProject,
   deleteProject,

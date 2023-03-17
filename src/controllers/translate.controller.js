@@ -16,7 +16,7 @@ const getWordsTrans = catchAsync(async (req, res) => {
   res.send(result);
 });
 
-const getWordsTransProjectID = catchAsync(async (req, res) => {
+const getWordsTransByProjectID = catchAsync(async (req, res) => {
   const result = await translateService.getWordsTransByProjectID(req.params.projectId);
   if (!result) {
     throw new ApiError(httpStatus.NOT_FOUND, 'word not found');
@@ -45,7 +45,7 @@ const deleteWordTrans = catchAsync(async (req, res) => {
 module.exports = {
   createWordTrans,
   getWordsTrans,
-  getWordsTransProjectID,
+  getWordsTransByProjectID,
   getWordTrans,
   updateWordTrans,
   deleteWordTrans,

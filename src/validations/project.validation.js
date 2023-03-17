@@ -12,10 +12,10 @@ const createProject = {
 
 const getProjects = {
   query: Joi.object().keys({
-    project_name: Joi.string().required(),
-    user_id: Joi.string().required(),
-    source_language: Joi.string().required(),
-    target_language: Joi.string().required(),
+    project_name: Joi.string(),
+    user_id: Joi.string(),
+    source_language: Joi.string(),
+    target_language: Joi.string(),
   }),
 };
 

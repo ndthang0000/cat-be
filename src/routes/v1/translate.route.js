@@ -19,7 +19,7 @@ router
 
 router
   .route('/projectid/:projectId')
-  .get(auth(''), validate(translateValidation.getWordsTrans), translateController.getWordsTransProjectID)
+  .get(auth(''), validate(translateValidation.getWordsTrans), translateController.getWordsTransByProjectID)
 
 module.exports = router;
 
@@ -134,7 +134,7 @@ module.exports = router;
 
 /**
  * @swagger
- * /translate/{word_id}:
+ * /translate/objectid/{word_id}:
  *   get:
  *     summary: Get a translate
  *     description: Logged in user can fetch only their own translate information. Only admins can fetch other translate.

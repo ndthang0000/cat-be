@@ -11,7 +11,7 @@ const createWord = {
 
 const getWords = {
   query: Joi.object().keys({
-    dictionary_id: Joi.string().required(),
+    dictionary_id: Joi.string(),
     source: Joi.string(),
     target: Joi.string(),
   }),

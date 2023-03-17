@@ -46,7 +46,6 @@ module.exports = router;
  *               - word
  *               - source_language
  *               - target_language
- *               - date_modified
  *             properties:
  *               project_name:
  *                type: string
@@ -56,8 +55,6 @@ module.exports = router;
  *                 type: string
  *               target_language:
  *                 type: string
- *               date_modified:
- *                 type: date
  *             example:
  *               project_name: test
  *               user_id: 5ebac534954b54139806c112
@@ -186,9 +183,9 @@ module.exports = router;
  *           schema:
  *             type: object
  *             properties:
- *               dictionary_name:
- *                 type: string
- *               dictionary_code:
+ *               project_name:
+ *                type: string
+ *               user_id:
  *                 type: string
  *               source_language:
  *                 type: string

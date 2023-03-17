@@ -7,7 +7,6 @@ const createProject = {
     user_id: Joi.string().required(),
     source_language: Joi.string().required(),
     target_language: Joi.string().required(),
-    date_modified: Joi.date(),
   }),
 };
 
@@ -17,7 +16,6 @@ const getProjects = {
     user_id: Joi.string().required(),
     source_language: Joi.string().required(),
     target_language: Joi.string().required(),
-    date_modified: Joi.date(),
   }),
 };
 
@@ -37,7 +35,6 @@ const updateProject = {
       user_id: Joi.string().required(),
       source_language: Joi.string().required(),
       target_language: Joi.string().required(),
-      date_modified: Joi.date(),
     })
     .min(1),
 };

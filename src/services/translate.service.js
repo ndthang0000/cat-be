@@ -25,14 +25,14 @@ const queryWordsTrans = async (filter, options) => {
   return words;
 };
 
-// /**
-//  * Get word trans by pj id
-//  * @param {string} projectID
-//  * @returns {Promise<word>}
-//  */
-// const getWordsTransByProjectID = async (projectID) => {
-//   return word.find({ projectID });
-// };
+/**
+ * Get word trans by pj id
+ * @param {string} projectID
+ * @returns {Promise<translate>}
+ */
+const getWordsTransByProjectID = async (projectID) => {
+  return translate.find({ project_id: projectID});
+};
 
 /**
  * Get word by ID
@@ -50,7 +50,7 @@ const getWordTransById = async (ID) => {
  * @returns {Promise<translate>}
  */
 const updateWordTransById = async (wordID, updateBody) => {
-  const translate = await getWordById(wordID);
+  const translate = await getWordTransById(wordID);
   if (!translate) {
     throw new ApiError(httpStatus.NOT_FOUND, 'word not found');
   }
@@ -65,7 +65,7 @@ const updateWordTransById = async (wordID, updateBody) => {
  * @returns {Promise<translate>}
  */
 const deleteWordTransById = async (wordID) => {
-  const translate = await getWordById(wordID);
+  const translate = await getWordTransById(wordID);
   if (!translate) {
     throw new ApiError(httpStatus.NOT_FOUND, 'word not found');
   }
@@ -76,7 +76,7 @@ const deleteWordTransById = async (wordID) => {
 module.exports = {
   createWordTrans,
   queryWordsTrans,
-  // getWordsTransByProjectID,
+  getWordsTransByProjectID,
   getWordTransById,
   updateWordTransById,
   deleteWordTransById,

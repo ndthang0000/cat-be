@@ -16,6 +16,14 @@ const getWords = catchAsync(async (req, res) => {
   res.send(result);
 });
 
+const getWordsByWordID = catchAsync(async (req, res) => {
+  const result = await wordService.getWordsByDictionaryID(req.params.wordId);
+  if (!result) {
+    throw new ApiError(httpStatus.NOT_FOUND, 'word not found');
+  }
+  res.send(result);
+});
+
 const getWord = catchAsync(async (req, res) => {
   const word = await wordService.getWordById(req.params.wordId);
   if (!word) {
@@ -37,6 +45,7 @@ const deleteWord = catchAsync(async (req, res) => {
 module.exports = {
   createWord,
   getWords,
+  getWordsByWordID,
   getWord,
   updateWord,
   deleteWord,

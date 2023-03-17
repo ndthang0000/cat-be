@@ -11,7 +11,7 @@ const createWordTrans = {
 
 const getWordsTrans = {
   query: Joi.object().keys({
-    project_id: Joi.string().required(),
+    project_id: Joi.string(),
     source: Joi.string(),
     target: Joi.string(),
   }),

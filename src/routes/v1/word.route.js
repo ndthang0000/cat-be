@@ -12,10 +12,14 @@ router
   .get(auth(''), validate(wordValidation.getWords), wordController.getWords);
 
 router
-  .route('/:wordId')
+  .route('/objectid/:wordId')
   .get(auth(''), validate(wordValidation.getWord), wordController.getWord)
   .patch(auth(''), validate(wordValidation.updateWord), wordController.updateWord)
   .delete(auth(''), validate(wordValidation.deleteWord), wordController.deleteWord);
+
+router
+  .route('/projectid/:wordID')
+  .get(auth(''), validate(wordValidation.getWords), wordController.getWordsByWordID);
 
 module.exports = router;
 
@@ -220,6 +224,37 @@ module.exports = router;
  *     responses:
  *       "200":
  *         description: No content
+ *       "401":
+ *         $ref: '#/components/responses/Unauthorized'
+ *       "403":
+ *         $ref: '#/components/responses/Forbidden'
+ *       "404":
+ *         $ref: '#/components/responses/NotFound'
+ */
+
+/**
+ * @swagger
+ * /dictionaries/dictionaryid/{word_id}:
+ *   get:
+ *     summary: Get all translate with dictionary id
+ *     description: get all translation by dictionary id
+ *     tags: [translate]
+ *     security:
+ *       - bearerAuth: []
+ *     parameters:
+ *       - in: path
+ *         name: id
+ *         required: true
+ *         schema:
+ *           type: string
+ *         description: dictionary id
+ *     responses:
+ *       "200":
+ *         description: OK
+ *         content:
+ *           application/json:
+ *             schema:
+ *                $ref: '#/components/schemas/translate'
  *       "401":
  *         $ref: '#/components/responses/Unauthorized'
  *       "403":

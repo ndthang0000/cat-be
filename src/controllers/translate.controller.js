@@ -16,6 +16,14 @@ const getWordsTrans = catchAsync(async (req, res) => {
   res.send(result);
 });
 
+const getWordsTransProjectID = catchAsync(async (req, res) => {
+  const result = await translateService.getWordsTransByProjectID(req.params.projectId);
+  if (!result) {
+    throw new ApiError(httpStatus.NOT_FOUND, 'word not found');
+  }
+  res.send(result);
+});
+
 const getWordTrans = catchAsync(async (req, res) => {
   const word = await translateService.getWordTransById(req.params.wordId);
   if (!word) {
@@ -37,6 +45,7 @@ const deleteWordTrans = catchAsync(async (req, res) => {
 module.exports = {
   createWordTrans,
   getWordsTrans,
+  getWordsTransProjectID,
   getWordTrans,
   updateWordTrans,
   deleteWordTrans,

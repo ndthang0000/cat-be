@@ -25,14 +25,14 @@ const queryWords = async (filter, options) => {
   return words;
 };
 
-// /**
-//  * Get word by word
-//  * @param {string} word
-//  * @returns {Promise<word>}
-//  */
-// const getwordByWord = async (word) => {
-//   return word.findOne({ word });
-// };
+/**
+ * Get word trans by dictionary id
+ * @param {string} dictionaryID
+ * @returns {Promise<word>}
+ */
+const getWordsByDictionaryID = async (dictionaryID) => {
+  return word.find({ dictionary_id: dictionaryID});
+};
 
 /**
  * Get word by ID
@@ -76,7 +76,7 @@ const deleteWordById = async (wordID) => {
 module.exports = {
   createWord,
   queryWords,
-  // getwordByWord,
+  getWordsByDictionaryID,  
   getWordById,
   updateWordById,
   deleteWordById,

@@ -12,10 +12,14 @@ router
   .get(auth(''), validate(translateValidation.getWordsTrans), translateController.getWordsTrans);
 
 router
-  .route('/:wordId')
+  .route('/objectid/:wordId')
   .get(auth(''), validate(translateValidation.getWordTrans), translateController.getWordTrans)
   .patch(auth(''), validate(translateValidation.updateWordTrans), translateController.updateWordTrans)
   .delete(auth(''), validate(translateValidation.deleteWordTrans), translateController.deleteWordTrans);
+
+router
+  .route('/projectid/:projectId')
+  .get(auth(''), validate(translateValidation.getWordsTrans), translateController.getWordsTransProjectID)
 
 module.exports = router;
 
@@ -130,7 +134,7 @@ module.exports = router;
 
 /**
  * @swagger
- * /translate/{id}:
+ * /translate/{word_id}:
  *   get:
  *     summary: Get a translate
  *     description: Logged in user can fetch only their own translate information. Only admins can fetch other translate.
@@ -220,6 +224,37 @@ module.exports = router;
  *     responses:
  *       "200":
  *         description: No content
+ *       "401":
+ *         $ref: '#/components/responses/Unauthorized'
+ *       "403":
+ *         $ref: '#/components/responses/Forbidden'
+ *       "404":
+ *         $ref: '#/components/responses/NotFound'
+ */
+
+/**
+ * @swagger
+ * /translate/projectid/{project_id}:
+ *   get:
+ *     summary: Get all translate with project id
+ *     description: get all translation by project id
+ *     tags: [translate]
+ *     security:
+ *       - bearerAuth: []
+ *     parameters:
+ *       - in: path
+ *         name: id
+ *         required: true
+ *         schema:
+ *           type: string
+ *         description: project id
+ *     responses:
+ *       "200":
+ *         description: OK
+ *         content:
+ *           application/json:
+ *             schema:
+ *                $ref: '#/components/schemas/translate'
  *       "401":
  *         $ref: '#/components/responses/Unauthorized'
  *       "403":

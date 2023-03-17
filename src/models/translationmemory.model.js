@@ -15,7 +15,11 @@ const translationMemorySchema = mongoose.Schema({
     type: String,
     required: true,
   },
-});
+  },
+  {
+    timestamps: true,
+  }
+);
 
 translationMemorySchema.plugin(toJSON);
 translationMemorySchema.plugin(paginate);

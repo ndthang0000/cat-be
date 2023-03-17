@@ -15,7 +15,11 @@ const translateSchema = mongoose.Schema({
     type: String,
     required: true,
   },
-});
+  },
+  {
+    timestamps: true,
+  }
+);
 
 translateSchema.plugin(toJSON);
 translateSchema.plugin(paginate);

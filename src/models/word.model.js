@@ -15,7 +15,11 @@ const wordSchema = mongoose.Schema({
     type: String,
     required: true,
   },
-});
+  },
+  {
+    timestamps: true,
+  }
+);
 
 wordSchema.plugin(toJSON);
 wordSchema.plugin(paginate);

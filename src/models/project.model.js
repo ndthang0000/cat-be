@@ -18,11 +18,11 @@ const projectSchema = mongoose.Schema({
     type: String,
     required: true,
   },
-  date_modified: {
-    type: Date,
-    default: Date.now,
   },
-});
+  {
+    timestamps: true,
+  }
+);
 
 projectSchema.plugin(toJSON);
 projectSchema.plugin(paginate);

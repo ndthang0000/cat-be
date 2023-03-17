@@ -17,7 +17,11 @@ const dictionarySchema = mongoose.Schema({
     type: String,
     required: true,
   },
-});
+  },
+  {
+    timestamps: true,
+  }
+);
 
 dictionarySchema.plugin(toJSON);
 dictionarySchema.plugin(paginate);

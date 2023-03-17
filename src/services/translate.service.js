@@ -26,12 +26,12 @@ const queryWordsTrans = async (filter, options) => {
 };
 
 // /**
-//  * Get word by word
-//  * @param {string} word
+//  * Get word trans by pj id
+//  * @param {string} projectID
 //  * @returns {Promise<word>}
 //  */
-// const getwordByWord = async (word) => {
-//   return word.findOne({ word });
+// const getWordsTransByProjectID = async (projectID) => {
+//   return word.find({ projectID });
 // };
 
 /**
@@ -76,7 +76,7 @@ const deleteWordTransById = async (wordID) => {
 module.exports = {
   createWordTrans,
   queryWordsTrans,
-  // getwordByWord,
+  // getWordsTransByProjectID,
   getWordTransById,
   updateWordTransById,
   deleteWordTransById,

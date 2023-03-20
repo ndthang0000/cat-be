@@ -12,7 +12,7 @@ router
   .get(auth(''), validate(dictionaryValidation.getDictionaries), dictionaryController.getDictionaries);
 
 router
-  .route('/objectid/:DictionaryId')
+  .route('/objectid/:dictionaryId')
   .get(auth(''), validate(dictionaryValidation.getDictionary), dictionaryController.getDictionary)
   .patch(auth(''), validate(dictionaryValidation.updateDictionary), dictionaryController.updateDictionary)
   .delete(auth(''), validate(dictionaryValidation.deleteDictionary), dictionaryController.deleteDictionary);

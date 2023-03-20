@@ -21,13 +21,13 @@ const getDictionaries = {
 
 const getDictionary = {
   params: Joi.object().keys({
-    projectId: Joi.string().custom(objectId),
+    dictionaryId: Joi.string().custom(objectId),
   }),
 };
 
 const updateDictionary = {
   params: Joi.object().keys({
-    projectId: Joi.required().custom(objectId),
+    dictionaryId: Joi.required().custom(objectId),
   }),
   body: Joi.object()
     .keys({
@@ -41,7 +41,7 @@ const updateDictionary = {
 
 const deleteDictionary = {
   params: Joi.object().keys({
-    projectId: Joi.string().custom(objectId),
+    dictionaryId: Joi.string().custom(objectId),
   }),
 };
 

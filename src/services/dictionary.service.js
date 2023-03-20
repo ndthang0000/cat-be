@@ -65,7 +65,7 @@ const updateDictionaryById = async (dictionaryID, updateBody) => {
  * @returns {Promise<dictionary>}
  */
 const deleteDictionaryById = async (dictionaryID) => {
-  const dictionary = await getdictionaryById(dictionaryID);
+  const dictionary = await getDictionaryById(dictionaryID);
   if (!dictionary) {
     throw new ApiError(httpStatus.NOT_FOUND, 'dictionary not found');
   }

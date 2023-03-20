@@ -41,6 +41,10 @@ const userSchema = mongoose.Schema(
       enum: roles,
       default: 'user',
     },
+    isEmailVerified: {
+      type: Boolean,
+      default: false,
+    },
     personalCodeDictionary: {
       type: String,
       default: crypto.randomUUID(), //use crypto module to create UUID for unique code

@@ -263,7 +263,7 @@ module.exports = router;
  *   get:
  *     summary: Get all translationmemory with translationmemory code
  *     description: get all translationmemory by translationmemory code
- *     tags: [translationmemory]
+ *     tags: [TranslationMemories]
  *     security:
  *       - bearerAuth: []
  *     parameters:

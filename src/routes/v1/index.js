@@ -42,7 +42,7 @@ const defaultRoutes = [
     route: projectRoute,
   },
   {
-    path: '/dictionary',
+    path: '/dictionaries',
     route: dictionaryRoute,
   },
 ];

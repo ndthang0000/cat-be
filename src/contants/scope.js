@@ -1,6 +1,6 @@
 const SCOPE = {
   PUBLIC: 'PUBLIC',
-  INDIVIDUAL: 'INDIVIDUAL'
-}
+  INDIVIDUAL: 'INDIVIDUAL',
+};
 
-module.exports = SCOPE
+module.exports = SCOPE;

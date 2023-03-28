@@ -2,10 +2,10 @@ const mongoose = require('mongoose');
 const { toJSON, paginate } = require('./plugins');
 const SCOPE = require('../contants/scope');
 const { PROJECT_STATUS } = require('../contants/status');
+const LANGUAGE = require('../contants/language');
 
 const projectSchema = mongoose.Schema(
   {
-
     user: {
       type: mongoose.SchemaTypes.ObjectId,
       ref: 'User',
@@ -13,38 +13,36 @@ const projectSchema = mongoose.Schema(
     },
     name: {
       type: String,
-      require: true
+      require: true,
     },
     domain: {
       type: String,
-      require: true
+      require: true,
     },
     description: {
-      type: String
+      type: String,
     },
-    shared: [
-      { type: mongoose.Schema.Types.ObjectId, ref: 'User' }
-    ],
+    shared: [{ type: mongoose.Schema.Types.ObjectId, ref: 'User' }],
     scope: {
       type: String,
       enum: Object.values(SCOPE),
-      default: SCOPE.PUBLIC
+      default: SCOPE.PUBLIC,
     },
     src: {
       type: String,
       enum: Object.values(LANGUAGE),
-      require: true
+      require: true,
     },
     dest: {
       type: String,
       enum: Object.values(LANGUAGE),
-      require: true
+      require: true,
     },
     status: {
       type: String,
       enum: Object.values(PROJECT_STATUS),
-      default: PROJECT_STATUS.INPROGRESS
-    }
+      default: PROJECT_STATUS.INPROGRESS,
+    },
   },
   {
     timestamps: true,

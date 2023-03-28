@@ -5,7 +5,6 @@ const { SENTENCE_STATUS } = require('../contants/status');
 
 const sentenceSchema = mongoose.Schema(
   {
-
     project: {
       type: mongoose.SchemaTypes.ObjectId,
       ref: 'Project',
@@ -22,8 +21,8 @@ const sentenceSchema = mongoose.Schema(
     status: {
       type: String,
       enum: Object.values(SENTENCE_STATUS),
-      default: SENTENCE_STATUS.TRANSLATING
-    }
+      default: SENTENCE_STATUS.TRANSLATING,
+    },
   },
   {
     timestamps: true,

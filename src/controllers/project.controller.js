@@ -10,6 +10,12 @@ const test = catchAsync(async (req, res) => {
   res.status(httpStatus.CREATED).send({ data: data });
 });
 
+const testUploadFile = catchAsync(async (req, res) => {
+  console.log(req.file);
+  res.status(httpStatus.CREATED).send({ data: 1 });
+});
+
 module.exports = {
   test,
+  testUploadFile,
 };

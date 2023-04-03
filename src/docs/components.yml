@@ -1,5 +1,81 @@
 components:
   schemas:
+    TranslationMemory:
+      type: object
+      properties:
+        user_id:
+          type: string
+        word:
+          type: string
+        translate:
+          type: string
+      example:
+        id: 5ebac534954b54139806c112
+        word: A dog
+        mean: Một con chó
+
+    project:
+      type: object
+      properties:
+        project_name:
+          type: string
+        user_id:
+          type: string
+        source_language:
+          type: string
+        target_language:
+          type: string
+      example:
+        project_name: test
+        user_id: 5ebac534954b54139806c112
+        source_language: english
+        target_language: vietnamese
+
+    translate:
+      type: object
+      properties:
+        project_id:
+          type: string
+        source:
+          type: string
+        target:
+          type: string
+      example:
+        project_id: 5ebac534954b54139806c112
+        source: dog
+        target: chó
+
+    dictionary:
+      type: object
+      properties:
+        dictionary_name:
+          type: string
+        dictionary_code:
+          type: string
+        source_language:
+          type: string
+        target_language:
+          type: string
+      example:
+        dictionary_name: english_to_vietnamese
+        dictionary_code: 5ebac534954b54139806c112
+        source_language: english
+        target_language: vietnamese
+
+    word:
+      type: object
+      properties:
+        dictionary_id:
+          type: string
+        word:
+          type: string
+        mean:
+          type: string
+      example:
+        dictionary_id: 5ebac534954b54139806c112
+        word: dog
+        mean: chó
+
     User:
       type: object
       properties:

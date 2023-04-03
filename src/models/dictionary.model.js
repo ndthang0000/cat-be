@@ -1,13 +1,12 @@
 const mongoose = require('mongoose');
 const { toJSON, paginate } = require('./plugins');
 
-const projectSchema = mongoose.Schema(
+const dictionarySchema = mongoose.Schema(
   {
-    project_name: {
+    dictionary_name: {
       type: String,
-      required: true,
     },
-    user_id: {
+    dictionary_code: {
       type: String,
       required: true,
     },
@@ -25,9 +24,9 @@ const projectSchema = mongoose.Schema(
   }
 );
 
-projectSchema.plugin(toJSON);
-projectSchema.plugin(paginate);
+dictionarySchema.plugin(toJSON);
+dictionarySchema.plugin(paginate);
 
-const project = mongoose.model('project', projectSchema);
+const dictionary = mongoose.model('dictionary', dictionarySchema);
 
-module.exports = project;
+module.exports = dictionary;

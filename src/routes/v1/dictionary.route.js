@@ -1,42 +1,42 @@
 const express = require('express');
 const auth = require('../../middlewares/auth');
 const validate = require('../../middlewares/validate');
-const projectValidation = require('../../validations/project.validation');
-const projectController = require('../../controllers/project.controller');
+const dictionaryValidation = require('../../validations/dictionary.validation');
+const dictionaryController = require('../../controllers/dictionary.controller');
 
 const router = express.Router();
 
 router
   .route('/')
-  .post(auth(''), validate(projectValidation.createProject), projectController.createProject)
-  .get(auth(''), validate(projectValidation.getProjects), projectController.getProjects);
+  .post(auth(''), validate(dictionaryValidation.createDictionary), dictionaryController.createDictionary)
+  .get(auth(''), validate(dictionaryValidation.getDictionaries), dictionaryController.getDictionaries);
 
 router
-  .route('/objectid/:projectId')
-  .get(auth(''), validate(projectValidation.getProject), projectController.getProject)
-  .patch(auth(''), validate(projectValidation.updateProject), projectController.updateProject)
-  .delete(auth(''), validate(projectValidation.deleteProject), projectController.deleteProject);
+  .route('/objectid/:dictionaryId')
+  .get(auth(''), validate(dictionaryValidation.getDictionary), dictionaryController.getDictionary)
+  .patch(auth(''), validate(dictionaryValidation.updateDictionary), dictionaryController.updateDictionary)
+  .delete(auth(''), validate(dictionaryValidation.deleteDictionary), dictionaryController.deleteDictionary);
 
 router
-  .route('/userid/:userId')
-  .get(auth(''), validate(projectValidation.getProjects), projectController.getProjectsByUserID);
+  .route('/codedictionary/:codeDic')
+  .get(auth(''), validate(dictionaryValidation.getDictionaries), dictionaryController.getDictionariesByCode);
 
 module.exports = router;
 
 /**
  * @swagger
  * tags:
- *   name: projects
- *   description: project management and retrieval
+ *   name: dictionaries
+ *   description: dictionary management and retrieval
  */
 
 /**
  * @swagger
- * /projects:
+ * /dictionaries:
  *   post:
- *     summary: Create a project
- *     description: User can add project to use.
- *     tags: [projects]
+ *     summary: Create a dictionary
+ *     description: User can add dictionary to use.
+ *     tags: [dictionaries]
  *     security:
  *       - bearerAuth: []
  *     requestBody:
@@ -46,22 +46,22 @@ module.exports = router;
  *           schema:
  *             type: object
  *             required:
- *               - project_name
- *               - word
+ *               - dictionary_name
+ *               - dictionary_code
  *               - source_language
  *               - target_language
  *             properties:
- *               project_name:
- *                type: string
- *               user_id:
+ *               dictionary_name:
+ *                 type: string
+ *               dictionary_code:
  *                 type: string
  *               source_language:
  *                 type: string
  *               target_language:
  *                 type: string
  *             example:
- *               project_name: test
- *               user_id: 5ebac534954b54139806c112
+ *               dictionary_name: english_to_vietnamese
+ *               dictionary_code: 5ebac534954b54139806c112
  *               source_language: english
  *               target_language: vietnamese
  *     responses:
@@ -70,16 +70,16 @@ module.exports = router;
  *         content:
  *           application/json:
  *             schema:
- *                $ref: '#/components/schemas/project'
+ *                $ref: '#/components/schemas/dictionary'
  *       "401":
  *         $ref: '#/components/responses/Unauthorized'
  *       "403":
  *         $ref: '#/components/responses/Forbidden'
  *
  *   get:
- *     summary: Get all projects
- *     description: Only admins can retrieve all projects.
- *     tags: [projects]
+ *     summary: Get all dictionaries
+ *     description: Only admins can retrieve all dictionaries.
+ *     tags: [dictionaries]
  *     security:
  *       - bearerAuth: []
  *     parameters:
@@ -87,7 +87,7 @@ module.exports = router;
  *         name: name
  *         schema:
  *           type: string
- *         description: project name
+ *         description: dictionary name
  *       - in: query
  *         name: sortBy
  *         schema:
@@ -99,7 +99,7 @@ module.exports = router;
  *           type: integer
  *           minimum: 1
  *         default: 10
- *         description: Maximum number of projects
+ *         description: Maximum number of dictionaries
  *       - in: query
  *         name: page
  *         schema:
@@ -118,7 +118,7 @@ module.exports = router;
  *                 results:
  *                   type: array
  *                   items:
- *                     $ref: '#/components/schemas/project'
+ *                     $ref: '#/components/schemas/dictionary'
  *                 page:
  *                   type: integer
  *                   example: 1
@@ -139,11 +139,11 @@ module.exports = router;
 
 /**
  * @swagger
- * /projects/objectid/{project_id}:
+ * /dictionaries/objectid/{dictionary_id}:
  *   get:
- *     summary: Get a project
- *     description: Logged in user can fetch only their own project information. Only admins can fetch other projects.
- *     tags: [projects]
+ *     summary: Get a dictionary
+ *     description: Logged in user can fetch only their own dictionary information. Only admins can fetch other dictionaries.
+ *     tags: [dictionaries]
  *     security:
  *       - bearerAuth: []
  *     parameters:
@@ -152,14 +152,14 @@ module.exports = router;
  *         required: true
  *         schema:
  *           type: string
- *         description: project id
+ *         description: dictionary id
  *     responses:
  *       "200":
  *         description: OK
  *         content:
  *           application/json:
  *             schema:
- *                $ref: '#/components/schemas/project'
+ *                $ref: '#/components/schemas/dictionary'
  *       "401":
  *         $ref: '#/components/responses/Unauthorized'
  *       "403":
@@ -168,9 +168,9 @@ module.exports = router;
  *         $ref: '#/components/responses/NotFound'
  *
  *   patch:
- *     summary: Update a project
- *     description: Logged in user can only update their own information. Only admins can update other projects.
- *     tags: [projects]
+ *     summary: Update a dictionary
+ *     description: Logged in user can only update their own information. Only admins can update other dictionaries.
+ *     tags: [dictionaries]
  *     security:
  *       - bearerAuth: []
  *     parameters:
@@ -179,7 +179,7 @@ module.exports = router;
  *         required: true
  *         schema:
  *           type: string
- *         description: project id
+ *         description: dictionary id
  *     requestBody:
  *       required: true
  *       content:
@@ -187,17 +187,17 @@ module.exports = router;
  *           schema:
  *             type: object
  *             properties:
- *               project_name:
- *                type: string
- *               user_id:
+ *               dictionary_name:
+ *                 type: string
+ *               dictionary_code:
  *                 type: string
  *               source_language:
  *                 type: string
  *               target_language:
  *                 type: string
  *             example:
- *               project_name: test
- *               user_id: 5ebac534954b54139806c112
+ *               dictionary_name: english_to_vietnamese
+ *               dictionary_code: 5ebac534954b54139806c112
  *               source_language: english
  *               target_language: vietnamese
  *     responses:
@@ -206,7 +206,7 @@ module.exports = router;
  *         content:
  *           application/json:
  *             schema:
- *                $ref: '#/components/schemas/project'
+ *                $ref: '#/components/schemas/dictionary'
  *       "400":
  *         $ref: '#/components/responses/DuplicateEmail'
  *       "401":
@@ -217,9 +217,9 @@ module.exports = router;
  *         $ref: '#/components/responses/NotFound'
  *
  *   delete:
- *     summary: Delete a project
- *     description: Logged in user can delete only themselves. Only admins can delete other projects.
- *     tags: [projects]
+ *     summary: Delete a dictionary
+ *     description: Logged in user can delete only themselves. Only admins can delete other dictionaries.
+ *     tags: [dictionaries]
  *     security:
  *       - bearerAuth: []
  *     parameters:
@@ -228,7 +228,7 @@ module.exports = router;
  *         required: true
  *         schema:
  *           type: string
- *         description: project id
+ *         description: dictionary id
  *     responses:
  *       "200":
  *         description: No content
@@ -242,11 +242,11 @@ module.exports = router;
 
 /**
  * @swagger
- * /project/userid/{user_id}:
+ * /dictionaries/codedictionary/{dictionary_code}:
  *   get:
- *     summary: Get all translate with user id
- *     description: get all translation by user id
- *     tags: [projects]
+ *     summary: Get all dictionary with dictionary code
+ *     description: get all dictionary by dictionary code
+ *     tags: [dictionaries]
  *     security:
  *       - bearerAuth: []
  *     parameters:
@@ -255,7 +255,7 @@ module.exports = router;
  *         required: true
  *         schema:
  *           type: string
- *         description: user id
+ *         description: dictionary id
  *     responses:
  *       "200":
  *         description: OK

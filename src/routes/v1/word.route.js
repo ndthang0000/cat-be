@@ -1,42 +1,40 @@
 const express = require('express');
 const auth = require('../../middlewares/auth');
 const validate = require('../../middlewares/validate');
-const projectValidation = require('../../validations/project.validation');
-const projectController = require('../../controllers/project.controller');
+const wordValidation = require('../../validations/word.validation');
+const wordController = require('../../controllers/word.controller');
 
 const router = express.Router();
 
 router
   .route('/')
-  .post(auth(''), validate(projectValidation.createProject), projectController.createProject)
-  .get(auth(''), validate(projectValidation.getProjects), projectController.getProjects);
+  .post(auth(''), validate(wordValidation.createWord), wordController.createWord)
+  .get(auth(''), validate(wordValidation.getWords), wordController.getWords);
 
 router
-  .route('/objectid/:projectId')
-  .get(auth(''), validate(projectValidation.getProject), projectController.getProject)
-  .patch(auth(''), validate(projectValidation.updateProject), projectController.updateProject)
-  .delete(auth(''), validate(projectValidation.deleteProject), projectController.deleteProject);
+  .route('/objectid/:wordId')
+  .get(auth(''), validate(wordValidation.getWord), wordController.getWord)
+  .patch(auth(''), validate(wordValidation.updateWord), wordController.updateWord)
+  .delete(auth(''), validate(wordValidation.deleteWord), wordController.deleteWord);
 
-router
-  .route('/userid/:userId')
-  .get(auth(''), validate(projectValidation.getProjects), projectController.getProjectsByUserID);
+router.route('/projectid/:wordID').get(auth(''), validate(wordValidation.getWords), wordController.getWordsByWordID);
 
 module.exports = router;
 
 /**
  * @swagger
  * tags:
- *   name: projects
- *   description: project management and retrieval
+ *   name: words
+ *   description: word management and retrieval
  */
 
 /**
  * @swagger
- * /projects:
+ * /word:
  *   post:
- *     summary: Create a project
- *     description: User can add project to use.
- *     tags: [projects]
+ *     summary: Create a word
+ *     description: User can add word to use.
+ *     tags: [words]
  *     security:
  *       - bearerAuth: []
  *     requestBody:
@@ -46,40 +44,35 @@ module.exports = router;
  *           schema:
  *             type: object
  *             required:
- *               - project_name
+ *               - dictionary_id
  *               - word
- *               - source_language
- *               - target_language
+ *               - mean
  *             properties:
- *               project_name:
- *                type: string
- *               user_id:
+ *               dictionary_id:
  *                 type: string
- *               source_language:
+ *               word:
  *                 type: string
- *               target_language:
+ *               mean:
  *                 type: string
  *             example:
- *               project_name: test
- *               user_id: 5ebac534954b54139806c112
- *               source_language: english
- *               target_language: vietnamese
+ *               dictionary_id: 5ebac534954b54139806c112
+ *               word: dog
+ *               mean: chó
  *     responses:
  *       "201":
  *         description: Created
  *         content:
  *           application/json:
  *             schema:
- *                $ref: '#/components/schemas/project'
+ *                $ref: '#/components/schemas/word'
  *       "401":
  *         $ref: '#/components/responses/Unauthorized'
  *       "403":
  *         $ref: '#/components/responses/Forbidden'
  *
  *   get:
- *     summary: Get all projects
- *     description: Only admins can retrieve all projects.
- *     tags: [projects]
+ *     summary: Get all words
+ *     tags: [words]
  *     security:
  *       - bearerAuth: []
  *     parameters:
@@ -87,7 +80,7 @@ module.exports = router;
  *         name: name
  *         schema:
  *           type: string
- *         description: project name
+ *         description: word name
  *       - in: query
  *         name: sortBy
  *         schema:
@@ -99,7 +92,7 @@ module.exports = router;
  *           type: integer
  *           minimum: 1
  *         default: 10
- *         description: Maximum number of projects
+ *         description: Maximum number of words
  *       - in: query
  *         name: page
  *         schema:
@@ -118,7 +111,7 @@ module.exports = router;
  *                 results:
  *                   type: array
  *                   items:
- *                     $ref: '#/components/schemas/project'
+ *                     $ref: '#/components/schemas/word'
  *                 page:
  *                   type: integer
  *                   example: 1
@@ -139,11 +132,11 @@ module.exports = router;
 
 /**
  * @swagger
- * /projects/objectid/{project_id}:
+ * /word/objectid/{word_id}:
  *   get:
- *     summary: Get a project
- *     description: Logged in user can fetch only their own project information. Only admins can fetch other projects.
- *     tags: [projects]
+ *     summary: Get a word
+ *     description: Logged in user can fetch only their own word information. Only admins can fetch other words.
+ *     tags: [words]
  *     security:
  *       - bearerAuth: []
  *     parameters:
@@ -152,14 +145,14 @@ module.exports = router;
  *         required: true
  *         schema:
  *           type: string
- *         description: project id
+ *         description: word id
  *     responses:
  *       "200":
  *         description: OK
  *         content:
  *           application/json:
  *             schema:
- *                $ref: '#/components/schemas/project'
+ *                $ref: '#/components/schemas/word'
  *       "401":
  *         $ref: '#/components/responses/Unauthorized'
  *       "403":
@@ -168,9 +161,9 @@ module.exports = router;
  *         $ref: '#/components/responses/NotFound'
  *
  *   patch:
- *     summary: Update a project
- *     description: Logged in user can only update their own information. Only admins can update other projects.
- *     tags: [projects]
+ *     summary: Update a word
+ *     description: Logged in user can only update their own information. Only admins can update other words.
+ *     tags: [words]
  *     security:
  *       - bearerAuth: []
  *     parameters:
@@ -179,7 +172,7 @@ module.exports = router;
  *         required: true
  *         schema:
  *           type: string
- *         description: project id
+ *         description: word id
  *     requestBody:
  *       required: true
  *       content:
@@ -187,26 +180,23 @@ module.exports = router;
  *           schema:
  *             type: object
  *             properties:
- *               project_name:
- *                type: string
- *               user_id:
+ *               dictionary_id:
+ *                 type:string
+ *               word:
  *                 type: string
- *               source_language:
- *                 type: string
- *               target_language:
+ *               mean:
  *                 type: string
  *             example:
- *               project_name: test
- *               user_id: 5ebac534954b54139806c112
- *               source_language: english
- *               target_language: vietnamese
+ *                 dictionary_id: 5ebac534954b54139806c112
+ *                 word: dog
+ *                 mean: chó
  *     responses:
  *       "200":
  *         description: OK
  *         content:
  *           application/json:
  *             schema:
- *                $ref: '#/components/schemas/project'
+ *                $ref: '#/components/schemas/word'
  *       "400":
  *         $ref: '#/components/responses/DuplicateEmail'
  *       "401":
@@ -217,9 +207,9 @@ module.exports = router;
  *         $ref: '#/components/responses/NotFound'
  *
  *   delete:
- *     summary: Delete a project
- *     description: Logged in user can delete only themselves. Only admins can delete other projects.
- *     tags: [projects]
+ *     summary: Delete a word
+ *     description: Logged in user can delete only themselves. Only admins can delete other words.
+ *     tags: [words]
  *     security:
  *       - bearerAuth: []
  *     parameters:
@@ -228,7 +218,7 @@ module.exports = router;
  *         required: true
  *         schema:
  *           type: string
- *         description: project id
+ *         description: word id
  *     responses:
  *       "200":
  *         description: No content
@@ -242,11 +232,11 @@ module.exports = router;
 
 /**
  * @swagger
- * /project/userid/{user_id}:
+ * /word/dictionaryid/{word_id}:
  *   get:
- *     summary: Get all translate with user id
- *     description: get all translation by user id
- *     tags: [projects]
+ *     summary: Get all translate with dictionary id
+ *     description: get all translation by dictionary id
+ *     tags: [words]
  *     security:
  *       - bearerAuth: []
  *     parameters:
@@ -255,7 +245,7 @@ module.exports = router;
  *         required: true
  *         schema:
  *           type: string
- *         description: user id
+ *         description: dictionary id
  *     responses:
  *       "200":
  *         description: OK

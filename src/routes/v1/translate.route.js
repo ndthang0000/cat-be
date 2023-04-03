@@ -1,42 +1,42 @@
 const express = require('express');
 const auth = require('../../middlewares/auth');
 const validate = require('../../middlewares/validate');
-const projectValidation = require('../../validations/project.validation');
-const projectController = require('../../controllers/project.controller');
+const translateValidation = require('../../validations/translate.validation');
+const translateController = require('../../controllers/translate.controller');
 
 const router = express.Router();
 
 router
   .route('/')
-  .post(auth(''), validate(projectValidation.createProject), projectController.createProject)
-  .get(auth(''), validate(projectValidation.getProjects), projectController.getProjects);
+  .post(auth(''), validate(translateValidation.createWordTrans), translateController.createWordTrans)
+  .get(auth(''), validate(translateValidation.getWordsTrans), translateController.getWordsTrans);
 
 router
-  .route('/objectid/:projectId')
-  .get(auth(''), validate(projectValidation.getProject), projectController.getProject)
-  .patch(auth(''), validate(projectValidation.updateProject), projectController.updateProject)
-  .delete(auth(''), validate(projectValidation.deleteProject), projectController.deleteProject);
+  .route('/objectid/:wordId')
+  .get(auth(''), validate(translateValidation.getWordTrans), translateController.getWordTrans)
+  .patch(auth(''), validate(translateValidation.updateWordTrans), translateController.updateWordTrans)
+  .delete(auth(''), validate(translateValidation.deleteWordTrans), translateController.deleteWordTrans);
 
 router
-  .route('/userid/:userId')
-  .get(auth(''), validate(projectValidation.getProjects), projectController.getProjectsByUserID);
+  .route('/projectid/:projectId')
+  .get(auth(''), validate(translateValidation.getWordsTrans), translateController.getWordsTransByProjectID);
 
 module.exports = router;
 
 /**
  * @swagger
  * tags:
- *   name: projects
- *   description: project management and retrieval
+ *   name: translate
+ *   description: translate management and retrieval
  */
 
 /**
  * @swagger
- * /projects:
+ * /translate:
  *   post:
- *     summary: Create a project
- *     description: User can add project to use.
- *     tags: [projects]
+ *     summary: Create a translate
+ *     description: User can add translate to use.
+ *     tags: [translate]
  *     security:
  *       - bearerAuth: []
  *     requestBody:
@@ -46,40 +46,35 @@ module.exports = router;
  *           schema:
  *             type: object
  *             required:
- *               - project_name
- *               - word
- *               - source_language
- *               - target_language
+ *               - project_id
+ *               - source
+ *               - target
  *             properties:
- *               project_name:
- *                type: string
- *               user_id:
+ *               project_id:
  *                 type: string
- *               source_language:
+ *               source:
  *                 type: string
- *               target_language:
+ *               target:
  *                 type: string
  *             example:
- *               project_name: test
- *               user_id: 5ebac534954b54139806c112
- *               source_language: english
- *               target_language: vietnamese
+ *               project_id: 5ebac534954b54139806c112
+ *               source: dog
+ *               target: chó
  *     responses:
  *       "201":
  *         description: Created
  *         content:
  *           application/json:
  *             schema:
- *                $ref: '#/components/schemas/project'
+ *                $ref: '#/components/schemas/translate'
  *       "401":
  *         $ref: '#/components/responses/Unauthorized'
  *       "403":
  *         $ref: '#/components/responses/Forbidden'
  *
  *   get:
- *     summary: Get all projects
- *     description: Only admins can retrieve all projects.
- *     tags: [projects]
+ *     summary: Get all translate
+ *     tags: [translate]
  *     security:
  *       - bearerAuth: []
  *     parameters:
@@ -87,7 +82,7 @@ module.exports = router;
  *         name: name
  *         schema:
  *           type: string
- *         description: project name
+ *         description: translate name
  *       - in: query
  *         name: sortBy
  *         schema:
@@ -99,7 +94,7 @@ module.exports = router;
  *           type: integer
  *           minimum: 1
  *         default: 10
- *         description: Maximum number of projects
+ *         description: Maximum number of translate
  *       - in: query
  *         name: page
  *         schema:
@@ -118,7 +113,7 @@ module.exports = router;
  *                 results:
  *                   type: array
  *                   items:
- *                     $ref: '#/components/schemas/project'
+ *                     $ref: '#/components/schemas/translate'
  *                 page:
  *                   type: integer
  *                   example: 1
@@ -139,11 +134,11 @@ module.exports = router;
 
 /**
  * @swagger
- * /projects/objectid/{project_id}:
+ * /translate/objectid/{word_id}:
  *   get:
- *     summary: Get a project
- *     description: Logged in user can fetch only their own project information. Only admins can fetch other projects.
- *     tags: [projects]
+ *     summary: Get a translate
+ *     description: Logged in user can fetch only their own translate information. Only admins can fetch other translate.
+ *     tags: [translate]
  *     security:
  *       - bearerAuth: []
  *     parameters:
@@ -152,14 +147,14 @@ module.exports = router;
  *         required: true
  *         schema:
  *           type: string
- *         description: project id
+ *         description: translate id
  *     responses:
  *       "200":
  *         description: OK
  *         content:
  *           application/json:
  *             schema:
- *                $ref: '#/components/schemas/project'
+ *                $ref: '#/components/schemas/translate'
  *       "401":
  *         $ref: '#/components/responses/Unauthorized'
  *       "403":
@@ -168,9 +163,9 @@ module.exports = router;
  *         $ref: '#/components/responses/NotFound'
  *
  *   patch:
- *     summary: Update a project
- *     description: Logged in user can only update their own information. Only admins can update other projects.
- *     tags: [projects]
+ *     summary: Update a translate
+ *     description: Logged in user can only update their own information. Only admins can update other translate.
+ *     tags: [translate]
  *     security:
  *       - bearerAuth: []
  *     parameters:
@@ -179,7 +174,7 @@ module.exports = router;
  *         required: true
  *         schema:
  *           type: string
- *         description: project id
+ *         description: translate id
  *     requestBody:
  *       required: true
  *       content:
@@ -187,26 +182,23 @@ module.exports = router;
  *           schema:
  *             type: object
  *             properties:
- *               project_name:
- *                type: string
- *               user_id:
+ *               project_id:
  *                 type: string
- *               source_language:
+ *               source:
  *                 type: string
- *               target_language:
+ *               target:
  *                 type: string
  *             example:
- *               project_name: test
- *               user_id: 5ebac534954b54139806c112
- *               source_language: english
- *               target_language: vietnamese
+ *               project_id: 5ebac534954b54139806c112
+ *               source: dog
+ *               target: chó
  *     responses:
  *       "200":
  *         description: OK
  *         content:
  *           application/json:
  *             schema:
- *                $ref: '#/components/schemas/project'
+ *                $ref: '#/components/schemas/translate'
  *       "400":
  *         $ref: '#/components/responses/DuplicateEmail'
  *       "401":
@@ -217,9 +209,9 @@ module.exports = router;
  *         $ref: '#/components/responses/NotFound'
  *
  *   delete:
- *     summary: Delete a project
- *     description: Logged in user can delete only themselves. Only admins can delete other projects.
- *     tags: [projects]
+ *     summary: Delete a translate
+ *     description: Logged in user can delete only themselves. Only admins can delete other translate.
+ *     tags: [translate]
  *     security:
  *       - bearerAuth: []
  *     parameters:
@@ -228,7 +220,7 @@ module.exports = router;
  *         required: true
  *         schema:
  *           type: string
- *         description: project id
+ *         description: translate id
  *     responses:
  *       "200":
  *         description: No content
@@ -242,11 +234,11 @@ module.exports = router;
 
 /**
  * @swagger
- * /project/userid/{user_id}:
+ * /translate/projectid/{project_id}:
  *   get:
- *     summary: Get all translate with user id
- *     description: get all translation by user id
- *     tags: [projects]
+ *     summary: Get all translate with project id
+ *     description: get all translation by project id
+ *     tags: [translate]
  *     security:
  *       - bearerAuth: []
  *     parameters:
@@ -255,7 +247,7 @@ module.exports = router;
  *         required: true
  *         schema:
  *           type: string
- *         description: user id
+ *         description: project id
  *     responses:
  *       "200":
  *         description: OK

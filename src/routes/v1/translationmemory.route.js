@@ -1,42 +1,66 @@
 const express = require('express');
 const auth = require('../../middlewares/auth');
 const validate = require('../../middlewares/validate');
-const projectValidation = require('../../validations/project.validation');
-const projectController = require('../../controllers/project.controller');
+const TranslationMemoryValidation = require('../../validations/translationmemory.validation');
+const TranslationMemoryController = require('../../controllers/translationmemory.controller');
 
 const router = express.Router();
 
 router
   .route('/')
-  .post(auth(''), validate(projectValidation.createProject), projectController.createProject)
-  .get(auth(''), validate(projectValidation.getProjects), projectController.getProjects);
+  .post(
+    auth(''),
+    validate(TranslationMemoryValidation.createTranslationMemory),
+    TranslationMemoryController.createTranslationMemory
+  )
+  .get(
+    auth(''),
+    validate(TranslationMemoryValidation.getTranslationMemories),
+    TranslationMemoryController.getTranslationMemories
+  );
 
 router
-  .route('/objectid/:projectId')
-  .get(auth(''), validate(projectValidation.getProject), projectController.getProject)
-  .patch(auth(''), validate(projectValidation.updateProject), projectController.updateProject)
-  .delete(auth(''), validate(projectValidation.deleteProject), projectController.deleteProject);
+  .route('/objectid/:TranslationMemoryId')
+  .get(
+    auth(''),
+    validate(TranslationMemoryValidation.getTranslationMemory),
+    TranslationMemoryController.getTranslationMemory
+  )
+  .patch(
+    auth(''),
+    validate(TranslationMemoryValidation.updateTranslationMemory),
+    TranslationMemoryController.updateTranslationMemory
+  )
+  .delete(
+    auth(''),
+    validate(TranslationMemoryValidation.deleteTranslationMemory),
+    TranslationMemoryController.deleteTranslationMemory
+  );
 
 router
-  .route('/userid/:userId')
-  .get(auth(''), validate(projectValidation.getProjects), projectController.getProjectsByUserID);
+  .route('/codetranslationmemory/:codeTrans')
+  .get(
+    auth(''),
+    validate(TranslationMemoryValidation.getTranslationMemories),
+    TranslationMemoryController.getTranslationMemoryByCode
+  );
 
 module.exports = router;
 
 /**
  * @swagger
  * tags:
- *   name: projects
- *   description: project management and retrieval
+ *   name: TranslationMemories
+ *   description: TranslationMemory management and retrieval
  */
 
 /**
  * @swagger
- * /projects:
+ * /TranslationMemories:
  *   post:
- *     summary: Create a project
- *     description: User can add project to use.
- *     tags: [projects]
+ *     summary: Create a TranslationMemory
+ *     description: User can add translationmemory to use.
+ *     tags: [TranslationMemories]
  *     security:
  *       - bearerAuth: []
  *     requestBody:
@@ -46,40 +70,36 @@ module.exports = router;
  *           schema:
  *             type: object
  *             required:
- *               - project_name
+ *               - user_id
  *               - word
- *               - source_language
- *               - target_language
+ *               - translate
  *             properties:
- *               project_name:
- *                type: string
  *               user_id:
  *                 type: string
- *               source_language:
+ *               word:
  *                 type: string
- *               target_language:
+ *               translate:
  *                 type: string
  *             example:
- *               project_name: test
  *               user_id: 5ebac534954b54139806c112
- *               source_language: english
- *               target_language: vietnamese
+ *               word: A dog
+ *               translate: Một con chó
  *     responses:
  *       "201":
  *         description: Created
  *         content:
  *           application/json:
  *             schema:
- *                $ref: '#/components/schemas/project'
+ *                $ref: '#/components/schemas/TranslationMemory'
  *       "401":
  *         $ref: '#/components/responses/Unauthorized'
  *       "403":
  *         $ref: '#/components/responses/Forbidden'
  *
  *   get:
- *     summary: Get all projects
- *     description: Only admins can retrieve all projects.
- *     tags: [projects]
+ *     summary: Get all TranslationMemories
+ *     description: Only admins can retrieve all TranslationMemories.
+ *     tags: [TranslationMemories]
  *     security:
  *       - bearerAuth: []
  *     parameters:
@@ -87,7 +107,7 @@ module.exports = router;
  *         name: name
  *         schema:
  *           type: string
- *         description: project name
+ *         description: TranslationMemory name
  *       - in: query
  *         name: sortBy
  *         schema:
@@ -99,7 +119,7 @@ module.exports = router;
  *           type: integer
  *           minimum: 1
  *         default: 10
- *         description: Maximum number of projects
+ *         description: Maximum number of TranslationMemories
  *       - in: query
  *         name: page
  *         schema:
@@ -118,7 +138,7 @@ module.exports = router;
  *                 results:
  *                   type: array
  *                   items:
- *                     $ref: '#/components/schemas/project'
+ *                     $ref: '#/components/schemas/TranslationMemory'
  *                 page:
  *                   type: integer
  *                   example: 1
@@ -139,11 +159,11 @@ module.exports = router;
 
 /**
  * @swagger
- * /projects/objectid/{project_id}:
+ * /TranslationMemories/objectid/{translationmemory_id}:
  *   get:
- *     summary: Get a project
- *     description: Logged in user can fetch only their own project information. Only admins can fetch other projects.
- *     tags: [projects]
+ *     summary: Get a TranslationMemory
+ *     description: Logged in user can fetch only their own TranslationMemory information. Only admins can fetch other TranslationMemories.
+ *     tags: [TranslationMemories]
  *     security:
  *       - bearerAuth: []
  *     parameters:
@@ -152,14 +172,14 @@ module.exports = router;
  *         required: true
  *         schema:
  *           type: string
- *         description: project id
+ *         description: TranslationMemory id
  *     responses:
  *       "200":
  *         description: OK
  *         content:
  *           application/json:
  *             schema:
- *                $ref: '#/components/schemas/project'
+ *                $ref: '#/components/schemas/TranslationMemory'
  *       "401":
  *         $ref: '#/components/responses/Unauthorized'
  *       "403":
@@ -168,9 +188,9 @@ module.exports = router;
  *         $ref: '#/components/responses/NotFound'
  *
  *   patch:
- *     summary: Update a project
- *     description: Logged in user can only update their own information. Only admins can update other projects.
- *     tags: [projects]
+ *     summary: Update a TranslationMemory
+ *     description: Logged in user can only update their own information. Only admins can update other TranslationMemories.
+ *     tags: [TranslationMemories]
  *     security:
  *       - bearerAuth: []
  *     parameters:
@@ -179,7 +199,7 @@ module.exports = router;
  *         required: true
  *         schema:
  *           type: string
- *         description: project id
+ *         description: TranslationMemory id
  *     requestBody:
  *       required: true
  *       content:
@@ -187,26 +207,23 @@ module.exports = router;
  *           schema:
  *             type: object
  *             properties:
- *               project_name:
- *                type: string
  *               user_id:
  *                 type: string
- *               source_language:
+ *               word:
  *                 type: string
- *               target_language:
+ *               translate:
  *                 type: string
  *             example:
- *               project_name: test
- *               user_id: 5ebac534954b54139806c112
- *               source_language: english
- *               target_language: vietnamese
+ *                 user_id: 5ebac534954b54139806c112
+ *                 word: A dog
+ *                 translate: Một con chó
  *     responses:
  *       "200":
  *         description: OK
  *         content:
  *           application/json:
  *             schema:
- *                $ref: '#/components/schemas/project'
+ *                $ref: '#/components/schemas/TranslationMemory'
  *       "400":
  *         $ref: '#/components/responses/DuplicateEmail'
  *       "401":
@@ -217,9 +234,9 @@ module.exports = router;
  *         $ref: '#/components/responses/NotFound'
  *
  *   delete:
- *     summary: Delete a project
- *     description: Logged in user can delete only themselves. Only admins can delete other projects.
- *     tags: [projects]
+ *     summary: Delete a TranslationMemory
+ *     description: Logged in user can delete only themselves. Only admins can delete other TranslationMemories.
+ *     tags: [TranslationMemories]
  *     security:
  *       - bearerAuth: []
  *     parameters:
@@ -228,7 +245,7 @@ module.exports = router;
  *         required: true
  *         schema:
  *           type: string
- *         description: project id
+ *         description: TranslationMemory id
  *     responses:
  *       "200":
  *         description: No content
@@ -242,11 +259,11 @@ module.exports = router;
 
 /**
  * @swagger
- * /project/userid/{user_id}:
+ * /TranslationMemories/codetranslationmemory/{translationmemory_code}:
  *   get:
- *     summary: Get all translate with user id
- *     description: get all translation by user id
- *     tags: [projects]
+ *     summary: Get all translationmemory with translationmemory code
+ *     description: get all translationmemory by translationmemory code
+ *     tags: [TranslationMemories]
  *     security:
  *       - bearerAuth: []
  *     parameters:
@@ -255,7 +272,7 @@ module.exports = router;
  *         required: true
  *         schema:
  *           type: string
- *         description: user id
+ *         description: translationmemory id
  *     responses:
  *       "200":
  *         description: OK

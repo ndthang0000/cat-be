@@ -3,6 +3,7 @@ const validator = require('validator');
 const bcrypt = require('bcryptjs');
 const { toJSON, paginate } = require('./plugins');
 const { roles } = require('../config/roles');
+const crypto = require('crypto');
 
 const userSchema = mongoose.Schema(
   {
@@ -43,6 +44,14 @@ const userSchema = mongoose.Schema(
     isEmailVerified: {
       type: Boolean,
       default: false,
+    },
+    personalCodeDictionary: {
+      type: String,
+      default: crypto.randomUUID(), //use crypto module to create UUID for unique code
+    },
+    personalCodeTranslationMemory: {
+      type: String,
+      default: crypto.randomUUID(),
     },
   },
   {

@@ -31,7 +31,7 @@ const queryProjects = async (filter, options) => {
  * @returns {Promise<project>}
  */
 const getProjectByUserID = async (userID) => {
-  return project.find({ user_id: userID});
+  return project.find({ user_id: userID });
 };
 
 /**

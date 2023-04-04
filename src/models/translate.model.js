@@ -1,20 +1,21 @@
 const mongoose = require('mongoose');
 const { toJSON, paginate } = require('./plugins');
 
-const translateSchema = mongoose.Schema({
-  project_id: {
-    type: String,
-    required: true,
-  },
-  source: {
-    type: String,
-    required: true,
-    index: true,
-  },
-  target: {
-    type: String,
-    required: true,
-  },
+const translateSchema = mongoose.Schema(
+  {
+    project_id: {
+      type: String,
+      required: true,
+    },
+    source: {
+      type: String,
+      required: true,
+      index: true,
+    },
+    target: {
+      type: String,
+      required: true,
+    },
   },
   {
     timestamps: true,

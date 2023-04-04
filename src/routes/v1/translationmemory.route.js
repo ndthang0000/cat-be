@@ -37,13 +37,13 @@ router
     TranslationMemoryController.deleteTranslationMemory
   );
 
-  router
+router
   .route('/codetranslationmemory/:codeTrans')
   .get(
     auth(''),
     validate(TranslationMemoryValidation.getTranslationMemories),
     TranslationMemoryController.getTranslationMemoryByCode
-  )
+  );
 
 module.exports = router;
 

@@ -31,7 +31,7 @@ const queryWordsTrans = async (filter, options) => {
  * @returns {Promise<translate>}
  */
 const getWordsTransByProjectID = async (projectID) => {
-  return translate.find({ project_id: projectID});
+  return translate.find({ project_id: projectID });
 };
 
 /**

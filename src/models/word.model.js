@@ -1,20 +1,21 @@
 const mongoose = require('mongoose');
 const { toJSON, paginate } = require('./plugins');
 
-const wordSchema = mongoose.Schema({
-  dictionary_id: {
-    type: String,
-    required: true,
-  },
-  word: {
-    type: String,
-    required: true,
-    index: true,
-  },
-  mean: {
-    type: String,
-    required: true,
-  },
+const wordSchema = mongoose.Schema(
+  {
+    dictionary_id: {
+      type: String,
+      required: true,
+    },
+    word: {
+      type: String,
+      required: true,
+      index: true,
+    },
+    mean: {
+      type: String,
+      required: true,
+    },
   },
   {
     timestamps: true,

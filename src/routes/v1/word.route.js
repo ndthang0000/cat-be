@@ -17,9 +17,7 @@ router
   .patch(auth(''), validate(wordValidation.updateWord), wordController.updateWord)
   .delete(auth(''), validate(wordValidation.deleteWord), wordController.deleteWord);
 
-router
-  .route('/projectid/:wordID')
-  .get(auth(''), validate(wordValidation.getWords), wordController.getWordsByWordID);
+router.route('/projectid/:wordID').get(auth(''), validate(wordValidation.getWords), wordController.getWordsByWordID);
 
 module.exports = router;
 

@@ -31,7 +31,7 @@ const queryDictionaries = async (filter, options) => {
  * @returns {Promise<dictionary>}
  */
 const getDictionariesByCode = async (codeDic) => {
-  return dictionary.find({ dictionary_code: codeDic});
+  return dictionary.find({ dictionary_code: codeDic });
 };
 
 /**

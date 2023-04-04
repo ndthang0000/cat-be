@@ -31,7 +31,7 @@ const queryWords = async (filter, options) => {
  * @returns {Promise<word>}
  */
 const getWordsByDictionaryID = async (dictionaryID) => {
-  return word.find({ dictionary_id: dictionaryID});
+  return word.find({ dictionary_id: dictionaryID });
 };
 
 /**
@@ -76,7 +76,7 @@ const deleteWordById = async (wordID) => {
 module.exports = {
   createWord,
   queryWords,
-  getWordsByDictionaryID,  
+  getWordsByDictionaryID,
   getWordById,
   updateWordById,
   deleteWordById,

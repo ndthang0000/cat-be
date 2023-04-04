@@ -19,7 +19,7 @@ router
 
 router
   .route('/projectid/:projectId')
-  .get(auth(''), validate(translateValidation.getWordsTrans), translateController.getWordsTransByProjectID)
+  .get(auth(''), validate(translateValidation.getWordsTrans), translateController.getWordsTransByProjectID);
 
 module.exports = router;
 

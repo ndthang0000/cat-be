@@ -1,12 +1,11 @@
 const mongoose = require('mongoose');
 const { toJSON, paginate } = require('./plugins');
-const SCOPE = require('../contants/scope');
 const { SENTENCE_STATUS } = require('../contants/status');
 
 const sentenceSchema = mongoose.Schema(
   {
     project: {
-      type: mongoose.SchemaTypes.ObjectId,
+      type: mongoose.Schema.Types.ObjectId,
       ref: 'Project',
       required: true,
     },

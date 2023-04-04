@@ -10,7 +10,14 @@ const PROJECT_STATUS = {
   FINISH: 'FINISH',
 };
 
+const PROJECT_ROLE = {
+  OWNER: 'OWNER',
+  DEVELOPER: 'DEVELOPER',
+  GUEST: 'GUEST',
+};
+
 module.exports = {
   SENTENCE_STATUS,
   PROJECT_STATUS,
+  PROJECT_ROLE,
 };

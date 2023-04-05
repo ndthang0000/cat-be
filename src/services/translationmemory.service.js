@@ -50,7 +50,7 @@ const getTranslationMemoryById = async (ID) => {
  * @returns {Promise<translationMemory>}
  */
 const updateTranslationMemoryById = async (translationMemoryID, updateBody) => {
-  const translationMemory = await gettranslationMemoryById(translationMemoryID);
+  const translationMemory = await getTranslationMemoryById(translationMemoryID);
   if (!translationMemory) {
     throw new ApiError(httpStatus.NOT_FOUND, 'translationMemory not found');
   }
@@ -65,7 +65,7 @@ const updateTranslationMemoryById = async (translationMemoryID, updateBody) => {
  * @returns {Promise<translationMemory>}
  */
 const deleteTranslationMemoryById = async (translationMemoryID) => {
-  const translationMemory = await gettranslationMemoryById(translationMemoryID);
+  const translationMemory = await getTranslationMemoryById(translationMemoryID);
   if (!translationMemory) {
     throw new ApiError(httpStatus.NOT_FOUND, 'translationMemory not found');
   }

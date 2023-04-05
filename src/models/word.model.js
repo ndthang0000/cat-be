@@ -3,7 +3,7 @@ const { toJSON, paginate } = require('./plugins');
 
 const wordSchema = mongoose.Schema(
   {
-    dictionary_id: {
+    dictionaryID: {
       type: String,
       required: true,
     },

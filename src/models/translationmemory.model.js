@@ -3,7 +3,7 @@ const { toJSON, paginate } = require('./plugins');
 
 const translationMemorySchema = mongoose.Schema(
   {
-    translation_memory_code: {
+    translationMemoryCode: {
       type: String,
       required: true,
     },

@@ -3,7 +3,7 @@ const { toJSON, paginate } = require('./plugins');
 
 const translateSchema = mongoose.Schema(
   {
-    project_id: {
+    projectID: {
       type: String,
       required: true,
     },

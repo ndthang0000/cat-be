@@ -3,18 +3,18 @@ const { toJSON, paginate } = require('./plugins');
 
 const dictionarySchema = mongoose.Schema(
   {
-    dictionary_name: {
+    dictionaryName: {
       type: String,
     },
-    dictionary_code: {
-      type: String,
-      required: true,
-    },
-    source_language: {
+    dictionaryCode: {
       type: String,
       required: true,
     },
-    target_language: {
+    sourceLanguage: {
+      type: String,
+      required: true,
+    },
+    targetLanguage: {
       type: String,
       required: true,
     },

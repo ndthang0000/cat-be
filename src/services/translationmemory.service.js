@@ -1,18 +1,18 @@
 const httpStatus = require('http-status');
-const { TranslationMemory } = require('../models');
+const { translationMemory } = require('../models');
 const ApiError = require('../utils/ApiError');
 
 /**
- * Create a TranslationMemory
- * @param {Object} TranslationMemoryBody
- * @returns {Promise<TranslationMemory>}
+ * Create a translationMemory
+ * @param {Object} translationMemoryBody
+ * @returns {Promise<translationMemory>}
  */
-const createTranslationMemory = async (TranslationMemoryBody) => {
-  return TranslationMemory.create(TranslationMemoryBody);
+const createTranslationMemory = async (translationMemoryBody) => {
+  return translationMemory.create(translationMemoryBody);
 };
 
 /**
- * Query for TranslationMemories
+ * Query for translationMemories
  * @param {Object} filter - Mongo filter
  * @param {Object} options - Query options
  * @param {string} [options.sortBy] - Sort option in the format: sortField:(desc|asc)
@@ -21,56 +21,56 @@ const createTranslationMemory = async (TranslationMemoryBody) => {
  * @returns {Promise<QueryResult>}
  */
 const queryTranslationMemories = async (filter, options) => {
-  const TranslationMemories = await TranslationMemory.paginate(filter, options);
-  return TranslationMemories;
+  const translationMemories = await translationMemory.paginate(filter, options);
+  return translationMemories;
 };
 
 /**
- * Get TranslationMemory by code
+ * Get translationMemory by code
  * @param {string} codeTrans
- * @returns {Promise<TranslationMemory>}
+ * @returns {Promise<translationMemory>}
  */
 const getTranslationMemoryByCode = async (codeTrans) => {
-  return TranslationMemory.find({ translationmemory_code: codeTrans });
+  return translationMemory.find({ translationMemory_code: codeTrans });
 };
 
 /**
- * Get TranslationMemory by ID
+ * Get translationMemory by ID
  * @param {ObjectId} ID
- * @returns {Promise<TranslationMemory>}
+ * @returns {Promise<translationMemory>}
  */
 const getTranslationMemoryById = async (ID) => {
-  return TranslationMemory.findById(ID);
+  return translationMemory.findById(ID);
 };
 
 /**
- * Update TranslationMemory by ID
- * @param {ObjectId} TranslationMemoryID
+ * Update translationMemory by ID
+ * @param {ObjectId} translationMemoryID
  * @param {Object} updateBody
- * @returns {Promise<TranslationMemory>}
+ * @returns {Promise<translationMemory>}
  */
-const updateTranslationMemoryById = async (TranslationMemoryID, updateBody) => {
-  const TranslationMemory = await getTranslationMemoryById(TranslationMemoryID);
-  if (!TranslationMemory) {
-    throw new ApiError(httpStatus.NOT_FOUND, 'TranslationMemory not found');
+const updateTranslationMemoryById = async (translationMemoryID, updateBody) => {
+  const translationMemory = await getTranslationMemoryById(translationMemoryID);
+  if (!translationMemory) {
+    throw new ApiError(httpStatus.NOT_FOUND, 'translationMemory not found');
   }
-  Object.assign(TranslationMemory, updateBody);
-  await TranslationMemory.save();
-  return TranslationMemory;
+  Object.assign(translationMemory, updateBody);
+  await translationMemory.save();
+  return translationMemory;
 };
 
 /**
- * Delete TranslationMemory by ID
- * @param {ObjectId} TranslationMemoryID
- * @returns {Promise<TranslationMemory>}
+ * Delete translationMemory by ID
+ * @param {ObjectId} translationMemoryID
+ * @returns {Promise<translationMemory>}
  */
-const deleteTranslationMemoryById = async (TranslationMemoryID) => {
-  const TranslationMemory = await getTranslationMemoryById(TranslationMemoryID);
-  if (!TranslationMemory) {
-    throw new ApiError(httpStatus.NOT_FOUND, 'TranslationMemory not found');
+const deleteTranslationMemoryById = async (translationMemoryID) => {
+  const translationMemory = await getTranslationMemoryById(translationMemoryID);
+  if (!translationMemory) {
+    throw new ApiError(httpStatus.NOT_FOUND, 'translationMemory not found');
   }
-  await TranslationMemory.remove();
-  return TranslationMemory;
+  await translationMemory.remove();
+  return translationMemory;
 };
 
 module.exports = {

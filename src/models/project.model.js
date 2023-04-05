@@ -6,20 +6,20 @@ const SCOPE = require('../contants/scope');
 
 const projectSchema = mongoose.Schema(
   {
-    project_name: {
+    projectName: {
       type: String,
       required: true,
     },
-    user_id: {
+    userID: {
       type: String,
       required: true,
     },
-    source_language: {
+    sourceLanguage: {
       type: String,
       enum: Object.values(LANGUAGE),
       required: true,
     },
-    target_language: {
+    targetLanguage: {
       type: String,
       enum: Object.values(LANGUAGE),
       required: true,

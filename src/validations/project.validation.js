@@ -1,12 +1,19 @@
 const Joi = require('joi');
 const { objectId } = require('./custom.validation');
+const SCOPE = require('../contants/scope');
+const LANGUAGE = require('../contants/language');
 
 const createProject = {
   body: Joi.object().keys({
-    project_name: Joi.string().required(),
-    user_id: Joi.string().required(),
-    source_language: Joi.string().required(),
-    target_language: Joi.string().required(),
+    projectName: Joi.string().required(),
+    sourceLanguage: Joi.string()
+      .required()
+      .valid(...Object.values(LANGUAGE)),
+    targetLanguage: Joi.string()
+      .required()
+      .valid(...Object.values(LANGUAGE)),
+    description: Joi.string(),
+    scope: Joi.string().valid(SCOPE.INDIVIDUAL, SCOPE.PUBLIC),
   }),
 };
 

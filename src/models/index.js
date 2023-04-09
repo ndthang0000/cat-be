@@ -5,3 +5,4 @@ module.exports.translate = require('./translate.model');
 module.exports.translationMemory = require('./translationmemory.model');
 module.exports.project = require('./project.model');
 module.exports.dictionary = require('./dictionary.model');
+module.exports.ServerSetting = require('./server.setting.model');

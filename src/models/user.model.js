@@ -7,6 +7,11 @@ const crypto = require('crypto');
 
 const userSchema = mongoose.Schema(
   {
+    userId: {
+      type: Number,
+      require: true,
+      unique: true,
+    },
     name: {
       type: String,
       required: true,
@@ -45,6 +50,10 @@ const userSchema = mongoose.Schema(
       type: Boolean,
       default: false,
     },
+    isBlock: {
+      type: Boolean,
+      default: false,
+    },
     personalCodeDictionary: {
       type: String,
       default: crypto.randomUUID(), //use crypto module to create UUID for unique code
@@ -52,6 +61,9 @@ const userSchema = mongoose.Schema(
     personalCodeTranslationMemory: {
       type: String,
       default: crypto.randomUUID(),
+    },
+    image: {
+      type: String,
     },
   },
   {

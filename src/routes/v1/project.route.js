@@ -3,13 +3,14 @@ const auth = require('../../middlewares/auth');
 const validate = require('../../middlewares/validate');
 const projectValidation = require('../../validations/project.validation');
 const projectController = require('../../controllers/project.controller');
+const { authJwt } = require('../../middlewares/jwtAuth');
 
 const router = express.Router();
 
 router
   .route('/')
-  .post(auth(''), validate(projectValidation.createProject), projectController.createProject)
-  .get(auth(''), validate(projectValidation.getProjects), projectController.getProjects);
+  .post(authJwt(), validate(projectValidation.createProject), projectController.createProject)
+  .get(authJwt(), validate(projectValidation.getProjects), projectController.getProjects);
 
 router
   .route('/objectid/:projectId')

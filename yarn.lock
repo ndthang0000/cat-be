@@ -1211,6 +1211,11 @@ async-listener@^0.6.0:
     semver "^5.3.0"
     shimmer "^1.1.0"
 
+async@^1.5.0:
+  version "1.5.2"
+  resolved "https://registry.yarnpkg.com/async/-/async-1.5.2.tgz#ec6a61ae56480c0c3cb241c95618e20892f9672a"
+  integrity sha512-nSVgobk4rv61R9PUSDtYt7mPVB2olxNR5RWJcAsH676/ef11bUZwvu7+RGYrYauVdDPcO519v68wRhXQtxsV9w==
+
 async@^2.6.3, async@~2.6.1:
   version "2.6.4"
   resolved "https://registry.yarnpkg.com/async/-/async-2.6.4.tgz#706b7ff6084664cd7eae713f6f965433b5504221"
@@ -4734,10 +4739,24 @@ mongodb@3.7.3:
   optionalDependencies:
     saslprep "^1.0.0"
 
+mongoose-delete@^0.5.4:
+  version "0.5.4"
+  resolved "https://registry.yarnpkg.com/mongoose-delete/-/mongoose-delete-0.5.4.tgz#588374bf144cbffa209a549f247e5482054715f2"
+  integrity sha512-zKkcWFEwTneVG4Oiy+qJRJPFCiGlqOJToHeU3a3meJybWsHCnWxdHkGEkFWNY5cmYEv5av3WwByOhPlQ6I+FmQ==
+
 mongoose-legacy-pluralize@1.0.2:
   version "1.0.2"
   resolved "https://registry.yarnpkg.com/mongoose-legacy-pluralize/-/mongoose-legacy-pluralize-1.0.2.tgz#3ba9f91fa507b5186d399fb40854bff18fb563e4"
   integrity sha512-Yo/7qQU4/EyIS8YDFSeenIvXxZN+ld7YdV9LqFVQJzTLye8unujAWPZ4NWKfFA+RNjh+wvTWKY9Z3E5XM6ZZiQ==
+
+mongoose-slug-generator@^1.0.4:
+  version "1.0.4"
+  resolved "https://registry.yarnpkg.com/mongoose-slug-generator/-/mongoose-slug-generator-1.0.4.tgz#a5364f2d4203783472c235c302d35aa1b20d53eb"
+  integrity sha512-YTluRZROhrHgcncstJTJsxT4K6xR2xIGtF9a0uf4Z1mNFADBVoyanezdKgjQBxN2zfB8PH6wpU8mh4AFxL4+4w==
+  dependencies:
+    async "^1.5.0"
+    shortid "^2.2.4"
+    speakingurl "^7.0.0"
 
 mongoose@^5.7.7:
   version "5.13.16"
@@ -4818,6 +4837,11 @@ mute-stream@~0.0.4:
   version "0.0.8"
   resolved "https://registry.yarnpkg.com/mute-stream/-/mute-stream-0.0.8.tgz#1630c42b2251ff81e2a283de96a5497ea92e5e0d"
   integrity sha512-nnbWWOkoWyUsTjKrhgD0dcz22mdkSnpYqbEjIm2nhwhuxlSkpywJmBo8h0ZqJdkp73mb90SssHkN4rsRaBAfAA==
+
+nanoid@^2.1.0:
+  version "2.1.11"
+  resolved "https://registry.yarnpkg.com/nanoid/-/nanoid-2.1.11.tgz#ec24b8a758d591561531b4176a01e3ab4f0f0280"
+  integrity sha512-s/snB+WGm6uwi0WjsZdaVcuf3KJXlfGl2LcxgwkEwJF0D/BWzVWAZW/XY4bFaiR7s0Jk3FPvlnepg1H1b1UwlA==
 
 nanomatch@^1.2.9:
   version "1.2.13"
@@ -6069,6 +6093,13 @@ shimmer@^1.1.0, shimmer@^1.2.0:
   resolved "https://registry.yarnpkg.com/shimmer/-/shimmer-1.2.1.tgz#610859f7de327b587efebf501fb43117f9aff337"
   integrity sha512-sQTKC1Re/rM6XyFM6fIAGHRPVGvyXfgzIDvzoq608vM+jeyVD0Tu1E6Np0Kc2zAIFWIj963V2800iF/9LPieQw==
 
+shortid@^2.2.4:
+  version "2.2.16"
+  resolved "https://registry.yarnpkg.com/shortid/-/shortid-2.2.16.tgz#b742b8f0cb96406fd391c76bfc18a67a57fe5608"
+  integrity sha512-Ugt+GIZqvGXCIItnsL+lvFJOiN7RYqlGy7QE41O3YC1xbNSeDGIRO7xg2JJXIAj1cAGnOeC1r7/T9pgrtQbv4g==
+  dependencies:
+    nanoid "^2.1.0"
+
 side-channel@^1.0.4:
   version "1.0.4"
   resolved "https://registry.yarnpkg.com/side-channel/-/side-channel-1.0.4.tgz#efce5c8fdc104ee751b25c58d4290011fa5ea2cf"
@@ -6258,6 +6289,11 @@ spdx-license-ids@^3.0.0:
   version "3.0.13"
   resolved "https://registry.yarnpkg.com/spdx-license-ids/-/spdx-license-ids-3.0.13.tgz#7189a474c46f8d47c7b0da4b987bb45e908bd2d5"
   integrity sha512-XkD+zwiqXHikFZm4AX/7JSCXA98U5Db4AFd5XUg/+9UNtnH75+Z9KxtpYiJZx36mUDVOwH83pl7yvCer6ewM3w==
+
+speakingurl@^7.0.0:
+  version "7.0.0"
+  resolved "https://registry.yarnpkg.com/speakingurl/-/speakingurl-7.0.0.tgz#0a392873af83bad594565ce3dcb4332d5187ab0b"
+  integrity sha512-b3w3MPlZxf/s3YhzyD12e9yw3bdl/23gNgxq2fUeKTJ1jt0ZTTTddZTl5SaQv4GwCNJ56DM3kOeRKeO9xab7wQ==
 
 split-string@^3.0.1, split-string@^3.0.2:
   version "3.1.0"

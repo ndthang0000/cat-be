@@ -3,6 +3,10 @@ const { toJSON, paginate } = require('./plugins');
 const { PROJECT_STATUS, PROJECT_ROLE } = require('../contants/status');
 const LANGUAGE = require('../contants/language');
 const SCOPE = require('../contants/scope');
+const slug = require('mongoose-slug-generator');
+const mongoose_delete = require('mongoose-delete');
+
+mongoose.plugin(slug);
 
 const projectSchema = mongoose.Schema(
   {
@@ -10,8 +14,8 @@ const projectSchema = mongoose.Schema(
       type: String,
       required: true,
     },
-    userID: {
-      type: String,
+    userId: {
+      type: Number,
       required: true,
     },
     sourceLanguage: {
@@ -48,6 +52,13 @@ const projectSchema = mongoose.Schema(
     description: {
       type: String,
     },
+    image: {
+      type: String,
+    },
+    slug: {
+      type: String,
+      slug: 'projectName',
+    },
   },
   {
     timestamps: true,
@@ -56,6 +67,7 @@ const projectSchema = mongoose.Schema(
 
 projectSchema.plugin(toJSON);
 projectSchema.plugin(paginate);
+projectSchema.plugin(mongoose_delete, { overrideMethods: 'all' });
 
 const project = mongoose.model('project', projectSchema);
 

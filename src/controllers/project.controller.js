@@ -5,6 +5,7 @@ const catchAsync = require('../utils/catchAsync');
 const { projectService } = require('../services');
 
 const createProject = catchAsync(async (req, res) => {
+  req.body.userId = req.user.userId;
   const project = await projectService.createProject(req.body);
   res.status(httpStatus.CREATED).send(project);
 });

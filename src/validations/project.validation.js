@@ -21,6 +21,7 @@ const getProjects = {
   query: Joi.object().keys({
     page: Joi.number(),
     limit: Joi.number(),
+    type: Joi.string().valid('ALL', 'INDIVIDUAL'),
   }),
 };
 

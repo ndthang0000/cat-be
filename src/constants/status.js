@@ -11,9 +11,10 @@ const PROJECT_STATUS = {
 };
 
 const PROJECT_ROLE = {
-  OWNER: 'OWNER',
+  PROJECT_MANAGER: 'PROJECT MANAGER',
   DEVELOPER: 'DEVELOPER',
   GUEST: 'GUEST',
+  OWNER: 'OWNER',
 };
 
 module.exports = {

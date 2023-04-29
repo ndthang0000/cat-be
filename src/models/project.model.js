@@ -1,8 +1,8 @@
 const mongoose = require('mongoose');
-const { toJSON, paginate } = require('./plugins');
-const { PROJECT_STATUS, PROJECT_ROLE } = require('../contants/status');
-const LANGUAGE = require('../contants/language');
-const SCOPE = require('../contants/scope');
+const { toJSON, paginate, paginateAgg } = require('./plugins');
+const { PROJECT_STATUS, PROJECT_ROLE } = require('../constants/status');
+const LANGUAGE = require('../constants/language');
+const SCOPE = require('../constants/scope');
 const slug = require('mongoose-slug-generator');
 const mongoose_delete = require('mongoose-delete');
 
@@ -61,7 +61,7 @@ const projectSchema = mongoose.Schema(
       unique: true,
     },
     percentComplete: {
-      type: String,
+      type: Number,
       min: 0,
       max: 100,
       default: 0,
@@ -74,6 +74,7 @@ const projectSchema = mongoose.Schema(
 
 projectSchema.plugin(toJSON);
 projectSchema.plugin(paginate);
+projectSchema.plugin(paginateAgg);
 projectSchema.plugin(mongoose_delete, { overrideMethods: 'all' });
 
 const project = mongoose.model('project', projectSchema);

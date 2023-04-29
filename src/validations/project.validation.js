@@ -1,7 +1,7 @@
 const Joi = require('joi');
 const { objectId } = require('./custom.validation');
-const SCOPE = require('../contants/scope');
-const LANGUAGE = require('../contants/language');
+const SCOPE = require('../constants/scope');
+const LANGUAGE = require('../constants/language');
 
 const createProject = {
   body: Joi.object().keys({

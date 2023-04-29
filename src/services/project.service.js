@@ -5,6 +5,7 @@ const generateImage = require('../utils/generate.image');
 const config = require('../config/config');
 const { uploadFile } = require('../utils/upload.file');
 const publicURL = require('../../get_url');
+const { PROJECT_ROLE } = require('../constants/status');
 
 /**
  * Create a project
@@ -29,8 +30,25 @@ const createProject = async (projectBody) => {
  * @param {number} [options.page] - Current page (default = 1)
  * @returns {Promise<QueryResult>}
  */
-const queryProjects = async (filter, options) => {
-  const projects = await Project.paginate(filter, options);
+const queryProjects = async (filters, options) => {
+  const filtersAgg = [
+    {
+      $match: filters,
+    },
+    {
+      $lookup: {
+        from: 'users',
+        localField: 'userId',
+        foreignField: 'userId',
+        as: 'owner',
+      },
+    },
+    {
+      $unwind: '$owner',
+    },
+  ];
+
+  const projects = await Project.paginateAgg(filtersAgg, options);
   return projects;
 };
 

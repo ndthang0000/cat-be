@@ -1,6 +1,6 @@
 const LANGUAGE = {
-  EN: 'ENGLISH',
-  VN: 'VIETNAMESE',
+  EN: 'EN',
+  VI: 'VI',
 };
 
 module.exports = LANGUAGE;

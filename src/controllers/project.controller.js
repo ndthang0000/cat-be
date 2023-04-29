@@ -3,9 +3,17 @@ const pick = require('../utils/pick');
 const ApiError = require('../utils/ApiError');
 const catchAsync = require('../utils/catchAsync');
 const { projectService } = require('../services');
+const { PROJECT_ROLE } = require('../constants/status');
 
 const createProject = catchAsync(async (req, res) => {
   req.body.userId = req.user.userId;
+  const members = [
+    {
+      userId: req.user._id,
+      role: PROJECT_ROLE.PROJECT_MANAGER,
+    },
+  ];
+  req.body.members = members;
   const project = await projectService.createProject(req.body);
   res.status(httpStatus.CREATED).send(project);
 });

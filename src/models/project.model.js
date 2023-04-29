@@ -58,6 +58,13 @@ const projectSchema = mongoose.Schema(
     slug: {
       type: String,
       slug: 'projectName',
+      unique: true,
+    },
+    percentComplete: {
+      type: String,
+      min: 0,
+      max: 100,
+      default: 0,
     },
   },
   {

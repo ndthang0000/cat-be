@@ -1,14 +1,23 @@
 const httpStatus = require('http-status');
-const { project } = require('../models');
+const { Project } = require('../models');
 const ApiError = require('../utils/ApiError');
+const generateImage = require('../utils/generate.image');
+const config = require('../config/config');
+const { uploadFile } = require('../utils/upload.file');
+const publicURL = require('../../get_url');
 
 /**
  * Create a project
  * @param {Object} projectBody
- * @returns {Promise<project>}
+ * @returns {Promise<Project>}
  */
 const createProject = async (projectBody) => {
-  return project.create(projectBody);
+  const data = await new Project(projectBody).save();
+  await generateImage(projectBody.projectName, data.slug);
+  const dataUpload = await uploadFile(`${publicURL}/generate-image/${data.slug}.png`, `${data.slug}.png`);
+  data.image = dataUpload.Location;
+  await data.save();
+  return data;
 };
 
 /**
@@ -21,26 +30,26 @@ const createProject = async (projectBody) => {
  * @returns {Promise<QueryResult>}
  */
 const queryProjects = async (filter, options) => {
-  const projects = await project.paginate(filter, options);
+  const projects = await Project.paginate(filter, options);
   return projects;
 };
 
 /**
  * Get word trans by pj id
  * @param {string} userID
- * @returns {Promise<project>}
+ * @returns {Promise<Project>}
  */
 const getProjectByUserID = async (userID) => {
-  return project.find({ user_id: userID });
+  return Project.find({ user_id: userID });
 };
 
 /**
  * Get project by ID
  * @param {ObjectId} ID
- * @returns {Promise<project>}
+ * @returns {Promise<Project>}
  */
 const getProjectById = async (ID) => {
-  return project.findById(ID);
+  return Project.findById(ID);
 };
 
 /**
@@ -62,7 +71,7 @@ const updateProjectById = async (projectID, updateBody) => {
 /**
  * Delete project by ID
  * @param {ObjectId} projectID
- * @returns {Promise<project>}
+ * @returns {Promise<Project>}
  */
 const deleteProjectById = async (projectID) => {
   const project = await getProjectById(projectID);

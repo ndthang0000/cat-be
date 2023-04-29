@@ -19,10 +19,8 @@ const createProject = {
 
 const getProjects = {
   query: Joi.object().keys({
-    project_name: Joi.string(),
-    user_id: Joi.string(),
-    source_language: Joi.string(),
-    target_language: Joi.string(),
+    page: Joi.number(),
+    limit: Joi.number(),
   }),
 };
 

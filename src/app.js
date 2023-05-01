@@ -46,7 +46,6 @@ app.options('*', cors());
 // jwt authentication
 app.use(passport.initialize());
 passport.use('jwt', jwtStrategy);
-console.log(path.join(publicURL, '/generate-image'));
 
 app.use(express.static('generate-image'));
 

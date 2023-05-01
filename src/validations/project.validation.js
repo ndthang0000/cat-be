@@ -22,12 +22,22 @@ const getProjects = {
     page: Joi.number(),
     limit: Joi.number(),
     type: Joi.string().valid('ALL', 'INDIVIDUAL'),
+    search: Joi.string().allow(''),
+  }),
+};
+
+const uploadFile = {
+  body: Joi.object().keys({
+    file: Joi.number(),
+    limit: Joi.number(),
+    type: Joi.string().valid('ALL', 'INDIVIDUAL'),
+    search: Joi.string().allow(''),
   }),
 };
 
 const getProject = {
   params: Joi.object().keys({
-    projectId: Joi.string().custom(objectId),
+    slug: Joi.string().required(),
   }),
 };
 

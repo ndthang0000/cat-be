@@ -62,7 +62,7 @@ const userSchema = mongoose.Schema(
       type: String,
       default: crypto.randomUUID(),
     },
-    image: {
+    avatar: {
       type: String,
     },
   },

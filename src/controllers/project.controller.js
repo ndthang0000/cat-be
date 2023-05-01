@@ -4,6 +4,8 @@ const ApiError = require('../utils/ApiError');
 const catchAsync = require('../utils/catchAsync');
 const { projectService } = require('../services');
 const { PROJECT_ROLE } = require('../constants/status');
+const { uploadFile } = require('../utils/upload.file');
+const ObjectId = require('mongoose').Types.ObjectId;
 
 const createProject = catchAsync(async (req, res) => {
   req.body.userId = req.user.userId;
@@ -23,6 +25,43 @@ const getProjects = catchAsync(async (req, res) => {
   const options = pick(req.query, ['sortBy', 'limit', 'page']);
   const result = await projectService.queryProjects(filter, options);
   res.send(result);
+});
+
+const getDetailProject = catchAsync(async (req, res) => {
+  const slug = pick(req.params, ['slug']);
+  const result = await projectService.getDetailProject(slug);
+  res.send(result);
+});
+
+const uploadFileToProject = catchAsync(async (req, res) => {
+  const { projectId } = req.body;
+  const { _id } = req.user;
+  if (!projectId) {
+    return res.send({ status: false, message: 'Project Id is required' });
+  }
+  if (!ObjectId.isValid(projectId)) {
+    return res.send({ status: false, message: 'Project Id is invalid' });
+  }
+  const findProject = await projectService.getProjectById(projectId);
+  if (!findProject) {
+    return res.send({ status: false, message: 'Project not found' });
+  }
+  // check quyền của user có đủ ko
+  const permissionUser = findProject.members.find((item) => String(item.userId) == String(_id));
+  if (!permissionUser || permissionUser.role == PROJECT_ROLE.GUEST) {
+    return res.send({ status: false, message: 'Permission Denied' });
+  }
+  for (let i = 0; i < req.files.length; i++) {
+    const dataUpload = await uploadFile(req.files[i].path, 'files/' + req.files[i].originalname);
+    const insertFile = await projectService.createNewFileToProject({
+      description: `Let's add description`,
+      url: dataUpload.Location,
+      nameFile: req.files[i].originalname,
+    });
+    findProject.files.push(insertFile._id);
+  }
+  await findProject.save();
+  res.send({ status: true, message: `Upload ${req.files.length} to project` });
 });
 
 const getProjectsByUserID = catchAsync(async (req, res) => {
@@ -58,4 +97,6 @@ module.exports = {
   getProject,
   updateProject,
   deleteProject,
+  getDetailProject,
+  uploadFileToProject,
 };

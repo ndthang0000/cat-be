@@ -1,5 +1,5 @@
 const httpStatus = require('http-status');
-const { Project } = require('../models');
+const { Project, User, File } = require('../models');
 const ApiError = require('../utils/ApiError');
 const generateImage = require('../utils/generate.image');
 const config = require('../config/config');
@@ -52,6 +52,24 @@ const queryProjects = async (filters, options) => {
   return projects;
 };
 
+const getDetailProject = async (slug) => {
+  const projects = await Project.findOne({ slug });
+  if (!projects) {
+    return {
+      status: false,
+      message: `Don't find exit project`,
+    };
+  }
+  const owner = await User.findOne({ userId: projects.userId });
+  return {
+    status: true,
+    data: {
+      projects,
+      owner,
+      // sentences
+    },
+  };
+};
 /**
  * Get word trans by pj id
  * @param {string} userID
@@ -100,6 +118,10 @@ const deleteProjectById = async (projectID) => {
   return project;
 };
 
+const createNewFileToProject = async (body) => {
+  return File.create(body);
+};
+
 module.exports = {
   createProject,
   queryProjects,
@@ -107,4 +129,6 @@ module.exports = {
   getProjectById,
   updateProjectById,
   deleteProjectById,
+  getDetailProject,
+  createNewFileToProject,
 };

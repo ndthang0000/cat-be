@@ -4,6 +4,7 @@ const validate = require('../../middlewares/validate');
 const projectValidation = require('../../validations/project.validation');
 const projectController = require('../../controllers/project.controller');
 const { authJwt } = require('../../middlewares/jwtAuth');
+const upload = require('../../middlewares/multer');
 
 const router = express.Router();
 
@@ -11,12 +12,10 @@ router
   .route('/')
   .post(authJwt(), validate(projectValidation.createProject), projectController.createProject)
   .get(authJwt(), validate(projectValidation.getProjects), projectController.getProjects);
-
-router
-  .route('/objectid/:projectId')
-  .get(auth(''), validate(projectValidation.getProject), projectController.getProject)
-  .patch(auth(''), validate(projectValidation.updateProject), projectController.updateProject)
-  .delete(auth(''), validate(projectValidation.deleteProject), projectController.deleteProject);
+router.post('/upload-file', authJwt(), upload.array('files', 5), projectController.uploadFileToProject);
+router.route('/detail/:slug').get(authJwt(''), validate(projectValidation.getProject), projectController.getDetailProject);
+// .patch(auth(''), validate(projectValidation.updateProject), projectController.updateProject)
+// .delete(auth(''), validate(projectValidation.deleteProject), projectController.deleteProject);
 
 router
   .route('/userid/:userId')

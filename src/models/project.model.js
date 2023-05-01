@@ -44,7 +44,7 @@ const projectSchema = mongoose.Schema(
         role: { type: String, enum: Object.values(PROJECT_ROLE), default: PROJECT_ROLE.DEVELOPER },
       },
     ],
-    files: [{ type: String }],
+    files: [{ type: mongoose.Schema.Types.ObjectId, ref: 'File' }],
     domain: {
       type: String,
       require: true,

@@ -53,7 +53,7 @@ const queryProjects = async (filters, options) => {
 };
 
 const getDetailProject = async (slug) => {
-  const projects = await Project.findOne({ slug });
+  const projects = await Project.findOne(slug).populate('files');
   if (!projects) {
     return {
       status: false,

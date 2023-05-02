@@ -25,7 +25,11 @@ const fileSchema = mongoose.Schema(
     },
     invalidFile: {
       type: Boolean,
-      default: true,
+      default: false,
+    },
+    icon: {
+      type: String,
+      default: 'https://images-storage-bucket.s3.ap-southeast-1.amazonaws.com/upload/avatar/icon/word.png',
     },
   },
   {

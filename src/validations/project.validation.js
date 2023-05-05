@@ -41,6 +41,13 @@ const getProject = {
   }),
 };
 
+const openFileOfProject = {
+  body: Joi.object().keys({
+    projectId: Joi.string().required().custom(objectId),
+    fileId: Joi.string().required().custom(objectId),
+  }),
+};
+
 const updateProject = {
   params: Joi.object().keys({
     projectId: Joi.required().custom(objectId),
@@ -67,4 +74,5 @@ module.exports = {
   getProject,
   updateProject,
   deleteProject,
+  openFileOfProject,
 };

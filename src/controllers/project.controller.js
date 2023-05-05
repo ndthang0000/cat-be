@@ -5,6 +5,9 @@ const catchAsync = require('../utils/catchAsync');
 const { projectService } = require('../services');
 const { PROJECT_ROLE } = require('../constants/status');
 const { uploadFile } = require('../utils/upload.file');
+const { pythonScript } = require('../python');
+const { readFileWord } = require('../readfile/readfileWord');
+const logger = require('../config/logger');
 const ObjectId = require('mongoose').Types.ObjectId;
 
 const createProject = catchAsync(async (req, res) => {
@@ -33,6 +36,47 @@ const getDetailProject = catchAsync(async (req, res) => {
   res.send(result);
 });
 
+const openFileOfProject = catchAsync(async (req, res) => {
+  const { projectId, fileId } = req.body;
+  const { _id } = req.user;
+  const findProject = await projectService.getProjectById(projectId);
+  if (!findProject) {
+    return res.status(200).json({ status: false, message: `Project invalid` });
+  }
+  const checkPermission = projectService.checkPermissionOfUser(findProject, _id, PROJECT_ROLE.GUEST);
+  if (!checkPermission.status) {
+    return res.send(checkPermission);
+  }
+  if (findProject.files.filter((item) => String(item) == fileId).length == 0) {
+    return res.status(200).json({ status: false, message: `File not belong to project [${findProject.name}]` });
+  }
+  const findFile = await projectService.getOneFileOfProjectById(fileId);
+  if (!findFile) {
+    return res.status(200).json({ status: false, message: `File not found` });
+  }
+  if (!findFile.isTokenizeSentence) {
+    try {
+      const text = await readFileWord(findFile.uniqueNameFile);
+      const dataSentence = await pythonScript(['sentence_tokenize', text]);
+      const dataInsertDB = dataSentence.map((item) => {
+        return {
+          projectId,
+          fileId,
+          textSrc: item,
+        };
+      });
+      const results = await projectService.createManySentenceOfFileOfProject(dataInsertDB);
+      findFile.isTokenizeSentence = true;
+      await findFile.save();
+      return res.status(200).json({ status: true, data: results });
+    } catch (error) {
+      logger.error(`ERR Tokenize or Readfile: fileId: ${findFile._id}`);
+    }
+  }
+  const data = await projectService.getAllSentenceOfFileOfProject(projectId, fileId);
+  res.send({ status: true, data });
+});
+
 const uploadFileToProject = catchAsync(async (req, res) => {
   const { projectId } = req.body;
   const { _id } = req.user;
@@ -47,16 +91,18 @@ const uploadFileToProject = catchAsync(async (req, res) => {
     return res.send({ status: false, message: 'Project not found' });
   }
   // check quyền của user có đủ ko
-  const permissionUser = findProject.members.find((item) => String(item.userId) == String(_id));
-  if (!permissionUser || permissionUser.role == PROJECT_ROLE.GUEST) {
-    return res.send({ status: false, message: 'Permission Denied' });
+  const checkPermission = projectService.checkPermissionOfUser(findProject, _id, PROJECT_ROLE.PROJECT_MANAGER);
+  if (!checkPermission.status) {
+    return res.send(checkPermission);
   }
+
   for (let i = 0; i < req.files.length; i++) {
-    const dataUpload = await uploadFile(req.files[i].path, 'files/' + req.files[i].originalname);
+    const dataUpload = await uploadFile(req.files[i].path, 'files/' + req.files[i].filename);
     const insertFile = await projectService.createNewFileToProject({
       description: `Let's add description`,
       url: dataUpload.Location,
       nameFile: req.files[i].originalname,
+      uniqueNameFile: req.files[i].filename,
     });
     findProject.files.push(insertFile._id);
   }
@@ -99,4 +145,5 @@ module.exports = {
   deleteProject,
   getDetailProject,
   uploadFileToProject,
+  openFileOfProject,
 };

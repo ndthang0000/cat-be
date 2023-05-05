@@ -1,7 +1,8 @@
 module.exports.Token = require('./token.model');
 module.exports.User = require('./user.model');
 module.exports.Project = require('./project.model');
-module.exports.File = require('./File.model');
+module.exports.File = require('./file.model');
+module.exports.Sentence = require('./sentence.model');
 module.exports.ServerSetting = require('./server.setting.model');
 module.exports.word = require('./word.model');
 module.exports.translate = require('./translate.model');

@@ -1,18 +1,18 @@
 const { PythonShell } = require('python-shell');
 
-const testFunction = () => {
+const pythonScript = (args) => {
   let options = {
     mode: 'text',
     //pythonPath: 'path/to/python',
     pythonOptions: ['-u'], // get print results in real-time
     scriptPath: 'src/python',
-    args: ['nameFunction', 'HAY QUA', 'Thang Ne'], // name function, argument..
+    args, // ['nameFunction', 'HAY QUA', 'Thang Ne'], // name function, argument..
   };
-  return PythonShell.run('test.py', options).then((messages) => {
+  return PythonShell.run('utils.py', options).then((messages) => {
     return messages;
   });
 };
 
 module.exports = {
-  testFunction,
+  pythonScript,
 };

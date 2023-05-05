@@ -14,6 +14,12 @@ router
   .get(authJwt(), validate(projectValidation.getProjects), projectController.getProjects);
 router.post('/upload-file', authJwt(), upload.array('files', 5), projectController.uploadFileToProject);
 router.route('/detail/:slug').get(authJwt(''), validate(projectValidation.getProject), projectController.getDetailProject);
+router.post(
+  '/open-file-of-project',
+  validate(projectValidation.openFileOfProject),
+  authJwt(''),
+  projectController.openFileOfProject
+);
 // .patch(auth(''), validate(projectValidation.updateProject), projectController.updateProject)
 // .delete(auth(''), validate(projectValidation.deleteProject), projectController.deleteProject);
 

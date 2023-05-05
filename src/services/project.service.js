@@ -1,11 +1,11 @@
 const httpStatus = require('http-status');
-const { Project, User, File } = require('../models');
+const { Project, User, File, Sentence } = require('../models');
 const ApiError = require('../utils/ApiError');
 const generateImage = require('../utils/generate.image');
 const config = require('../config/config');
 const { uploadFile } = require('../utils/upload.file');
 const publicURL = require('../../get_url');
-const { PROJECT_ROLE } = require('../constants/status');
+const { PROJECT_ROLE, getOneNumberRoleProject } = require('../constants/status');
 
 /**
  * Create a project
@@ -122,6 +122,31 @@ const createNewFileToProject = async (body) => {
   return File.create(body);
 };
 
+const createManySentenceOfFileOfProject = async (data) => {
+  return await Sentence.insertMany(data);
+};
+
+const getAllSentenceOfFileOfProject = async (projectId, fileId) => {
+  return await Sentence.find({ projectId, fileId });
+};
+
+const getOneFileOfProjectById = async (id) => {
+  return await File.findOne({ _id: id });
+};
+
+const checkPermissionOfUser = (findProject, _id, minRole) => {
+  const permissionUser = findProject.members.find((item) => String(item.userId) == String(_id));
+  if (!permissionUser) {
+    return { status: false, message: 'Permission Denied' };
+  }
+  if (getOneNumberRoleProject(permissionUser.role) > getOneNumberRoleProject(minRole)) {
+    return { status: false, message: `Permission Denied, You need greater than [${minRole}] Role` };
+  }
+  return {
+    status: true,
+  };
+};
+
 module.exports = {
   createProject,
   queryProjects,
@@ -131,4 +156,8 @@ module.exports = {
   deleteProjectById,
   getDetailProject,
   createNewFileToProject,
+  checkPermissionOfUser,
+  getOneFileOfProjectById,
+  createManySentenceOfFileOfProject,
+  getAllSentenceOfFileOfProject,
 };

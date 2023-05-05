@@ -36,6 +36,9 @@ const queryProjects = async (filters, options) => {
       $match: filters,
     },
     {
+      $addFields: { lengthFile: { $size: '$files' } },
+    },
+    {
       $lookup: {
         from: 'users',
         localField: 'userId',
@@ -43,6 +46,7 @@ const queryProjects = async (filters, options) => {
         as: 'owner',
       },
     },
+
     {
       $unwind: '$owner',
     },

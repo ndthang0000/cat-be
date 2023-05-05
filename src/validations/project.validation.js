@@ -2,6 +2,7 @@ const Joi = require('joi');
 const { objectId } = require('./custom.validation');
 const SCOPE = require('../constants/scope');
 const LANGUAGE = require('../constants/language');
+const { SORT_PROJECT } = require('../constants/sort');
 
 const createProject = {
   body: Joi.object().keys({
@@ -21,8 +22,9 @@ const getProjects = {
   query: Joi.object().keys({
     page: Joi.number(),
     limit: Joi.number(),
-    type: Joi.string().valid('ALL', 'INDIVIDUAL'),
+    type: Joi.string().valid('ALL', 'INDIVIDUAL').default('ALL'),
     search: Joi.string().allow(''),
+    sortBy: Joi.string().valid(...Object.values(SORT_PROJECT)),
   }),
 };
 

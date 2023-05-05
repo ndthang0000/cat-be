@@ -8,6 +8,7 @@ const { uploadFile } = require('../utils/upload.file');
 const { pythonScript } = require('../python');
 const { readFileWord } = require('../readfile/readfileWord');
 const logger = require('../config/logger');
+const { SORT_PROJECT } = require('../constants/sort');
 const ObjectId = require('mongoose').Types.ObjectId;
 
 const createProject = catchAsync(async (req, res) => {
@@ -24,9 +25,19 @@ const createProject = catchAsync(async (req, res) => {
 });
 
 const getProjects = catchAsync(async (req, res) => {
-  const filter = pick(req.query, ['name', 'role']);
+  const { _id, userId } = req.user;
+  const filters = pick(req.query, ['search', 'type']);
   const options = pick(req.query, ['sortBy', 'limit', 'page']);
-  const result = await projectService.queryProjects(filter, options);
+  const lastFilter = {};
+  if (filters.type == 'ALL') {
+    lastFilter.members = { $elemMatch: { userId: _id } };
+  } else if (filters.type == 'INDIVIDUAL') {
+    lastFilter.userId = userId;
+  }
+  if (filters.search) {
+    lastFilter.$or = [{ projectName: { $regex: filters.search } }, { description: { $regex: filters.search } }];
+  }
+  const result = await projectService.queryProjects(lastFilter, options);
   res.send(result);
 });
 

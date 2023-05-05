@@ -20,12 +20,6 @@ router.post(
   authJwt(''),
   projectController.openFileOfProject
 );
-// .patch(auth(''), validate(projectValidation.updateProject), projectController.updateProject)
-// .delete(auth(''), validate(projectValidation.deleteProject), projectController.deleteProject);
-
-router
-  .route('/userid/:userId')
-  .get(auth(''), validate(projectValidation.getProjects), projectController.getProjectsByUserID);
 
 module.exports = router;
 

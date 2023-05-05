@@ -13,6 +13,7 @@ router
   .post(authJwt(), validate(projectValidation.createProject), projectController.createProject)
   .get(authJwt(), validate(projectValidation.getProjects), projectController.getProjects);
 router.post('/upload-file', authJwt(), upload.array('files', 5), projectController.uploadFileToProject);
+router.get('/sort', projectController.getSortProject);
 router.route('/detail/:slug').get(authJwt(''), validate(projectValidation.getProject), projectController.getDetailProject);
 router.post(
   '/open-file-of-project',

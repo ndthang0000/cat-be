@@ -1,11 +1,11 @@
 const SORT_PROJECT = {
-  'OLD TO NEW': 'createdAt',
-  'NEW TO OLD': 'createdAt:desc',
-  'LAST UPDATE': 'updatedAt:desc',
-  PRIORITY: 'priority:desc',
-  NAME: 'projectName',
-  'DESCENDING FILE': 'lengthFile',
-  'ASCENDING FILE': 'lengthFile:desc',
+  Oldest: 'createdAt',
+  Newest: 'createdAt:desc',
+  'Last Update': 'updatedAt:desc',
+  Priority: 'priority:desc',
+  'Project Name': 'projectName',
+  'Descending File': 'lengthFile',
+  'Ascending File': 'lengthFile:desc',
 };
 
 module.exports = {

@@ -29,9 +29,9 @@ const getProjects = catchAsync(async (req, res) => {
   const filters = pick(req.query, ['search', 'type']);
   const options = pick(req.query, ['sortBy', 'limit', 'page']);
   const lastFilter = {};
-  if (filters.type == 'ALL') {
+  if (filters.type == 'All') {
     lastFilter.members = { $elemMatch: { userId: _id } };
-  } else if (filters.type == 'INDIVIDUAL') {
+  } else if (filters.type == 'Individual') {
     lastFilter.userId = userId;
   }
   if (filters.search) {
@@ -147,6 +147,10 @@ const deleteProject = catchAsync(async (req, res) => {
   res.status(httpStatus.NO_CONTENT).send();
 });
 
+const getSortProject = catchAsync(async (req, res) => {
+  res.status(httpStatus.OK).send({ status: true, data: SORT_PROJECT });
+});
+
 module.exports = {
   createProject,
   getProjects,
@@ -157,4 +161,5 @@ module.exports = {
   getDetailProject,
   uploadFileToProject,
   openFileOfProject,
+  getSortProject,
 };

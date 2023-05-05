@@ -22,9 +22,9 @@ const getProjects = {
   query: Joi.object().keys({
     page: Joi.number(),
     limit: Joi.number(),
-    type: Joi.string().valid('ALL', 'INDIVIDUAL').default('ALL'),
+    type: Joi.string().valid('All', 'Individual').default('All'),
     search: Joi.string().allow(''),
-    sortBy: Joi.string().valid(...Object.values(SORT_PROJECT)),
+    sortBy: Joi.string().valid(...Object.values(SORT_PROJECT), ''),
   }),
 };
 

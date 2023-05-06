@@ -14,10 +14,10 @@ const { tokenTypes } = require('../config/tokens');
 const loginUserWithEmailAndPassword = async (email, password) => {
   const user = await userService.getUserByEmail(email);
   if (!user) {
-    throw new ApiError(httpStatus.UNAUTHORIZED, `Email ${email} not exist in system`);
+    throw new ApiError(httpStatus.BAD_REQUEST, `Email ${email} not exist in system`);
   }
   if (!(await user.isPasswordMatch(password))) {
-    throw new ApiError(httpStatus.UNAUTHORIZED, 'Incorrect password !!');
+    throw new ApiError(httpStatus.BAD_REQUEST, 'Incorrect password !!');
   }
   return user;
 };

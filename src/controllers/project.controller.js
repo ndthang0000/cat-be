@@ -68,7 +68,8 @@ const openFileOfProject = catchAsync(async (req, res) => {
   if (!findFile.isTokenizeSentence) {
     try {
       const text = await readFileWord(findFile.uniqueNameFile);
-      const dataSentence = await pythonScript(['sentence_tokenize', text]);
+      console.log(text);
+      const dataSentence = await pythonScript(['sentence_tokenize', text.trim()]);
       const dataInsertDB = dataSentence.map((item) => {
         return {
           projectId,
@@ -81,7 +82,8 @@ const openFileOfProject = catchAsync(async (req, res) => {
       await findFile.save();
       return res.status(200).json({ status: true, data: results });
     } catch (error) {
-      logger.error(`ERR Tokenize or Readfile: fileId: ${findFile._id}`);
+      logger.error(`ERR Tokenize or Readfile ${error.message}: fileId: ${findFile._id}`);
+      return res.send({ status: false, message: 'Something went wrong with this file' });
     }
   }
   const data = await projectService.getAllSentenceOfFileOfProject(projectId, fileId);

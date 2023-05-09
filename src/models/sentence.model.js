@@ -24,7 +24,10 @@ const sentenceSchema = mongoose.Schema(
     status: {
       type: String,
       enum: Object.values(SENTENCE_STATUS),
-      default: SENTENCE_STATUS.TRANSLATING,
+      default: SENTENCE_STATUS.UN_TRANSLATE,
+    },
+    index: {
+      type: Number,
     },
   },
   {

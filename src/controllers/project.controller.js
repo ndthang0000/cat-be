@@ -71,11 +71,12 @@ const openFileOfProject = catchAsync(async (req, res) => {
     const text = await readFileWord(findFile.uniqueNameFile);
     try {
       const dataSentence = await pythonScript(['sentence_tokenize', text]);
-      const dataInsertDB = dataSentence.map((item) => {
+      const dataInsertDB = dataSentence.map((item, index) => {
         return {
           projectId,
           fileId,
           textSrc: item,
+          index: index + 1,
         };
       });
       const results = await projectService.createManySentenceOfFileOfProject(dataInsertDB);
@@ -112,6 +113,7 @@ const uploadFileToProject = catchAsync(async (req, res) => {
   }
 
   for (let i = 0; i < req.files.length; i++) {
+    console.log(req.files[i]);
     const dataUpload = await uploadFile(req.files[i].path, 'files/' + req.files[i].filename);
     const insertFile = await projectService.createNewFileToProject({
       description: `Let's add description`,

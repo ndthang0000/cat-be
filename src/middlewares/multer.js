@@ -6,7 +6,18 @@ var storage = multer.diskStorage({
     cb(null, publicURL + '/uploads');
   },
   filename: function (req, file, cb) {
-    cb(null, Date.now() + '-' + file.originalname);
+    file.originalname = Buffer.from(file.originalname, 'latin1').toString('utf8');
+
+    cb(
+      null,
+      Date.now() +
+        '-' +
+        file.originalname
+          .normalize('NFD')
+          .replace(/[\u0300-\u036f]/g, '')
+          .replace(/đ/g, 'd')
+          .replace(/Đ/g, 'D')
+    );
   },
 });
 var upload = multer({

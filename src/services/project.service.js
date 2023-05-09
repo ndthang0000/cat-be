@@ -155,6 +155,15 @@ const checkPermissionOfUser = (findProject, _id, minRole) => {
   };
 };
 
+const fixSentenceIndex = async () => {
+  const data = await Sentence.find({ fileId: '645501975bb966420c7b6570' }).sort({ createdAt: 1 });
+  for (let i = 0; i < data.length; i++) {
+    data[i].index = i + 1;
+    await data[i].save();
+  }
+};
+fixSentenceIndex();
+
 module.exports = {
   createProject,
   queryProjects,

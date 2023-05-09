@@ -78,6 +78,7 @@
     "randomcolor": "^0.6.2",
     "swagger-jsdoc": "^6.0.8",
     "swagger-ui-express": "^4.1.6",
+    "text-decoding": "^1.0.0",
     "text-to-image": "^5.2.0",
     "validator": "^13.0.0",
     "winston": "^3.2.1",

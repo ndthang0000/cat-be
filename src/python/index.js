@@ -6,7 +6,8 @@ const pythonScript = (args) => {
     //pythonPath: 'path/to/python',
     pythonOptions: ['-u'], // get print results in real-time
     scriptPath: 'src/python',
-    args, // ['nameFunction', 'HAY QUA', 'Thang Ne'], // name function, argument..
+    encoding: 'utf8',
+    args: ['sentence_tokenize', 'text'], // ['nameFunction', 'HAY QUA', 'Thang Ne'], // name function, argument..
   };
   return PythonShell.run('utils.py', options).then((messages) => {
     return messages;

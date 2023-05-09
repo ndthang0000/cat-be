@@ -49,6 +49,8 @@ const getDetailProject = catchAsync(async (req, res) => {
 
 const openFileOfProject = catchAsync(async (req, res) => {
   const { projectId, fileId } = req.body;
+  const options = pick(req.query, ['limit', 'page']);
+  const filter = pick(req.query, ['status']);
   const { _id } = req.user;
   const findProject = await projectService.getProjectById(projectId);
   if (!findProject) {
@@ -66,10 +68,9 @@ const openFileOfProject = catchAsync(async (req, res) => {
     return res.status(200).json({ status: false, message: `File not found` });
   }
   if (!findFile.isTokenizeSentence) {
+    const text = await readFileWord(findFile.uniqueNameFile);
     try {
-      const text = await readFileWord(findFile.uniqueNameFile);
-      console.log(text);
-      const dataSentence = await pythonScript(['sentence_tokenize', text.trim()]);
+      const dataSentence = await pythonScript(['sentence_tokenize', text]);
       const dataInsertDB = dataSentence.map((item) => {
         return {
           projectId,
@@ -80,13 +81,14 @@ const openFileOfProject = catchAsync(async (req, res) => {
       const results = await projectService.createManySentenceOfFileOfProject(dataInsertDB);
       findFile.isTokenizeSentence = true;
       await findFile.save();
-      return res.status(200).json({ status: true, data: results });
+      const dataPaginate = await projectService.getPaginateSentenceOfFile({ projectId, fileId, ...filter }, options);
+      return res.status(200).json({ status: true, data: dataPaginate });
     } catch (error) {
       logger.error(`ERR Tokenize or Readfile ${error.message}: fileId: ${findFile._id}`);
       return res.send({ status: false, message: 'Something went wrong with this file' });
     }
   }
-  const data = await projectService.getAllSentenceOfFileOfProject(projectId, fileId);
+  const data = await projectService.getPaginateSentenceOfFile({ projectId, fileId, ...filter }, options);
   res.send({ status: true, data });
 });
 

@@ -48,6 +48,11 @@ const openFileOfProject = {
     projectId: Joi.string().required().custom(objectId),
     fileId: Joi.string().required().custom(objectId),
   }),
+  query: {
+    limit: Joi.number(),
+    page: Joi.number(),
+    status: Joi.string().allow('', null),
+  },
 };
 
 const updateProject = {

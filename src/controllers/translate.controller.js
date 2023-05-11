@@ -42,6 +42,27 @@ const deleteWordTrans = catchAsync(async (req, res) => {
   res.status(httpStatus.NO_CONTENT).send();
 });
 
+const translateMachineSentence = catchAsync(async (req, res) => {
+  const { sentence } = req.body;
+  // call python machine  translate
+  res.send({ status: true, data: `Success ${sentence}` });
+});
+
+const getWordDictionary = catchAsync(async (req, res) => {
+  const { word } = req.body;
+  // call python machine  translate
+  res.send({
+    status: true,
+    data: [`Thành công ${word}`, `word: ${word}`],
+  });
+});
+
+const fuzzyMatching = catchAsync(async (req, res) => {
+  const { sentence } = req.body;
+  // call python machine  translate
+  res.send({ status: true, data: [`Fuzzy matching ${sentence}`, 'Hi...'] });
+});
+
 module.exports = {
   createWordTrans,
   getWordsTrans,
@@ -49,4 +70,7 @@ module.exports = {
   getWordTrans,
   updateWordTrans,
   deleteWordTrans,
+  translateMachineSentence,
+  getWordDictionary,
+  fuzzyMatching,
 };

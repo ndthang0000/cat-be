@@ -42,10 +42,31 @@ const deleteWordTrans = {
   }),
 };
 
+const translateMachineSentence = {
+  body: Joi.object().keys({
+    sentence: Joi.string().required(),
+  }),
+};
+
+const getWordDictionary = {
+  body: Joi.object().keys({
+    word: Joi.string().required(),
+  }),
+};
+
+const fuzzyMatching = {
+  body: Joi.object().keys({
+    sentence: Joi.string().required(),
+  }),
+};
+
 module.exports = {
   createWordTrans,
   getWordsTrans,
   getWordTrans,
   updateWordTrans,
   deleteWordTrans,
+  translateMachineSentence,
+  getWordDictionary,
+  fuzzyMatching,
 };

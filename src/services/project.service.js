@@ -92,6 +92,10 @@ const getProjectById = async (ID) => {
   return Project.findById(ID);
 };
 
+const getProjectBySlug = async (slug) => {
+  return Project.findOne({ slug });
+};
+
 /**
  * Update project by ID
  * @param {ObjectId} projectID
@@ -178,4 +182,5 @@ module.exports = {
   createManySentenceOfFileOfProject,
   getAllSentenceOfFileOfProject,
   getPaginateSentenceOfFile,
+  getProjectBySlug,
 };

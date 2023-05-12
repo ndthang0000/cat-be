@@ -45,7 +45,7 @@ const getProject = {
 
 const openFileOfProject = {
   body: Joi.object().keys({
-    projectId: Joi.string().required().custom(objectId),
+    slug: Joi.string().required(),
     fileId: Joi.string().required().custom(objectId),
   }),
   query: {

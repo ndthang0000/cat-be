@@ -5,7 +5,7 @@ const catchAsync = require('../utils/catchAsync');
 const { projectService } = require('../services');
 const { PROJECT_ROLE } = require('../constants/status');
 const { uploadFile } = require('../utils/upload.file');
-const { pythonScript } = require('../python');
+const { sentenceTokenizeFromFileDocx } = require('../python');
 const { readFileWord } = require('../readfile/readfileWord');
 const logger = require('../config/logger');
 const { SORT_PROJECT } = require('../constants/sort');
@@ -70,7 +70,7 @@ const openFileOfProject = catchAsync(async (req, res) => {
   if (!findFile.isTokenizeSentence) {
     const text = await readFileWord(findFile.uniqueNameFile);
     try {
-      const dataSentence = await pythonScript(['sentence_tokenize', text]);
+      const dataSentence = await sentenceTokenizeFromFileDocx(['sent_from_file', findFile.uniqueNameFile]);
       const dataInsertDB = dataSentence.map((item, index) => {
         return {
           projectId: findProject._id,

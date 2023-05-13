@@ -3,6 +3,7 @@ const pick = require('../utils/pick');
 const ApiError = require('../utils/ApiError');
 const catchAsync = require('../utils/catchAsync');
 const { translateService } = require('../services');
+const { translating } = require('../python');
 
 const createWordTrans = catchAsync(async (req, res) => {
   const word = await translateService.createWordTrans(req.body);
@@ -43,9 +44,10 @@ const deleteWordTrans = catchAsync(async (req, res) => {
 });
 
 const translateMachineSentence = catchAsync(async (req, res) => {
-  const { sentence } = req.body;
+  const { sentence, target } = req.body;
   // call python machine  translate
-  res.send({ status: true, data: `Success ${sentence}` });
+  const data = await translating(['translate_sent', Buffer.from(sentence, 'utf-8'), target]);
+  res.send({ status: true, data: data[0] });
 });
 
 const getWordDictionary = catchAsync(async (req, res) => {

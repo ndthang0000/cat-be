@@ -2,7 +2,7 @@ const httpStatus = require('http-status');
 const pick = require('../utils/pick');
 const ApiError = require('../utils/ApiError');
 const catchAsync = require('../utils/catchAsync');
-const { projectService } = require('../services');
+const { projectService, memberService, userService } = require('../services');
 const { PROJECT_ROLE } = require('../constants/status');
 const { uploadFile } = require('../utils/upload.file');
 const { sentenceTokenizeFromFileDocx } = require('../python');
@@ -21,6 +21,12 @@ const createProject = catchAsync(async (req, res) => {
   ];
   req.body.members = members;
   const project = await projectService.createProject(req.body);
+  // const createJoinMember = await memberService.createNewMember({
+  //   role: PROJECT_ROLE.OWNER,
+  //   userId: req.user._id
+  // })
+  // project.allMember.push(createJoinMember?._id)
+  // await project.save()
   res.status(httpStatus.CREATED).send(project);
 });
 
@@ -160,6 +166,34 @@ const getSortProject = catchAsync(async (req, res) => {
   res.status(httpStatus.OK).send({ status: true, data: SORT_PROJECT });
 });
 
+const getRoleOfProject = catchAsync(async (req, res) => {
+  res.status(httpStatus.OK).send({ status: true, data: Object.values(PROJECT_ROLE) });
+});
+
+const addMemberToProject = catchAsync(async (req, res) => {
+  const { email, projectId, role } = req.body;
+  const findUser = await userService.getUserByEmail(email);
+  if (!findUser) {
+    return res.status(200).json({ status: false, message: `User [${email}] not exit in system` });
+  }
+  const { _id } = req.user;
+  const findProject = await projectService.getProjectById(projectId);
+  if (!findProject) {
+    return res.status(200).json({ status: false, message: `Project invalid` });
+  }
+  const checkPermission = projectService.checkPermissionOfUser(findProject, _id, PROJECT_ROLE.PROJECT_MANAGER);
+  if (!checkPermission.status) {
+    return res.send(checkPermission);
+  }
+
+  findProject.members.push({
+    userId: findUser._id,
+    role,
+  });
+  await findProject.save();
+  res.status(httpStatus.OK).send({ status: true, data: Object.values(PROJECT_ROLE) });
+});
+
 module.exports = {
   createProject,
   getProjects,
@@ -171,4 +205,6 @@ module.exports = {
   uploadFileToProject,
   openFileOfProject,
   getSortProject,
+  getRoleOfProject,
+  addMemberToProject,
 };

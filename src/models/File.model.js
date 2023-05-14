@@ -38,6 +38,22 @@ const fileSchema = mongoose.Schema(
       type: Boolean,
       default: false,
     },
+    sourceLanguage: {
+      type: String,
+      enum: Object.values(LANGUAGE),
+      required: true,
+    },
+    targetLanguage: {
+      type: String,
+      enum: Object.values(LANGUAGE),
+      required: true,
+    },
+    percentComplete: {
+      type: Number,
+      min: 0,
+      max: 100,
+      default: 0,
+    },
   },
   {
     timestamps: true,

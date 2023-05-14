@@ -3,6 +3,7 @@ const { objectId } = require('./custom.validation');
 const SCOPE = require('../constants/scope');
 const LANGUAGE = require('../constants/language');
 const { SORT_PROJECT } = require('../constants/sort');
+const { PROJECT_ROLE } = require('../constants/status');
 
 const createProject = {
   body: Joi.object().keys({
@@ -75,6 +76,16 @@ const deleteProject = {
   }),
 };
 
+const addMemberToProject = {
+  body: Joi.object().keys({
+    projectId: Joi.string().custom(objectId),
+    email: Joi.string().required(),
+    role: Joi.string()
+      .valid(...Object.values(PROJECT_ROLE))
+      .default(PROJECT_ROLE.GUEST),
+  }),
+};
+
 module.exports = {
   createProject,
   getProjects,
@@ -82,4 +93,5 @@ module.exports = {
   updateProject,
   deleteProject,
   openFileOfProject,
+  addMemberToProject,
 };

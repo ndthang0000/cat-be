@@ -22,6 +22,15 @@ router.post(
   projectController.openFileOfProject
 );
 
+router.get('/get-role-of-project', projectController.getRoleOfProject);
+
+router.post(
+  '/add-member',
+  validate(projectValidation.addMemberToProject),
+  authJwt(''),
+  projectController.addMemberToProject
+);
+
 module.exports = router;
 
 /**

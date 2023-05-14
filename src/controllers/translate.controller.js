@@ -100,6 +100,7 @@ const translateMachineSentence = catchAsync(async (req, res) => {
   console.log('result= ', Utf8ArrayToStr(bufferText));
   console.log(decodeURIComponent(escape('\xc4\x90\xc3\xa2y l\xc3\xa0 t\xc3\xbai c\xe1\xbb\xa7a t\xc3\xb4i')));
   console.log(decodeURIComponent(escape(text)));
+  console.log('\xc4\x90\xc3\xa2y l\xc3\xa0 t\xc3\xbai c\xe1\xbb\xa7a t\xc3\xb4i');
   res.send({ status: true, data: text });
 });
 

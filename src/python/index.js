@@ -23,7 +23,7 @@ const translating = (args) => {
     encoding: 'utf-8',
     args, // ['nameFunction', 'HAY QUA', 'Thang Ne'], // name function, argument..
   };
-  return PythonShell.run('translatorDocx.py', options).then((messages) => {
+  return PythonShell.run('docxHandler.py', options).then((messages) => {
     console.log(messages);
     return messages;
   });

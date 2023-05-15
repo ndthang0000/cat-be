@@ -42,6 +42,7 @@ const projectSchema = mongoose.Schema(
       {
         userId: { type: mongoose.Schema.Types.ObjectId, ref: 'User' },
         role: { type: String, enum: Object.values(PROJECT_ROLE), default: PROJECT_ROLE.DEVELOPER },
+        timeJoin: { type: Date, default: new Date() },
       },
     ],
     files: [{ type: mongoose.Schema.Types.ObjectId, ref: 'File' }],

@@ -57,7 +57,7 @@ const queryProjects = async (filters, options) => {
 };
 
 const getDetailProject = async (slug) => {
-  const projects = await Project.findOne(slug).populate('files').populate('allMember');
+  const projects = await Project.findOne(slug).populate('files').populate({ path: 'members.userId' });
   if (!projects) {
     return {
       status: false,

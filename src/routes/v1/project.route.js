@@ -23,6 +23,7 @@ router.post(
 );
 
 router.get('/get-role-of-project', projectController.getRoleOfProject);
+router.get('/get-language-of-system', projectController.getAllLanguageOfSystem);
 
 router.post(
   '/add-member',

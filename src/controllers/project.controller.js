@@ -9,6 +9,7 @@ const { sentenceTokenizeFromFileDocx } = require('../python');
 const { readFileWord } = require('../readfile/readfileWord');
 const logger = require('../config/logger');
 const { SORT_PROJECT } = require('../constants/sort');
+const LANGUAGE = require('../constants/language');
 const ObjectId = require('mongoose').Types.ObjectId;
 
 const createProject = catchAsync(async (req, res) => {
@@ -27,7 +28,9 @@ const createProject = catchAsync(async (req, res) => {
   // })
   // project.allMember.push(createJoinMember?._id)
   // await project.save()
-  res.status(httpStatus.CREATED).send(project);
+  res
+    .status(httpStatus.CREATED)
+    .send({ data: project, status: true, message: `Congratulation, Create Project ${project.projectName} successfully!!` });
 });
 
 const getProjects = catchAsync(async (req, res) => {
@@ -170,6 +173,10 @@ const getRoleOfProject = catchAsync(async (req, res) => {
   res.status(httpStatus.OK).send({ status: true, data: Object.values(PROJECT_ROLE) });
 });
 
+const getAllLanguageOfSystem = catchAsync(async (req, res) => {
+  res.status(httpStatus.OK).send({ status: true, data: Object.values(LANGUAGE) });
+});
+
 const addMemberToProject = catchAsync(async (req, res) => {
   const { email, projectId, role } = req.body;
   const findUser = await userService.getUserByEmail(email);
@@ -207,4 +214,5 @@ module.exports = {
   getSortProject,
   getRoleOfProject,
   addMemberToProject,
+  getAllLanguageOfSystem,
 };

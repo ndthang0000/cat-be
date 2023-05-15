@@ -29,10 +29,6 @@ const defaultRoutes = [
     path: '/TranslationMemories',
     route: translationMemoryRoute,
   },
-  // {
-  //   path: '/translation',
-  //   route: translationMachineRoute,
-  // },
   {
     path: '/translate',
     route: translateRoute,

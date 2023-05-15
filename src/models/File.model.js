@@ -41,12 +41,12 @@ const fileSchema = mongoose.Schema(
     sourceLanguage: {
       type: String,
       enum: Object.values(LANGUAGE),
-      required: true,
+      //required: true,
     },
     targetLanguage: {
       type: String,
       enum: Object.values(LANGUAGE),
-      required: true,
+      //required: true,
     },
     percentComplete: {
       type: Number,

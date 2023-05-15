@@ -1,14 +1,24 @@
 const httpStatus = require('http-status');
-const { project } = require('../models');
+const { Project, User, File, Sentence } = require('../models');
 const ApiError = require('../utils/ApiError');
+const generateImage = require('../utils/generate.image');
+const config = require('../config/config');
+const { uploadFile } = require('../utils/upload.file');
+const publicURL = require('../../get_url');
+const { PROJECT_ROLE, getOneNumberRoleProject } = require('../constants/status');
 
 /**
  * Create a project
  * @param {Object} projectBody
- * @returns {Promise<project>}
+ * @returns {Promise<Project>}
  */
 const createProject = async (projectBody) => {
-  return project.create(projectBody);
+  const data = await new Project(projectBody).save();
+  await generateImage(projectBody.projectName, data.slug);
+  const dataUpload = await uploadFile(`${publicURL}/generate-image/${data.slug}.png`, `${data.slug}.png`);
+  data.image = dataUpload.Location;
+  await data.save();
+  return data;
 };
 
 /**
@@ -20,27 +30,70 @@ const createProject = async (projectBody) => {
  * @param {number} [options.page] - Current page (default = 1)
  * @returns {Promise<QueryResult>}
  */
-const queryProjects = async (filter, options) => {
-  const projects = await project.paginate(filter, options);
+const queryProjects = async (filters, options) => {
+  const filtersAgg = [
+    {
+      $match: filters,
+    },
+    {
+      $addFields: { lengthFile: { $size: '$files' } },
+    },
+    {
+      $lookup: {
+        from: 'users',
+        localField: 'userId',
+        foreignField: 'userId',
+        as: 'owner',
+      },
+    },
+
+    {
+      $unwind: '$owner',
+    },
+  ];
+
+  const projects = await Project.paginateAgg(filtersAgg, options);
   return projects;
 };
 
+const getDetailProject = async (slug) => {
+  const projects = await Project.findOne(slug).populate('files').populate({ path: 'members.userId' });
+  if (!projects) {
+    return {
+      status: false,
+      message: `Don't find exit project`,
+    };
+  }
+  const owner = await User.findOne({ userId: projects.userId });
+  return {
+    status: true,
+    data: {
+      projects,
+      owner,
+      // sentences
+    },
+  };
+};
 /**
  * Get word trans by pj id
  * @param {string} userID
- * @returns {Promise<project>}
+ * @returns {Promise<Project>}
  */
 const getProjectByUserID = async (userID) => {
-  return project.find({ user_id: userID });
+  return Project.find({ user_id: userID });
 };
 
 /**
  * Get project by ID
  * @param {ObjectId} ID
- * @returns {Promise<project>}
+ * @returns {Promise<Project>}
  */
 const getProjectById = async (ID) => {
-  return project.findById(ID);
+  return Project.findById(ID);
+};
+
+const getProjectBySlug = async (slug) => {
+  return Project.findOne({ slug });
 };
 
 /**
@@ -62,7 +115,7 @@ const updateProjectById = async (projectID, updateBody) => {
 /**
  * Delete project by ID
  * @param {ObjectId} projectID
- * @returns {Promise<project>}
+ * @returns {Promise<Project>}
  */
 const deleteProjectById = async (projectID) => {
   const project = await getProjectById(projectID);
@@ -73,6 +126,48 @@ const deleteProjectById = async (projectID) => {
   return project;
 };
 
+const createNewFileToProject = async (body) => {
+  return File.create(body);
+};
+
+const createManySentenceOfFileOfProject = async (data) => {
+  return await Sentence.insertMany(data);
+};
+
+const getAllSentenceOfFileOfProject = async (projectId, fileId) => {
+  return await Sentence.find({ projectId, fileId });
+};
+
+const getPaginateSentenceOfFile = async (filters, options) => {
+  return await Sentence.paginate(filters, options);
+};
+
+const getOneFileOfProjectById = async (id) => {
+  return await File.findOne({ _id: id });
+};
+
+const checkPermissionOfUser = (findProject, _id, minRole) => {
+  const permissionUser = findProject.members.find((item) => String(item.userId) == String(_id));
+  if (!permissionUser) {
+    return { status: false, message: 'Permission Denied' };
+  }
+  if (getOneNumberRoleProject(permissionUser.role) > getOneNumberRoleProject(minRole)) {
+    return { status: false, message: `Permission Denied, You need greater than [${minRole}] Role` };
+  }
+  return {
+    status: true,
+  };
+};
+
+const fixSentenceIndex = async () => {
+  const data = await Sentence.find({ fileId: '645501975bb966420c7b6570' }).sort({ createdAt: 1 });
+  for (let i = 0; i < data.length; i++) {
+    data[i].index = i + 1;
+    await data[i].save();
+  }
+};
+fixSentenceIndex();
+
 module.exports = {
   createProject,
   queryProjects,
@@ -80,4 +175,12 @@ module.exports = {
   getProjectById,
   updateProjectById,
   deleteProjectById,
+  getDetailProject,
+  createNewFileToProject,
+  checkPermissionOfUser,
+  getOneFileOfProjectById,
+  createManySentenceOfFileOfProject,
+  getAllSentenceOfFileOfProject,
+  getPaginateSentenceOfFile,
+  getProjectBySlug,
 };

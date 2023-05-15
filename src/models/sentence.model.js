@@ -1,12 +1,17 @@
 const mongoose = require('mongoose');
 const { toJSON, paginate } = require('./plugins');
-const { SENTENCE_STATUS } = require('../contants/status');
+const { SENTENCE_STATUS } = require('../constants/status');
 
 const sentenceSchema = mongoose.Schema(
   {
-    project: {
+    projectId: {
       type: mongoose.Schema.Types.ObjectId,
       ref: 'Project',
+      required: true,
+    },
+    fileId: {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: 'file',
       required: true,
     },
     textSrc: {
@@ -15,12 +20,14 @@ const sentenceSchema = mongoose.Schema(
     },
     textDist: {
       type: String,
-      require: true,
     },
     status: {
       type: String,
       enum: Object.values(SENTENCE_STATUS),
-      default: SENTENCE_STATUS.TRANSLATING,
+      default: SENTENCE_STATUS.UN_TRANSLATE,
+    },
+    index: {
+      type: Number,
     },
   },
   {

@@ -1,8 +1,12 @@
 const mongoose = require('mongoose');
-const { toJSON, paginate } = require('./plugins');
-const { PROJECT_STATUS, PROJECT_ROLE } = require('../contants/status');
-const LANGUAGE = require('../contants/language');
-const SCOPE = require('../contants/scope');
+const { toJSON, paginate, paginateAgg } = require('./plugins');
+const { PROJECT_STATUS, PROJECT_ROLE } = require('../constants/status');
+const LANGUAGE = require('../constants/language');
+const SCOPE = require('../constants/scope');
+const slug = require('mongoose-slug-generator');
+const mongoose_delete = require('mongoose-delete');
+
+mongoose.plugin(slug);
 
 const projectSchema = mongoose.Schema(
   {
@@ -10,8 +14,8 @@ const projectSchema = mongoose.Schema(
       type: String,
       required: true,
     },
-    userID: {
-      type: String,
+    userId: {
+      type: Number,
       required: true,
     },
     sourceLanguage: {
@@ -38,15 +42,34 @@ const projectSchema = mongoose.Schema(
       {
         userId: { type: mongoose.Schema.Types.ObjectId, ref: 'User' },
         role: { type: String, enum: Object.values(PROJECT_ROLE), default: PROJECT_ROLE.DEVELOPER },
+        timeJoin: { type: Date, default: new Date() },
       },
     ],
-    files: [{ type: String }],
+    files: [{ type: mongoose.Schema.Types.ObjectId, ref: 'File' }],
     domain: {
       type: String,
       require: true,
     },
     description: {
       type: String,
+    },
+    image: {
+      type: String,
+    },
+    slug: {
+      type: String,
+      slug: 'projectName',
+      unique: true,
+    },
+    percentComplete: {
+      type: Number,
+      min: 0,
+      max: 100,
+      default: 0,
+    },
+    priority: {
+      type: Number,
+      default: 1, // 1-> 5 normal -> urgent
     },
   },
   {
@@ -56,6 +79,8 @@ const projectSchema = mongoose.Schema(
 
 projectSchema.plugin(toJSON);
 projectSchema.plugin(paginate);
+projectSchema.plugin(paginateAgg);
+projectSchema.plugin(mongoose_delete, { overrideMethods: 'all' });
 
 const project = mongoose.model('project', projectSchema);
 

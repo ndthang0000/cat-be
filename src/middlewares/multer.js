@@ -3,12 +3,21 @@ const multer = require('multer');
 
 var storage = multer.diskStorage({
   destination: function (req, file, cb) {
-    console.log('destination');
     cb(null, publicURL + '/uploads');
   },
   filename: function (req, file, cb) {
-    console.log('filename');
-    cb(null, file.originalname);
+    file.originalname = Buffer.from(file.originalname, 'latin1').toString('utf8');
+
+    cb(
+      null,
+      Date.now() +
+        '-' +
+        file.originalname
+          .normalize('NFD')
+          .replace(/[\u0300-\u036f]/g, '')
+          .replace(/đ/g, 'd')
+          .replace(/Đ/g, 'D')
+    );
   },
 });
 var upload = multer({

@@ -3,6 +3,7 @@ const auth = require('../../middlewares/auth');
 const validate = require('../../middlewares/validate');
 const translateValidation = require('../../validations/translate.validation');
 const translateController = require('../../controllers/translate.controller');
+const { authJwt } = require('../../middlewares/jwtAuth');
 
 const router = express.Router();
 
@@ -21,6 +22,13 @@ router
   .route('/projectid/:projectId')
   .get(auth(''), validate(translateValidation.getWordsTrans), translateController.getWordsTransByProjectID);
 
+router.post(
+  '/machine-translate/sentence',
+  validate(translateValidation.translateMachineSentence),
+  translateController.translateMachineSentence
+);
+router.post('/dictionary', validate(translateValidation.getWordDictionary), translateController.getWordDictionary);
+router.post('/fuzzy-matching', validate(translateValidation.fuzzyMatching), translateController.fuzzyMatching);
 module.exports = router;
 
 /**

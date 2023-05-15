@@ -1,8 +1,24 @@
 const httpStatus = require('http-status');
 const catchAsync = require('../utils/catchAsync');
 const { authService, userService, tokenService, emailService } = require('../services');
+const generateImage = require('../utils/generate.image');
+const publicURL = require('../../get_url');
+const { uploadFile } = require('../utils/upload.file');
 
 const register = catchAsync(async (req, res) => {
+  req.body.userId = await userService.randomIdUser();
+  const textImage = req.body.name
+    .split(' ')
+    .map((item) => item.slice(0, 1))
+    .join('')
+    .slice(0, 4)
+    .toUpperCase();
+  await generateImage(textImage, `user-${req.body.userId}`);
+  const dataUpload = await uploadFile(
+    `${publicURL}/generate-image/user-${req.body.userId}.png`,
+    `user-${req.body.userId}.png`
+  );
+  req.body.avatar = dataUpload.Location;
   const user = await userService.createUser(req.body);
   const tokens = await tokenService.generateAuthTokens(user);
   res.status(httpStatus.CREATED).send({ user, tokens });
@@ -10,6 +26,7 @@ const register = catchAsync(async (req, res) => {
 
 const login = catchAsync(async (req, res) => {
   const { email, password } = req.body;
+
   const user = await authService.loginUserWithEmailAndPassword(email, password);
   const tokens = await tokenService.generateAuthTokens(user);
   res.send({ user, tokens });
@@ -47,6 +64,10 @@ const verifyEmail = catchAsync(async (req, res) => {
   res.status(httpStatus.NO_CONTENT).send();
 });
 
+const checkTokenValid = catchAsync(async (req, res) => {
+  res.status(httpStatus.OK).send({ data: true, user: req.user });
+});
+
 module.exports = {
   register,
   login,
@@ -56,4 +77,5 @@ module.exports = {
   resetPassword,
   sendVerificationEmail,
   verifyEmail,
+  checkTokenValid,
 };

@@ -3,23 +3,33 @@ const auth = require('../../middlewares/auth');
 const validate = require('../../middlewares/validate');
 const projectValidation = require('../../validations/project.validation');
 const projectController = require('../../controllers/project.controller');
+const { authJwt } = require('../../middlewares/jwtAuth');
+const upload = require('../../middlewares/multer');
 
 const router = express.Router();
 
 router
   .route('/')
-  .post(auth(''), validate(projectValidation.createProject), projectController.createProject)
-  .get(auth(''), validate(projectValidation.getProjects), projectController.getProjects);
+  .post(authJwt(), validate(projectValidation.createProject), projectController.createProject)
+  .get(authJwt(), validate(projectValidation.getProjects), projectController.getProjects);
+router.post('/upload-file', authJwt(), upload.array('files', 5), projectController.uploadFileToProject);
+router.get('/sort', projectController.getSortProject);
+router.route('/detail/:slug').get(authJwt(''), validate(projectValidation.getProject), projectController.getDetailProject);
+router.post(
+  '/open-file-of-project',
+  validate(projectValidation.openFileOfProject),
+  authJwt(''),
+  projectController.openFileOfProject
+);
 
-router
-  .route('/objectid/:projectId')
-  .get(auth(''), validate(projectValidation.getProject), projectController.getProject)
-  .patch(auth(''), validate(projectValidation.updateProject), projectController.updateProject)
-  .delete(auth(''), validate(projectValidation.deleteProject), projectController.deleteProject);
+router.get('/get-role-of-project', projectController.getRoleOfProject);
 
-router
-  .route('/userid/:userId')
-  .get(auth(''), validate(projectValidation.getProjects), projectController.getProjectsByUserID);
+router.post(
+  '/add-member',
+  validate(projectValidation.addMemberToProject),
+  authJwt(''),
+  projectController.addMemberToProject
+);
 
 module.exports = router;
 

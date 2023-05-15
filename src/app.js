@@ -13,6 +13,8 @@ const { authLimiter } = require('./middlewares/rateLimiter');
 const routes = require('./routes/v1');
 const { errorConverter, errorHandler } = require('./middlewares/error');
 const ApiError = require('./utils/ApiError');
+const publicURL = require('../get_url');
+const path = require('path');
 
 const app = express();
 
@@ -45,7 +47,7 @@ app.options('*', cors());
 app.use(passport.initialize());
 passport.use('jwt', jwtStrategy);
 
-//app.use(express.static(path.join(__dirname, '/upload'))) // public
+app.use(express.static('generate-image'));
 
 // limit repeated failed requests to auth endpoints
 if (config.env === 'production') {

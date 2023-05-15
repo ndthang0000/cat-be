@@ -79,6 +79,15 @@ const deleteUserById = async (userId) => {
   return user;
 };
 
+const randomIdUser = async () => {
+  const userId = 100000 + Math.floor(Math.random() * 100000);
+  const findExist = await User.findOne({ userId });
+  if (findExist) {
+    return randomIdUser();
+  }
+  return userId;
+};
+
 module.exports = {
   createUser,
   queryUsers,
@@ -86,4 +95,5 @@ module.exports = {
   getUserByEmail,
   updateUserById,
   deleteUserById,
+  randomIdUser,
 };

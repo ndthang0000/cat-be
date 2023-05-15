@@ -2,18 +2,138 @@ const httpStatus = require('http-status');
 const pick = require('../utils/pick');
 const ApiError = require('../utils/ApiError');
 const catchAsync = require('../utils/catchAsync');
-const { projectService } = require('../services');
+const { projectService, memberService, userService } = require('../services');
+const { PROJECT_ROLE } = require('../constants/status');
+const { uploadFile } = require('../utils/upload.file');
+const { sentenceTokenizeFromFileDocx } = require('../python');
+const { readFileWord } = require('../readfile/readfileWord');
+const logger = require('../config/logger');
+const { SORT_PROJECT } = require('../constants/sort');
+const ObjectId = require('mongoose').Types.ObjectId;
 
 const createProject = catchAsync(async (req, res) => {
+  req.body.userId = req.user.userId;
+  const members = [
+    {
+      userId: req.user._id,
+      role: PROJECT_ROLE.PROJECT_MANAGER,
+    },
+  ];
+  req.body.members = members;
   const project = await projectService.createProject(req.body);
+  // const createJoinMember = await memberService.createNewMember({
+  //   role: PROJECT_ROLE.OWNER,
+  //   userId: req.user._id
+  // })
+  // project.allMember.push(createJoinMember?._id)
+  // await project.save()
   res.status(httpStatus.CREATED).send(project);
 });
 
 const getProjects = catchAsync(async (req, res) => {
-  const filter = pick(req.query, ['name', 'role']);
+  const { _id, userId } = req.user;
+  const filters = pick(req.query, ['search', 'type']);
   const options = pick(req.query, ['sortBy', 'limit', 'page']);
-  const result = await projectService.queryProjects(filter, options);
+  const lastFilter = {};
+  if (filters.type == 'All') {
+    lastFilter.members = { $elemMatch: { userId: _id } };
+  } else if (filters.type == 'Individual') {
+    lastFilter.userId = userId;
+  }
+  if (filters.search) {
+    lastFilter.$or = [{ projectName: { $regex: filters.search } }, { description: { $regex: filters.search } }];
+  }
+  const result = await projectService.queryProjects(lastFilter, options);
   res.send(result);
+});
+
+const getDetailProject = catchAsync(async (req, res) => {
+  const slug = pick(req.params, ['slug']);
+  const result = await projectService.getDetailProject(slug);
+  res.send(result);
+});
+
+const openFileOfProject = catchAsync(async (req, res) => {
+  const { slug, fileId } = req.body;
+  const options = pick(req.query, ['limit', 'page']);
+  const filter = pick(req.query, ['status']);
+  const { _id } = req.user;
+  const findProject = await projectService.getProjectBySlug(slug);
+  if (!findProject) {
+    return res.status(200).json({ status: false, message: `Project invalid` });
+  }
+  const checkPermission = projectService.checkPermissionOfUser(findProject, _id, PROJECT_ROLE.GUEST);
+  if (!checkPermission.status) {
+    return res.send(checkPermission);
+  }
+  if (findProject.files.filter((item) => String(item) == fileId).length == 0) {
+    return res.status(200).json({ status: false, message: `File not belong to project [${findProject.name}]` });
+  }
+  const findFile = await projectService.getOneFileOfProjectById(fileId);
+  if (!findFile) {
+    return res.status(200).json({ status: false, message: `File not found` });
+  }
+  if (!findFile.isTokenizeSentence) {
+    const text = await readFileWord(findFile.uniqueNameFile);
+    try {
+      const dataSentence = await sentenceTokenizeFromFileDocx(['sent_from_file', findFile.uniqueNameFile]);
+      const dataInsertDB = dataSentence.map((item, index) => {
+        return {
+          projectId: findProject._id,
+          fileId,
+          textSrc: item,
+          index: index + 1,
+        };
+      });
+      const results = await projectService.createManySentenceOfFileOfProject(dataInsertDB);
+      findFile.isTokenizeSentence = true;
+      await findFile.save();
+      const dataPaginate = await projectService.getPaginateSentenceOfFile(
+        { projectId: findProject._id, fileId, ...filter },
+        options
+      );
+      return res.status(200).json({ status: true, data: dataPaginate, project: findProject });
+    } catch (error) {
+      logger.error(`ERR Tokenize or Readfile ${error.message}: fileId: ${findFile._id}`);
+      return res.send({ status: false, message: 'Something went wrong with this file' });
+    }
+  }
+  const data = await projectService.getPaginateSentenceOfFile({ projectId: findProject._id, fileId, ...filter }, options);
+  res.send({ status: true, data, project: findProject });
+});
+
+const uploadFileToProject = catchAsync(async (req, res) => {
+  const { projectId } = req.body;
+  const { _id } = req.user;
+  if (!projectId) {
+    return res.send({ status: false, message: 'Project Id is required' });
+  }
+  if (!ObjectId.isValid(projectId)) {
+    return res.send({ status: false, message: 'Project Id is invalid' });
+  }
+  const findProject = await projectService.getProjectById(projectId);
+  if (!findProject) {
+    return res.send({ status: false, message: 'Project not found' });
+  }
+  // check quyền của user có đủ ko
+  const checkPermission = projectService.checkPermissionOfUser(findProject, _id, PROJECT_ROLE.PROJECT_MANAGER);
+  if (!checkPermission.status) {
+    return res.send(checkPermission);
+  }
+
+  for (let i = 0; i < req.files.length; i++) {
+    console.log(req.files[i]);
+    const dataUpload = await uploadFile(req.files[i].path, 'files/' + req.files[i].filename);
+    const insertFile = await projectService.createNewFileToProject({
+      description: `Let's add description`,
+      url: dataUpload.Location,
+      nameFile: req.files[i].originalname,
+      uniqueNameFile: req.files[i].filename,
+    });
+    findProject.files.push(insertFile._id);
+  }
+  await findProject.save();
+  res.send({ status: true, message: `Upload ${req.files.length} to project` });
 });
 
 const getProjectsByUserID = catchAsync(async (req, res) => {
@@ -42,6 +162,38 @@ const deleteProject = catchAsync(async (req, res) => {
   res.status(httpStatus.NO_CONTENT).send();
 });
 
+const getSortProject = catchAsync(async (req, res) => {
+  res.status(httpStatus.OK).send({ status: true, data: SORT_PROJECT });
+});
+
+const getRoleOfProject = catchAsync(async (req, res) => {
+  res.status(httpStatus.OK).send({ status: true, data: Object.values(PROJECT_ROLE) });
+});
+
+const addMemberToProject = catchAsync(async (req, res) => {
+  const { email, projectId, role } = req.body;
+  const findUser = await userService.getUserByEmail(email);
+  if (!findUser) {
+    return res.status(200).json({ status: false, message: `User [${email}] not exit in system` });
+  }
+  const { _id } = req.user;
+  const findProject = await projectService.getProjectById(projectId);
+  if (!findProject) {
+    return res.status(200).json({ status: false, message: `Project invalid` });
+  }
+  const checkPermission = projectService.checkPermissionOfUser(findProject, _id, PROJECT_ROLE.PROJECT_MANAGER);
+  if (!checkPermission.status) {
+    return res.send(checkPermission);
+  }
+
+  findProject.members.push({
+    userId: findUser._id,
+    role,
+  });
+  await findProject.save();
+  res.status(httpStatus.OK).send({ status: true, data: Object.values(PROJECT_ROLE) });
+});
+
 module.exports = {
   createProject,
   getProjects,
@@ -49,4 +201,10 @@ module.exports = {
   getProject,
   updateProject,
   deleteProject,
+  getDetailProject,
+  uploadFileToProject,
+  openFileOfProject,
+  getSortProject,
+  getRoleOfProject,
+  addMemberToProject,
 };

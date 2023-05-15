@@ -1,5 +1,6 @@
 const Joi = require('joi');
 const { objectId } = require('./custom.validation');
+const LANGUAGE = require('../constants/language');
 
 const createWordTrans = {
   body: Joi.object().keys({
@@ -42,10 +43,34 @@ const deleteWordTrans = {
   }),
 };
 
+const translateMachineSentence = {
+  body: Joi.object().keys({
+    sentence: Joi.string().required(),
+    target: Joi.string()
+      .valid(...Object.values(LANGUAGE))
+      .default(LANGUAGE.VI),
+  }),
+};
+
+const getWordDictionary = {
+  body: Joi.object().keys({
+    word: Joi.string().required(),
+  }),
+};
+
+const fuzzyMatching = {
+  body: Joi.object().keys({
+    sentence: Joi.string().required(),
+  }),
+};
+
 module.exports = {
   createWordTrans,
   getWordsTrans,
   getWordTrans,
   updateWordTrans,
   deleteWordTrans,
+  translateMachineSentence,
+  getWordDictionary,
+  fuzzyMatching,
 };

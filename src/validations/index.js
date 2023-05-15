@@ -5,3 +5,4 @@ module.exports.translateValidation = require('./translate.validation');
 module.exports.projectValidation = require('./project.validation');
 module.exports.dictionaryValidation = require('./dictionary.validation');
 module.exports.TranslationMemoryValidation = require('./translationmemory.validation');
+module.exports.activityValidation = require('./activity.validation');

@@ -11,6 +11,7 @@ const logger = require('../config/logger');
 const { SORT_PROJECT } = require('../constants/sort');
 const LANGUAGE = require('../constants/language');
 const ObjectId = require('mongoose').Types.ObjectId;
+const { tokenizeSentence } = require('../utils/sentence.tokenize');
 
 const createProject = catchAsync(async (req, res) => {
   req.body.userId = req.user.userId;
@@ -78,8 +79,10 @@ const openFileOfProject = catchAsync(async (req, res) => {
   }
   if (!findFile.isTokenizeSentence) {
     const text = await readFileWord(findFile.uniqueNameFile);
+    console.log(text.replace(/(\r\n|\n|\r)/gm, ' '));
     try {
-      const dataSentence = await sentenceTokenizeFromFileDocx(['sent_from_file', findFile.uniqueNameFile]);
+      const dataSentence = tokenizeSentence(String(findFile._id), text.replace(/(\r\n|\n|\r)/gm, '. '));
+      console.log(dataSentence);
       const dataInsertDB = dataSentence.map((item, index) => {
         return {
           projectId: findProject._id,

@@ -27,6 +27,7 @@ const envVarsSchema = Joi.object()
     S3_SECRET_KEY: Joi.string(),
     S3_URI: Joi.string(),
     BE_DOMAIN: Joi.string(),
+    PYTHON_DOMAIN: Joi.string(),
   })
   .unknown();
 
@@ -72,5 +73,6 @@ module.exports = {
   },
   domain: {
     beDomain: envVars.BE_DOMAIN,
+    pythonDomain: envVars.PYTHON_DOMAIN,
   },
 };

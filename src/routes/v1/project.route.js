@@ -32,6 +32,8 @@ router.post(
   projectController.addMemberToProject
 );
 
+router.post('/update', validate(projectValidation.updateProject), authJwt(''), projectController.updateProject);
+
 module.exports = router;
 
 /**

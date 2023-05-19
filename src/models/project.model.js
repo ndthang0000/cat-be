@@ -70,6 +70,8 @@ const projectSchema = mongoose.Schema(
     priority: {
       type: Number,
       default: 1, // 1-> 5 normal -> urgent
+      min: 1,
+      max: 5,
     },
   },
   {

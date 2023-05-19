@@ -159,8 +159,17 @@ const getProject = catchAsync(async (req, res) => {
 });
 
 const updateProject = catchAsync(async (req, res) => {
-  const project = await projectService.updateProjectById(req.params.projectId, req.body);
-  res.send(project);
+  const { _id } = req.body;
+  const project = await projectService.getProjectById(_id);
+  if (!project) {
+    return res.status(200).json({ status: false, message: `Not found project, please contact support` });
+  }
+  delete req.body._id;
+  Object.assign(project, req.body);
+  await project.save();
+  return res
+    .status(200)
+    .json({ status: true, data: project, message: `Update Information for project <${project.projectName}> successfully` });
 });
 
 const deleteProject = catchAsync(async (req, res) => {

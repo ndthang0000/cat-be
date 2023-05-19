@@ -5,4 +5,4 @@ module.exports.translateController = require('./translate.controller');
 module.exports.projectController = require('./project.controller');
 module.exports.dictionaryController = require('./dictionary.controller');
 module.exports.TranslationMemoryController = require('./translationmemory.controller');
-// module.exports.translationMachineController = require('./translationmachine.controller')
+module.exports.activityController = require('./activity.controller');

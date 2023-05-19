@@ -41,6 +41,10 @@ const defaultRoutes = [
     path: '/dictionaries',
     route: dictionaryRoute,
   },
+  {
+    path: '/activities',
+    route: activityRoute,
+  },
 ];
 
 const devRoutes = [

@@ -8,3 +8,4 @@ module.exports.projectService = require('./project.service');
 module.exports.memberService = require('./member.service');
 module.exports.dictionaryService = require('./dictionary.service');
 module.exports.TranslationMemoryService = require('./translationmemory.service');
+module.exports.activityService = require('./activity.service');

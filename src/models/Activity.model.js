@@ -17,6 +17,9 @@ const ActivitySchema = mongoose.Schema(
     projectId: {
       type: String,
     },
+    fileId: {
+      type: String,
+    },
   },
   {
     timestamps: true,

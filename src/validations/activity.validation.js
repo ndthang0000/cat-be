@@ -6,7 +6,8 @@ const createActivity = {
     comment: Joi.string(),
     userId: Joi.string().required(),
     action: Joi.string().required(),
-    projectId: Joi.string().required(),
+    projectId: Joi.string(),
+    fileId: Joi.string(),
   }),
 };
 
@@ -16,6 +17,7 @@ const getActivities = {
     userId: Joi.string(),
     action: Joi.string(),
     projectId: Joi.string(),
+    fileId: Joi.string(),
   }),
 };
 
@@ -31,10 +33,18 @@ const updateActivity = {
   }),
   body: Joi.object()
     .keys({
+<<<<<<< Updated upstream
         comment: Joi.string(),
         userId: Joi.string().required(),
         action: Joi.string().required(),
         projectId: Joi.string().required(),
+=======
+      comment: Joi.string(),
+      userId: Joi.string().required(),
+      action: Joi.string().required(),
+      projectId: Joi.string(),
+      fileId: Joi.string(),
+>>>>>>> Stashed changes
     })
     .min(1),
 };

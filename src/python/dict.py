@@ -4,9 +4,9 @@ from bs4 import BeautifulSoup
 import requests
 
 
-def get_translate(inputtext):
+def get_translate(languageToLanguage,inputtext):
     try:
-        url = 'https://dictionary.cambridge.org/vi/dictionary/english-vietnamese/'+inputtext
+        url = 'https://dictionary.cambridge.org/vi/dictionary/'+languageToLanguage+'/'+inputtext
         user_agent = "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/102.0.5005.63 Safari/537.36"
         headers = {'User-Agent': user_agent}
         web_request = requests.get(url, headers=headers)
@@ -58,7 +58,9 @@ def get_translate(inputtext):
         for i in range(len(a)):
             result = a[i].find_all("span", class_="trans dtrans")
             if len(result) == 0:
-                continue
+                result = a[i].find_all("span", class_="trans dtrans dtrans-se")
+                if len(result) == 0:
+                    continue
             for j in range(len(result)):
                 allresult[i]['meaning'].append(result[j].text)
         #print(allresult)
@@ -79,5 +81,11 @@ def get_translate(inputtext):
         return None
 
 
-test = get_translate("heroin")
+test = get_translate("english-french","example")
 print(test)
+#print(test[0]['terms'][0])
+#print(test[0]['example'][0])
+#print(test[0]['meaning'][0])
+#print(test[1]['example'][1])
+#test= get_translate("helpless")
+#print(test)

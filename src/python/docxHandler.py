@@ -5,12 +5,13 @@ import docx
 from deep_translator import GoogleTranslator
 from underthesea import word_tokenize
 from underthesea import sent_tokenize
+import pandas as pd
+import numpy as np
+import sys
+
 #from google.cloud import translate_v2 as translate
 import translators as ts
 #translation = ts.translate_text(para.text, to_language=target_language)
-import sys
-import os
-import docx2txt
 # deep_translator dung gg API
 
 # ---------------------------------------------------------
@@ -19,12 +20,25 @@ import docx2txt
 
 def sent_from_file(filename):
     docx_file = docx.Document(r"uploads/"+filename)
+    
+    #sent from paragraph
     sent = []
     for paragraph in docx_file.paragraphs:
         text = paragraph.text
         sent_Vi = sent_tokenize(text)
         sent = sent + sent_Vi
-    return sent
+    
+    #sent from table
+    df = pd.DataFrame()
+    tables = docx_file.tables[0]
+    ##Getting the original data from the document to a list
+    ls =[]
+    for row in tables.rows:
+        for cell in row.cells:
+            for paragraph in cell.paragraphs:
+                ls.append(paragraph.text)
+    
+    return sent + ls
 
 
 # ---------------------------------------------------------
@@ -32,7 +46,9 @@ def sent_from_file(filename):
 def translate_sent(sent_byte, language):
     # byte=sent_byte.encode('latin-1').decode('utf-8').encode('utf-8')
     # sent=byte.decode('utf-8')
-    translated_text = ts.translate_text(sent_byte, to_language=language)
+    
+    #translated_text = ts.translate_text(sent_byte, to_language=language)
+    translated_text = GoogleTranslator(source='auto', target=language).translate(sent_byte)
     return translated_text
 
 
@@ -45,55 +61,6 @@ def translate_sents(sents, language):
         translated_sents.append(translated_sent)
     return translated_sents
 
-# ---------------------------------------------------------
-# function 4: tao file moi
-
-
-def translate_docx_file(docx_file, target_language):
-    # Load the original DOCX file
-    doc = docx.Document(docx_file)
-    all_paras = doc.paragraphs
-    print(len(all_paras))
-    # Create a new document to store the translated text
-    new_doc = docx.Document()
-
-    # Iterate through each paragraph in the original document
-    for para in doc.paragraphs:
-        # Translate the text of the paragraph to the target language
-        para.is_
-        print(para.text)
-        print(len(para.text))
-        if len(para.text) > 5:
-            translation = ts.translate_text(
-                para.text, to_language=target_language)
-            print(translation)
-            # Create a new paragraph in the new document with the translated text
-            new_para = new_doc.add_paragraph(translation)
-
-        else:
-            print("empty")
-            new_para = new_doc.add_paragraph(para)
-
-        # Copy any formatting from the original paragraph to the new paragraph
-        new_para.style = para.style
-
-    # Iterate through each table in the original document
-    for table in doc.tables:
-        # Create a new table in the new document with the same number of rows and columns as the original table
-        new_table = new_doc.add_table(
-            rows=len(table.rows), cols=len(table.columns))
-
-        # Iterate through each cell in the original table and copy its contents to the corresponding cell in the new table
-        for i, row in enumerate(table.rows):
-            for j, cell in enumerate(row.cells):
-                new_table.cell(i, j).text = cell.text
-
-    # Save the new document as a DOCX file with the same name as the original file, but with "_translated" appended to the end
-    new_doc.save(docx_file[:-5] + '_translated.docx')
-
-# ---------------------------------------------------------
-# translate_docx_file("uploads/vi.docx","vi")
-# ---------------------------------------------------------
 
 
 def main():
@@ -178,37 +145,3 @@ for paragraph in doc.paragraphs:
 '''
 # test
 
-#filename = "Hello.docx"
-# language="vi"
-#sent = sent_from_file(filename)
-# print(sent)
-# print("-------------------------------------------------")
-#sent='Cuộc phản công mùa xuân thành công sẽ quyết định vận mệnh cuộc chiến'
-'''
-sent="tôi đi học"
-print(sent.encode('utf-8'))
-
-print("-------------------------------------------------")
-print("bạn bị cái lỗi này: ")
-sent_1 = 't\xc3\xb4i \xc4\x91i h\xe1\xbb\x8dc'
-print(sent_1)
-
-print("-------------------------------------------------")
-print("đây là cách fix lỗi:")
-byte_string_with_b = sent_1.encode('latin-1').decode('utf-8').encode('utf-8')
-print(byte_string_with_b)
-print(byte_string_with_b.decode('utf-8'))
-
-'''
-
-
-#sent='t\xc3\xb4i \xc4\x91i h\xe1\xbb\x8dc'
-#translated_sent = translate_sent(sent,language)
-# print(translated_sent)
-
-# enc=translated_sent.encode('utf-8')
-#byte_string = "M\xe1\xbb\x99t cu\xe1\xbb\x99c ph\xe1\xba\xa3n c\xc3\xb4ng m\xc3\xb9a xu\xc3\xa2n th\xc3\xa0nh c\xc3\xb4ng s\xe1\xba\xbd quy\xe1\xba\xbft \xc4\x91\xe1\xbb\x8bnh s\xe1\xbb\x91 ph\xe1\xba\xadn c\xe1\xbb\xa7a cu\xe1\xbb\x99c chi\xe1\xba\xbfn"
-
-#byte_string_with_b = byte_string.encode('latin-1').decode('utf-8').encode('utf-8')
-# print(byte_string_with_b)
-# print(byte_string_with_b.decode('utf-8'))

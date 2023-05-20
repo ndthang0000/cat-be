@@ -2,7 +2,7 @@ const httpStatus = require('http-status');
 const pick = require('../utils/pick');
 const ApiError = require('../utils/ApiError');
 const catchAsync = require('../utils/catchAsync');
-const { projectService, memberService, userService } = require('../services');
+const { projectService, memberService, userService, activityService } = require('../services');
 const { PROJECT_ROLE } = require('../constants/status');
 const { uploadFile } = require('../utils/upload.file');
 const { sentenceTokenizeFromFileDocx } = require('../python');
@@ -12,6 +12,7 @@ const { SORT_PROJECT } = require('../constants/sort');
 const LANGUAGE = require('../constants/language');
 const ObjectId = require('mongoose').Types.ObjectId;
 const { tokenizeSentence } = require('../utils/sentence.tokenize');
+const ACTIVITY = require('../constants/activity');
 
 const createProject = catchAsync(async (req, res) => {
   req.body.userId = req.user.userId;
@@ -29,6 +30,16 @@ const createProject = catchAsync(async (req, res) => {
   // })
   // project.allMember.push(createJoinMember?._id)
   // await project.save()
+  const activityCreateProject = [
+    {
+      comment: 'create project',
+      userId: project.userId,
+      action: ACTIVITY.CREATE_PROJECT,
+      projectId: project._id,
+      fileId: '',
+    }
+  ]
+  await activityService.createActivity(activityCreateProject);
   res
     .status(httpStatus.CREATED)
     .send({ data: project, status: true, message: `Congratulation, Create Project ${project.projectName} successfully!!` });
@@ -137,6 +148,15 @@ const uploadFileToProject = catchAsync(async (req, res) => {
       uniqueNameFile: req.files[i].filename,
     });
     findProject.files.push(insertFile._id);
+    const activityUploadFile = [
+      {
+        comment: 'upload file',
+        userId: '',
+        action: ACTIVITY.UPLOAD_FILE,
+        projectId: '',
+      }
+    ]
+    await activityService.createActivity(activityUploadFile);
   }
   await findProject.save();
   res.send({ status: true, message: `Upload ${req.files.length} to project` });
@@ -167,6 +187,15 @@ const updateProject = catchAsync(async (req, res) => {
   delete req.body._id;
   Object.assign(project, req.body);
   await project.save();
+  const activityUpdateProject = [
+    {
+      comment: 'update project',
+      userId: project.userId,
+      action: ACTIVITY.UPDATE_PROJECT,
+      projectId: project._id,
+    }
+  ]
+  await activityService.createActivity(activityUpdateProject);
   return res
     .status(200)
     .json({ status: true, data: project, message: `Update Information for project <${project.projectName}> successfully` });
@@ -210,6 +239,15 @@ const addMemberToProject = catchAsync(async (req, res) => {
     role,
   });
   await findProject.save();
+  const activityAddMember = [
+    {
+      comment: 'add member',
+      userId: findUser._id,
+      action: ACTIVITY.ADD_MEMBER,
+      projectId: projectId,
+    }
+  ]
+  await activityService.createActivity(activityAddMember);
   res.status(httpStatus.OK).send({ status: true, data: Object.values(PROJECT_ROLE) });
 });
 

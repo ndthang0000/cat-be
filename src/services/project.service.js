@@ -1,12 +1,11 @@
 const httpStatus = require('http-status');
-const { Project, User, File, Sentence, Activity } = require('../models');
+const { Project, User, File, Sentence } = require('../models');
 const ApiError = require('../utils/ApiError');
 const generateImage = require('../utils/generate.image');
 const config = require('../config/config');
 const { uploadFile } = require('../utils/upload.file');
 const publicURL = require('../../get_url');
 const { PROJECT_ROLE, getOneNumberRoleProject } = require('../constants/status');
-const ACTIVITY = require('../') = require('../constants/activity');
 
 /**
  * Create a project
@@ -19,13 +18,6 @@ const createProject = async (projectBody) => {
   const dataUpload = await uploadFile(`${publicURL}/generate-image/${data.slug}.png`, `${data.slug}.png`);
   data.image = dataUpload.Location;
   await data.save();
-  const activity = await new Activity();
-  activity.userId = data.userId;
-  activity.projectId = data.id;
-  activity.fileId = '';
-  activity.action = ACTIVITY.CREATE_PROJECT;
-  activity.comment = 'create project';
-  await activity.save();
   return data;
 };
 
@@ -135,15 +127,7 @@ const deleteProjectById = async (projectID) => {
 };
 
 const createNewFileToProject = async (body) => {
-  const data = await File.create(body);
-  const activity = await new Activity();
-  activity.userId = data.userId;
-  activity.fileId = data.id;
-  activity.projectId = '';
-  activity.action = ACTIVITY.UPLOAD_FILE;
-  activity.comment = 'create project';
-  await activity.save();
-  return data;
+  return await File.create(body);
 };
 
 const createManySentenceOfFileOfProject = async (data) => {

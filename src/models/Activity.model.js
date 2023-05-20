@@ -1,6 +1,6 @@
 const mongoose = require('mongoose');
 const { toJSON, paginate, paginateAgg } = require('./plugins');
-const ACTIVITY = require('../constants/activity');
+
 
 const ActivitySchema = mongoose.Schema(
   {
@@ -15,9 +15,6 @@ const ActivitySchema = mongoose.Schema(
       enum: Object.values(ACTIVITY),
     },
     projectId: {
-      type: String,
-    },
-    fileId: {
       type: String,
     },
   },

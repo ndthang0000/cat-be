@@ -204,11 +204,39 @@ const addMemberToProject = catchAsync(async (req, res) => {
   if (!checkPermission.status) {
     return res.send(checkPermission);
   }
+  if (findProject.members.find((member) => member.userId == findUser.id)) {
+    return res.status(200).json({ status: false, message: 'This member already exists' });
+  }
 
   findProject.members.push({
     userId: findUser._id,
     role,
   });
+  await findProject.save();
+  res.status(httpStatus.OK).send({ status: true, data: Object.values(PROJECT_ROLE) });
+});
+
+const removeMemberFromProject = catchAsync(async (req, res) => {
+  const { id, projectId } = req.body;
+
+  const findProject = await projectService.getProjectById(projectId);
+  if (!findProject) {
+    return res.status(200).json({ status: false, message: `Project invalid` });
+  }
+
+  const { _id } = req.user;
+  const checkPermission = projectService.checkPermissionOfUser(findProject, _id, PROJECT_ROLE.PROJECT_MANAGER);
+  if (!checkPermission.status) {
+    return res.send(checkPermission);
+  }
+
+  // const findMember = await projectService.getMemberById(id);
+  const findMember = findProject.members.find((member) => member._id == id);
+  if (!findMember) {
+    return res.status(200).json({ status: false, message: 'This ID does not belong to any member' });
+  }
+
+  findProject.members = findProject.members.filter((member) => member._id != id);
   await findProject.save();
   res.status(httpStatus.OK).send({ status: true, data: Object.values(PROJECT_ROLE) });
 });
@@ -226,5 +254,6 @@ module.exports = {
   getSortProject,
   getRoleOfProject,
   addMemberToProject,
+  removeMemberFromProject,
   getAllLanguageOfSystem,
 };

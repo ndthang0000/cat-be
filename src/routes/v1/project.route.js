@@ -32,6 +32,13 @@ router.post(
   projectController.addMemberToProject
 );
 
+router.post(
+  '/remove-member',
+  validate(projectValidation.removeMemberFromProject),
+  authJwt(''),
+  projectController.removeMemberFromProject
+);
+
 router.post('/update', validate(projectValidation.updateProject), authJwt(''), projectController.updateProject);
 
 module.exports = router;

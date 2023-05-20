@@ -1,7 +1,6 @@
 const httpStatus = require('http-status');
 const { Activity } = require('../models');
 const ApiError = require('../utils/ApiError');
-const ACTIVITY = require('../') = require('../constants/activity');
 
 /**
  * Create a project
@@ -11,14 +10,7 @@ const ACTIVITY = require('../') = require('../constants/activity');
 const createActivity = async (activityBody) => {
   return await new Activity(activityBody).save();
 }
-await data.save();
-const activity = await new Activity();
-activity.userId = data.userId;
-activity.fileId = '';
-activity.projectId = '';
-activity.action = ACTIVITY.ADD_MEMBER;
-activity.comment = 'add new member';
-await activity.save();
+
 /**
  * Query for activities
  * @param {Object} filter - Mongo filter

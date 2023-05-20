@@ -6,6 +6,7 @@ const translateRoute = require('./translate.route');
 const projectRoute = require('./project.route');
 const translationMemoryRoute = require('./translationmemory.route');
 const dictionaryRoute = require('./dictionary.route');
+const activityRoute = require('./activity.route');
 // const translationMachineRoute = require('./translationmachine.route');
 const docsRoute = require('./docs.route');
 const config = require('../../config/config');

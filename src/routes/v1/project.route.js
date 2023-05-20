@@ -23,6 +23,7 @@ router.post(
 );
 
 router.get('/get-role-of-project', projectController.getRoleOfProject);
+router.get('/get-language-of-system', projectController.getAllLanguageOfSystem);
 
 router.post(
   '/add-member',
@@ -30,6 +31,8 @@ router.post(
   authJwt(''),
   projectController.addMemberToProject
 );
+
+router.post('/update', validate(projectValidation.updateProject), authJwt(''), projectController.updateProject);
 
 module.exports = router;
 

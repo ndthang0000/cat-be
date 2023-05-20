@@ -4,6 +4,8 @@ const ApiError = require('../utils/ApiError');
 const catchAsync = require('../utils/catchAsync');
 const { translateService } = require('../services');
 const { translating } = require('../python');
+const config = require('../config/config');
+const axios = require('axios');
 
 const createWordTrans = catchAsync(async (req, res) => {
   const word = await translateService.createWordTrans(req.body);
@@ -43,65 +45,19 @@ const deleteWordTrans = catchAsync(async (req, res) => {
   res.status(httpStatus.NO_CONTENT).send();
 });
 
-function Utf8ArrayToStr(array) {
-  var out, i, len, c;
-  var char2, char3, char4;
-
-  out = '';
-  len = array.length;
-  i = 0;
-  while (i < len) {
-    c = array[i++];
-    switch (c >> 4) {
-      case 0:
-      case 1:
-      case 2:
-      case 3:
-      case 4:
-      case 5:
-      case 6:
-      case 7:
-        // 0xxxxxxx
-        out += String.fromCharCode(c);
-        break;
-      case 12:
-      case 13:
-        // 110x xxxx   10xx xxxx
-        char2 = array[i++];
-        out += String.fromCharCode(((c & 0x1f) << 6) | (char2 & 0x3f));
-        break;
-      case 14:
-        // 1110 xxxx  10xx xxxx  10xx xxxx
-        char2 = array[i++];
-        char3 = array[i++];
-        out += String.fromCharCode(((c & 0x0f) << 12) | ((char2 & 0x3f) << 6) | ((char3 & 0x3f) << 0));
-        break;
-      case 15:
-        // 1111 0xxx 10xx xxxx 10xx xxxx 10xx xxxx
-        char2 = array[i++];
-        char3 = array[i++];
-        char4 = array[i++];
-        out += String.fromCodePoint(((c & 0x07) << 18) | ((char2 & 0x3f) << 12) | ((char3 & 0x3f) << 6) | (char4 & 0x3f));
-
-        break;
-    }
-
-    return out;
-  }
-}
-
 const translateMachineSentence = catchAsync(async (req, res) => {
   const { sentence, target } = req.body;
   // call python machine  translate
-  const data = await translating(['translate_sent', Buffer.from(sentence, 'utf-8'), target]);
-  const text = data[0].slice(2, -1);
-  console.log(text);
-  const bufferText = Buffer.from(text);
-  console.log('result= ', Utf8ArrayToStr(bufferText));
-  console.log(decodeURIComponent(escape('\xc4\x90\xc3\xa2y l\xc3\xa0 t\xc3\xbai c\xe1\xbb\xa7a t\xc3\xb4i')));
-  console.log(decodeURIComponent(escape(text)));
-  console.log('\xc4\x90\xc3\xa2y l\xc3\xa0 t\xc3\xbai c\xe1\xbb\xa7a t\xc3\xb4i');
-  res.send({ status: true, data: text });
+  // const data = await translating(['translate_sent', Buffer.from(sentence, 'utf-8'), target]);
+  // const text = data[0].slice(2, -1);
+  // console.log(text);
+  try {
+    const data = await axios.post(`${config.domain.pythonDomain}/translate-one-sentence`, { sentence, target });
+    res.status(200).json({ status: true, data: data.data.data });
+  } catch (error) {
+    res.status(200).json({ status: false, data: null });
+    console.log(error);
+  }
 });
 
 const getWordDictionary = catchAsync(async (req, res) => {

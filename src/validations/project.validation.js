@@ -57,17 +57,13 @@ const openFileOfProject = {
 };
 
 const updateProject = {
-  params: Joi.object().keys({
-    projectId: Joi.required().custom(objectId),
+  body: Joi.object().keys({
+    _id: Joi.string().required().custom(objectId),
+    priority: Joi.number(),
+    projectName: Joi.string(),
+    description: Joi.string(),
+    scope: Joi.string().valid(...Object.values(SCOPE)),
   }),
-  body: Joi.object()
-    .keys({
-      project_name: Joi.string().required(),
-      user_id: Joi.string().required(),
-      source_language: Joi.string().required(),
-      target_language: Joi.string().required(),
-    })
-    .min(1),
 };
 
 const deleteProject = {

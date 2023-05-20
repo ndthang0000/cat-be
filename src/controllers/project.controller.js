@@ -9,7 +9,9 @@ const { sentenceTokenizeFromFileDocx } = require('../python');
 const { readFileWord } = require('../readfile/readfileWord');
 const logger = require('../config/logger');
 const { SORT_PROJECT } = require('../constants/sort');
+const LANGUAGE = require('../constants/language');
 const ObjectId = require('mongoose').Types.ObjectId;
+const { tokenizeSentence } = require('../utils/sentence.tokenize');
 
 const createProject = catchAsync(async (req, res) => {
   req.body.userId = req.user.userId;
@@ -27,7 +29,9 @@ const createProject = catchAsync(async (req, res) => {
   // })
   // project.allMember.push(createJoinMember?._id)
   // await project.save()
-  res.status(httpStatus.CREATED).send(project);
+  res
+    .status(httpStatus.CREATED)
+    .send({ data: project, status: true, message: `Congratulation, Create Project ${project.projectName} successfully!!` });
 });
 
 const getProjects = catchAsync(async (req, res) => {
@@ -75,8 +79,10 @@ const openFileOfProject = catchAsync(async (req, res) => {
   }
   if (!findFile.isTokenizeSentence) {
     const text = await readFileWord(findFile.uniqueNameFile);
+    console.log(text.replace(/(\r\n|\n|\r)/gm, ' '));
     try {
-      const dataSentence = await sentenceTokenizeFromFileDocx(['sent_from_file', findFile.uniqueNameFile]);
+      const dataSentence = tokenizeSentence(String(findFile._id), text.replace(/(\r\n|\n|\r)/gm, '. '));
+      console.log(dataSentence);
       const dataInsertDB = dataSentence.map((item, index) => {
         return {
           projectId: findProject._id,
@@ -153,8 +159,17 @@ const getProject = catchAsync(async (req, res) => {
 });
 
 const updateProject = catchAsync(async (req, res) => {
-  const project = await projectService.updateProjectById(req.params.projectId, req.body);
-  res.send(project);
+  const { _id } = req.body;
+  const project = await projectService.getProjectById(_id);
+  if (!project) {
+    return res.status(200).json({ status: false, message: `Not found project, please contact support` });
+  }
+  delete req.body._id;
+  Object.assign(project, req.body);
+  await project.save();
+  return res
+    .status(200)
+    .json({ status: true, data: project, message: `Update Information for project <${project.projectName}> successfully` });
 });
 
 const deleteProject = catchAsync(async (req, res) => {
@@ -168,6 +183,10 @@ const getSortProject = catchAsync(async (req, res) => {
 
 const getRoleOfProject = catchAsync(async (req, res) => {
   res.status(httpStatus.OK).send({ status: true, data: Object.values(PROJECT_ROLE) });
+});
+
+const getAllLanguageOfSystem = catchAsync(async (req, res) => {
+  res.status(httpStatus.OK).send({ status: true, data: Object.values(LANGUAGE) });
 });
 
 const addMemberToProject = catchAsync(async (req, res) => {
@@ -207,4 +226,5 @@ module.exports = {
   getSortProject,
   getRoleOfProject,
   addMemberToProject,
+  getAllLanguageOfSystem,
 };

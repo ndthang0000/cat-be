@@ -23,10 +23,10 @@ const updateActivity = {
   }),
   body: Joi.object()
     .keys({
-        comment: Joi.string(),
-        userId: Joi.string().required(),
-        action: Joi.string().required(),
-        projectId: Joi.string().required(),
+      comment: Joi.string(),
+      userId: Joi.string().required(),
+      action: Joi.string().required(),
+      projectId: Joi.string().required(),
     })
     .min(1),
 };

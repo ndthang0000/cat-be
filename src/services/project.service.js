@@ -127,7 +127,7 @@ const deleteProjectById = async (projectID) => {
 };
 
 const createNewFileToProject = async (body) => {
-  return File.create(body);
+  return await File.create(body);
 };
 
 const createManySentenceOfFileOfProject = async (data) => {

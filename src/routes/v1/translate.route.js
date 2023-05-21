@@ -22,6 +22,7 @@ router
   .route('/projectid/:projectId')
   .get(auth(''), validate(translateValidation.getWordsTrans), translateController.getWordsTransByProjectID);
 
+// current using
 router.post(
   '/machine-translate/sentence',
   validate(translateValidation.translateMachineSentence),
@@ -29,6 +30,18 @@ router.post(
 );
 router.post('/dictionary', validate(translateValidation.getWordDictionary), translateController.getWordDictionary);
 router.post('/fuzzy-matching', validate(translateValidation.fuzzyMatching), translateController.fuzzyMatching);
+router.post(
+  '/apply-machine-for-all-sentence',
+  validate(translateValidation.applyMachineForAllSentence),
+  authJwt(''),
+  translateController.applyMachineForAllSentence
+);
+router.post(
+  '/apply-machine-for-all-one',
+  validate(translateValidation.applyMachineForOneSentence),
+  authJwt(''),
+  translateController.applyMachineForOneSentence
+);
 module.exports = router;
 
 /**

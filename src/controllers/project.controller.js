@@ -93,6 +93,7 @@ const openFileOfProject = catchAsync(async (req, res) => {
       });
       const results = await projectService.createManySentenceOfFileOfProject(dataInsertDB);
       findFile.isTokenizeSentence = true;
+      findFile.quantitySentence = dataSentence.length;
       await findFile.save();
       const dataPaginate = await projectService.getPaginateSentenceOfFile(
         { projectId: findProject._id, fileId, ...filter },

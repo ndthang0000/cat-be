@@ -2,10 +2,11 @@ const httpStatus = require('http-status');
 const pick = require('../utils/pick');
 const ApiError = require('../utils/ApiError');
 const catchAsync = require('../utils/catchAsync');
-const { translateService } = require('../services');
+const { translateService, projectService } = require('../services');
 const { translating } = require('../python');
 const config = require('../config/config');
 const axios = require('axios');
+const { PROJECT_ROLE, SENTENCE_STATUS, PROJECT_STATUS } = require('../constants/status');
 
 const createWordTrans = catchAsync(async (req, res) => {
   const word = await translateService.createWordTrans(req.body);
@@ -47,10 +48,6 @@ const deleteWordTrans = catchAsync(async (req, res) => {
 
 const translateMachineSentence = catchAsync(async (req, res) => {
   const { sentence, target } = req.body;
-  // call python machine  translate
-  // const data = await translating(['translate_sent', Buffer.from(sentence, 'utf-8'), target]);
-  // const text = data[0].slice(2, -1);
-  // console.log(text);
   try {
     const data = await axios.post(`${config.domain.pythonDomain}/translate-one-sentence`, { sentence, target });
     res.status(200).json({ status: true, data: data.data.data });
@@ -75,6 +72,93 @@ const fuzzyMatching = catchAsync(async (req, res) => {
   res.send({ status: true, data: [`Fuzzy matching ${sentence}`, 'Hi...'] });
 });
 
+const applyMachineForAllSentence = catchAsync(async (req, res) => {
+  const { projectId, fileId } = req.body;
+  const { _id } = req.user;
+  try {
+    const findProject = await projectService.getProjectById(projectId);
+    if (!findProject) {
+      return res.status(200).json({ status: false, message: `Project invalid` });
+    }
+
+    const checkPermission = projectService.checkPermissionOfUser(findProject, _id, PROJECT_ROLE.DEVELOPER);
+    if (!checkPermission.status) {
+      return res.send(checkPermission);
+    }
+
+    const findExitFile = await projectService.getOneFileOfProjectById(fileId);
+
+    if (!findExitFile) {
+      return res.status(200).json({ status: false, message: `File invalid` });
+    }
+
+    const sentences = await projectService.getAllSentenceOfFileOfProject(projectId, fileId);
+
+    try {
+      const data = await axios.post(`${config.domain.pythonDomain}/translate-many-sentence`, {
+        list_sentence: sentences.map((item) => item.textSrc),
+        target: findProject.targetLanguage,
+      });
+      const newListTranslate = data.data.data;
+      for (let i = 0; i < sentences.length; i++) {
+        sentences[i].textTarget = newListTranslate[i];
+        sentences[i].status = SENTENCE_STATUS.TRANSLATING;
+        await sentences[i].save();
+      }
+      res.status(200).json({ status: true, data: 1 });
+    } catch (error) {
+      res.status(200).json({ status: false, data: null, message: 'Something went wrong when translating' });
+    }
+  } catch (error) {
+    res.status(200).json({ status: false, data: null });
+    console.log(error);
+  }
+});
+
+const applyMachineForOneSentence = catchAsync(async (req, res) => {
+  const { projectId, fileId, sentenceId } = req.body;
+  const { _id } = req.user;
+  try {
+    const findProject = await projectService.getProjectById(projectId);
+    if (!findProject) {
+      return res.status(200).json({ status: false, message: `Project invalid` });
+    }
+
+    const checkPermission = projectService.checkPermissionOfUser(findProject, _id, PROJECT_ROLE.DEVELOPER);
+    if (!checkPermission.status) {
+      return res.send(checkPermission);
+    }
+
+    const findExitFile = await projectService.getOneFileOfProjectById(fileId);
+
+    if (!findExitFile) {
+      return res.status(200).json({ status: false, message: `File invalid` });
+    }
+
+    const findSentence = await projectService.getOneSentenceOfFileOfProjectById(sentenceId);
+
+    if (!findSentence) {
+      return res.status(200).json({ status: false, message: `Sentence invalid` });
+    }
+
+    try {
+      const data = await axios.post(`${config.domain.pythonDomain}/translate-one-sentence`, {
+        sentence: findSentence.textSrc,
+        target: findProject.targetLanguage,
+      });
+      findSentence.textTarget = data.data.data;
+      findSentence.status = SENTENCE_STATUS.TRANSLATING;
+      await findSentence.save();
+      res.status(200).json({ status: true, data: true });
+    } catch (error) {
+      res.status(200).json({ status: false, data: null, message: 'Something went wrong when translating' });
+    }
+  } catch (error) {
+    res.status(200).json({ status: false, data: null });
+    console.log(error);
+  }
+});
+
 module.exports = {
   createWordTrans,
   getWordsTrans,
@@ -85,4 +169,6 @@ module.exports = {
   translateMachineSentence,
   getWordDictionary,
   fuzzyMatching,
+  applyMachineForAllSentence,
+  applyMachineForOneSentence,
 };

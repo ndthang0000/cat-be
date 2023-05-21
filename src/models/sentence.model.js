@@ -18,7 +18,7 @@ const sentenceSchema = mongoose.Schema(
       type: String,
       require: true,
     },
-    textDist: {
+    textTarget: {
       type: String,
     },
     status: {

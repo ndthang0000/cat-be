@@ -64,6 +64,21 @@ const fuzzyMatching = {
   }),
 };
 
+const applyMachineForAllSentence = {
+  body: Joi.object().keys({
+    projectId: Joi.string().required().custom(objectId),
+    fileId: Joi.string().required().custom(objectId),
+  }),
+};
+
+const applyMachineForOneSentence = {
+  body: Joi.object().keys({
+    projectId: Joi.string().required().custom(objectId),
+    fileId: Joi.string().required().custom(objectId),
+    sentenceId: Joi.string().required().custom(objectId),
+  }),
+};
+
 module.exports = {
   createWordTrans,
   getWordsTrans,
@@ -73,4 +88,6 @@ module.exports = {
   translateMachineSentence,
   getWordDictionary,
   fuzzyMatching,
+  applyMachineForAllSentence,
+  applyMachineForOneSentence,
 };

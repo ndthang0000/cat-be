@@ -82,6 +82,13 @@ const addMemberToProject = {
   }),
 };
 
+const removeMemberFromProject = {
+  body: Joi.object().keys({
+    projectId: Joi.string().custom(objectId),
+    id: Joi.string().required(),
+  }),
+};
+
 module.exports = {
   createProject,
   getProjects,
@@ -90,4 +97,5 @@ module.exports = {
   deleteProject,
   openFileOfProject,
   addMemberToProject,
+  removeMemberFromProject,
 };

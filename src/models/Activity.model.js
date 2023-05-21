@@ -1,6 +1,6 @@
 const mongoose = require('mongoose');
 const { toJSON, paginate, paginateAgg } = require('./plugins');
-
+const ACTIVITY = require('../constants/activity');
 
 const ActivitySchema = mongoose.Schema(
   {

@@ -37,8 +37,8 @@ const createProject = catchAsync(async (req, res) => {
       action: ACTIVITY.CREATE_PROJECT,
       projectId: project._id,
       fileId: '',
-    }
-  ]
+    },
+  ];
   await activityService.createActivity(activityCreateProject);
   res
     .status(httpStatus.CREATED)
@@ -155,8 +155,8 @@ const uploadFileToProject = catchAsync(async (req, res) => {
         userId: '',
         action: ACTIVITY.UPLOAD_FILE,
         projectId: '',
-      }
-    ]
+      },
+    ];
     await activityService.createActivity(activityUploadFile);
   }
   await findProject.save();
@@ -194,8 +194,8 @@ const updateProject = catchAsync(async (req, res) => {
       userId: project.userId,
       action: ACTIVITY.UPDATE_PROJECT,
       projectId: project._id,
-    }
-  ]
+    },
+  ];
   await activityService.createActivity(activityUpdateProject);
   return res
     .status(200)
@@ -221,11 +221,13 @@ const getAllLanguageOfSystem = catchAsync(async (req, res) => {
 
 const addMemberToProject = catchAsync(async (req, res) => {
   const { email, projectId, role } = req.body;
+  const { _id } = req.user;
+
   const findUser = await userService.getUserByEmail(email);
   if (!findUser) {
     return res.status(200).json({ status: false, message: `User [${email}] not exit in system` });
   }
-  const { _id } = req.user;
+
   const findProject = await projectService.getProjectById(projectId);
   if (!findProject) {
     return res.status(200).json({ status: false, message: `Project invalid` });
@@ -243,16 +245,23 @@ const addMemberToProject = catchAsync(async (req, res) => {
     role,
   });
   await findProject.save();
-  const activityAddMember = [
-    {
-      comment: 'add member',
-      userId: findUser._id,
-      action: ACTIVITY.ADD_MEMBER,
-      projectId: projectId,
-    }
-  ]
+
+  const activityAddMember = {
+    comment: `[${req.user.email}] add [${email}] with role ${role} into this project`,
+    userId: _id,
+    action: ACTIVITY.ADD_MEMBER,
+    projectId: projectId,
+  };
+
   await activityService.createActivity(activityAddMember);
-  res.status(httpStatus.OK).send({ status: true, data: Object.values(PROJECT_ROLE) });
+
+  res
+    .status(httpStatus.OK)
+    .send({
+      status: true,
+      data: Object.values(PROJECT_ROLE),
+      message: `Add [${email}] with role ${role} into this project successfully !!`,
+    });
 });
 
 const removeMemberFromProject = catchAsync(async (req, res) => {
@@ -275,9 +284,30 @@ const removeMemberFromProject = catchAsync(async (req, res) => {
     return res.status(200).json({ status: false, message: 'This ID does not belong to any member' });
   }
 
+  const findExistUser = await userService.getUserById(findMember.userId);
+  if (!findExistUser) {
+    return res.status(200).json({ status: false, message: `Not found user in system` });
+  }
+
   findProject.members = findProject.members.filter((member) => member._id != id);
   await findProject.save();
-  res.status(httpStatus.OK).send({ status: true, data: Object.values(PROJECT_ROLE) });
+
+  const activityAddMember = {
+    comment: `[${req.user.email}] kick out user [${findExistUser.email}]`,
+    userId: _id,
+    action: ACTIVITY.REMOVE_MEMBER,
+    projectId,
+  };
+
+  await activityService.createActivity(activityAddMember);
+
+  res
+    .status(httpStatus.OK)
+    .send({
+      status: true,
+      message: `Remove userId [${findExistUser.email}] successfully !!`,
+      data: Object.values(PROJECT_ROLE),
+    });
 });
 
 module.exports = {

@@ -9,7 +9,7 @@ const ApiError = require('../utils/ApiError');
  */
 const createActivity = async (activityBody) => {
   return await new Activity(activityBody).save();
-}
+};
 
 /**
  * Query for activities
@@ -33,7 +33,6 @@ const queryActivities = async (filter, options) => {
 const getActivityById = async (ID) => {
   return Activity.findById(ID);
 };
-
 
 module.exports = {
   createActivity,

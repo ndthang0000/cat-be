@@ -73,7 +73,7 @@ const fuzzyMatching = catchAsync(async (req, res) => {
 });
 
 const applyMachineForAllSentence = catchAsync(async (req, res) => {
-  const { projectId, fileId } = req.body;
+  const { projectId, fileId, optionMachine } = req.body;
   const { _id } = req.user;
   try {
     const findProject = await projectService.getProjectById(projectId);
@@ -92,8 +92,10 @@ const applyMachineForAllSentence = catchAsync(async (req, res) => {
       return res.status(200).json({ status: false, message: `File invalid` });
     }
 
-    const sentences = await projectService.getAllSentenceOfFileOfProject(projectId, fileId);
-
+    const sentences = await projectService.filterSentence({ projectId, fileId, status: SENTENCE_STATUS.UN_TRANSLATE });
+    if (sentences.length == 0) {
+      return res.status(200).json({ status: true, message: `You have been translated all sentence before` });
+    }
     try {
       const data = await axios.post(`${config.domain.pythonDomain}/translate-many-sentence`, {
         list_sentence: sentences.map((item) => item.textSrc),
@@ -102,7 +104,7 @@ const applyMachineForAllSentence = catchAsync(async (req, res) => {
       const newListTranslate = data.data.data;
       for (let i = 0; i < sentences.length; i++) {
         sentences[i].textTarget = newListTranslate[i];
-        sentences[i].status = SENTENCE_STATUS.TRANSLATING;
+        sentences[i].status = optionMachine == 1 ? SENTENCE_STATUS.TRANSLATING : SENTENCE_STATUS.CONFIRM;
         await sentences[i].save();
       }
       res.status(200).json({ status: true, data: 1 });
@@ -146,8 +148,8 @@ const applyMachineForOneSentence = catchAsync(async (req, res) => {
         sentence: findSentence.textSrc,
         target: findProject.targetLanguage,
       });
-      findSentence.textTarget = data.data.data;
-      findSentence.status = SENTENCE_STATUS.TRANSLATING;
+      findSentence.textTarget = data.data.data || findSentence.textSrc;
+      findSentence.status = SENTENCE_STATUS.CONFIRM;
       await findSentence.save();
       res.status(200).json({ status: true, data: true });
     } catch (error) {

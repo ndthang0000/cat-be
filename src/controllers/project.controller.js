@@ -255,13 +255,11 @@ const addMemberToProject = catchAsync(async (req, res) => {
 
   await activityService.createActivity(activityAddMember);
 
-  res
-    .status(httpStatus.OK)
-    .send({
-      status: true,
-      data: Object.values(PROJECT_ROLE),
-      message: `Add [${email}] with role ${role} into this project successfully !!`,
-    });
+  res.status(httpStatus.OK).send({
+    status: true,
+    data: Object.values(PROJECT_ROLE),
+    message: `Add [${email}] with role ${role} into this project successfully !!`,
+  });
 });
 
 const removeMemberFromProject = catchAsync(async (req, res) => {
@@ -301,13 +299,11 @@ const removeMemberFromProject = catchAsync(async (req, res) => {
 
   await activityService.createActivity(activityAddMember);
 
-  res
-    .status(httpStatus.OK)
-    .send({
-      status: true,
-      message: `Remove userId [${findExistUser.email}] successfully !!`,
-      data: Object.values(PROJECT_ROLE),
-    });
+  res.status(httpStatus.OK).send({
+    status: true,
+    message: `Remove userId [${findExistUser.email}] successfully !!`,
+    data: Object.values(PROJECT_ROLE),
+  });
 });
 
 module.exports = {

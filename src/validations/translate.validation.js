@@ -68,6 +68,7 @@ const applyMachineForAllSentence = {
   body: Joi.object().keys({
     projectId: Joi.string().required().custom(objectId),
     fileId: Joi.string().required().custom(objectId),
+    optionMachine: Joi.number().default(1),
   }),
 };
 

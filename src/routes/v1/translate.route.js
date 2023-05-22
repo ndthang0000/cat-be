@@ -32,6 +32,7 @@ router.post('/dictionary', validate(translateValidation.getWordDictionary), tran
 router.post('/fuzzy-matching', validate(translateValidation.fuzzyMatching), translateController.fuzzyMatching);
 router.post(
   '/apply-machine-for-all-sentence',
+
   validate(translateValidation.applyMachineForAllSentence),
   authJwt(''),
   translateController.applyMachineForAllSentence

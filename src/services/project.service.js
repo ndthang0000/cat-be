@@ -138,11 +138,16 @@ const getAllSentenceOfFileOfProject = async (projectId, fileId) => {
   return await Sentence.find({ projectId, fileId });
 };
 
+const filterSentence = async (filters) => {
+  return await Sentence.find(filters);
+};
+
 const getOneSentenceOfFileOfProjectById = async (sentenceId) => {
   return await Sentence.findOne({ _id: sentenceId });
 };
 
 const getPaginateSentenceOfFile = async (filters, options) => {
+  options.sortBy = 'index:asc';
   return await Sentence.paginate(filters, options);
 };
 
@@ -188,4 +193,5 @@ module.exports = {
   getOneSentenceOfFileOfProjectById,
   getPaginateSentenceOfFile,
   getProjectBySlug,
+  filterSentence,
 };

@@ -37,6 +37,10 @@ const getUserById = async (id) => {
   return User.findById(id);
 };
 
+const getUserBySubId = async (userId) => {
+  return User.findOne({ userId });
+};
+
 /**
  * Get user by email
  * @param {string} email
@@ -96,4 +100,5 @@ module.exports = {
   updateUserById,
   deleteUserById,
   randomIdUser,
+  getUserBySubId,
 };

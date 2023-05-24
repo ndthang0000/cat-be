@@ -5,7 +5,8 @@ const generateImage = require('../utils/generate.image');
 const config = require('../config/config');
 const { uploadFile } = require('../utils/upload.file');
 const publicURL = require('../../get_url');
-const { PROJECT_ROLE, getOneNumberRoleProject } = require('../constants/status');
+const { PROJECT_ROLE, getOneNumberRoleProject, SENTENCE_STATUS } = require('../constants/status');
+const mongoose = require('mongoose');
 
 /**
  * Create a project
@@ -175,7 +176,6 @@ const fixSentenceIndex = async () => {
     await data[i].save();
   }
 };
-fixSentenceIndex();
 
 module.exports = {
   createProject,

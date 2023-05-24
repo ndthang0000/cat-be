@@ -1,6 +1,8 @@
 const httpStatus = require('http-status');
-const { translate } = require('../models');
+const { translate, Sentence } = require('../models');
 const ApiError = require('../utils/ApiError');
+const mongoose = require('mongoose');
+const { SENTENCE_STATUS } = require('../constants/status');
 
 /**
  * Create a word translate
@@ -73,6 +75,31 @@ const deleteWordTransById = async (wordID) => {
   return translate;
 };
 
+const statisticFile = async (fileId) => {
+  const data = await Sentence.aggregate([
+    {
+      $match: {
+        fileId: mongoose.Types.ObjectId(fileId),
+      },
+    },
+    {
+      $group: {
+        _id: '$status',
+        count: { $sum: 1 },
+      },
+    },
+  ]);
+  const allStatus = Object.values(SENTENCE_STATUS).map((item) => {
+    return { status: item, count: 0 };
+  });
+  return Object.assign(
+    allStatus,
+    data.map((item) => {
+      return { status: item._id, count: item.count };
+    })
+  );
+};
+
 module.exports = {
   createWordTrans,
   queryWordsTrans,
@@ -80,4 +107,5 @@ module.exports = {
   getWordTransById,
   updateWordTransById,
   deleteWordTransById,
+  statisticFile,
 };

@@ -37,12 +37,23 @@ router.post(
   authJwt(''),
   translateController.applyMachineForAllSentence
 );
+
 router.post(
   '/apply-machine-for-all-one',
   validate(translateValidation.applyMachineForOneSentence),
   authJwt(''),
   translateController.applyMachineForOneSentence
 );
+
+router.post(
+  '/confirm-sentence',
+  validate(translateValidation.confirmSentence),
+  authJwt(''),
+  translateController.confirmSentence
+);
+
+router.post('/statistic-file', validate(translateValidation.statisticFile), translateController.statisticFile);
+
 module.exports = router;
 
 /**

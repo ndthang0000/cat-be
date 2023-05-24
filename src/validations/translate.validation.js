@@ -80,6 +80,21 @@ const applyMachineForOneSentence = {
   }),
 };
 
+const confirmSentence = {
+  body: Joi.object().keys({
+    projectId: Joi.string().required().custom(objectId),
+    fileId: Joi.string().required().custom(objectId),
+    sentenceId: Joi.string().required().custom(objectId),
+    data: Joi.string().required(),
+  }),
+};
+
+const statisticFile = {
+  body: Joi.object().keys({
+    fileId: Joi.string().required().custom(objectId),
+  }),
+};
+
 module.exports = {
   createWordTrans,
   getWordsTrans,
@@ -91,4 +106,6 @@ module.exports = {
   fuzzyMatching,
   applyMachineForAllSentence,
   applyMachineForOneSentence,
+  confirmSentence,
+  statisticFile,
 };

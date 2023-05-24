@@ -151,7 +151,7 @@ const applyMachineForOneSentence = catchAsync(async (req, res) => {
       findSentence.textTarget = data.data.data || findSentence.textSrc;
       findSentence.status = SENTENCE_STATUS.CONFIRM;
       await findSentence.save();
-      res.status(200).json({ status: true, data: true });
+      res.status(200).json({ status: true, data: findSentence.textTarget });
     } catch (error) {
       res.status(200).json({ status: false, data: null, message: 'Something went wrong when translating' });
     }
@@ -159,6 +159,48 @@ const applyMachineForOneSentence = catchAsync(async (req, res) => {
     res.status(200).json({ status: false, data: null });
     console.log(error);
   }
+});
+
+const confirmSentence = catchAsync(async (req, res) => {
+  const { projectId, fileId, sentenceId, data } = req.body;
+  const { _id } = req.user;
+  try {
+    const findProject = await projectService.getProjectById(projectId);
+    if (!findProject) {
+      return res.status(200).json({ status: false, message: `Project invalid` });
+    }
+
+    const checkPermission = projectService.checkPermissionOfUser(findProject, _id, PROJECT_ROLE.DEVELOPER);
+    if (!checkPermission.status) {
+      return res.send(checkPermission);
+    }
+
+    const findExitFile = await projectService.getOneFileOfProjectById(fileId);
+
+    if (!findExitFile) {
+      return res.status(200).json({ status: false, message: `File invalid` });
+    }
+
+    const findSentence = await projectService.getOneSentenceOfFileOfProjectById(sentenceId);
+
+    if (!findSentence) {
+      return res.status(200).json({ status: false, message: `Sentence invalid` });
+    }
+
+    findSentence.textTarget = data;
+    findSentence.status = SENTENCE_STATUS.CONFIRM;
+    await findSentence.save();
+    res.status(200).json({ status: true, data: true });
+  } catch (error) {
+    res.status(200).json({ status: false, data: null });
+    console.log(error);
+  }
+});
+
+const statisticFile = catchAsync(async (req, res) => {
+  const { fileId } = req.body;
+  const data = await translateService.statisticFile(fileId);
+  res.status(200).json({ status: true, data });
 });
 
 module.exports = {
@@ -173,4 +215,6 @@ module.exports = {
   fuzzyMatching,
   applyMachineForAllSentence,
   applyMachineForOneSentence,
+  confirmSentence,
+  statisticFile,
 };

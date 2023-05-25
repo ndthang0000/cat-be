@@ -107,6 +107,8 @@ const applyMachineForAllSentence = catchAsync(async (req, res) => {
         sentences[i].status = optionMachine == 1 ? SENTENCE_STATUS.TRANSLATING : SENTENCE_STATUS.CONFIRM;
         await sentences[i].save();
       }
+      findExitFile.percentComplete = 100;
+      await findExitFile.save();
       res.status(200).json({ status: true, data: 1 });
     } catch (error) {
       res.status(200).json({ status: false, data: null, message: 'Something went wrong when translating' });
@@ -189,7 +191,12 @@ const confirmSentence = catchAsync(async (req, res) => {
 
     findSentence.textTarget = data;
     findSentence.status = SENTENCE_STATUS.CONFIRM;
+    findExitFile.percentComplete =
+      ((await projectService.countCompleteSentence(fileId)) / findExitFile.quantitySentence) * 100;
+    console.log(findExitFile);
+    findExitFile.percentComplete = findExitFile.percentComplete.toFixed(2);
     await findSentence.save();
+    await findExitFile.save();
     res.status(200).json({ status: true, data: true });
   } catch (error) {
     res.status(200).json({ status: false, data: null });

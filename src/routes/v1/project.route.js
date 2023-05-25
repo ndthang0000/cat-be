@@ -41,6 +41,8 @@ router.post(
 
 router.post('/update', validate(projectValidation.updateProject), authJwt(''), projectController.updateProject);
 
+router.post('/export-file', validate(projectValidation.exportFile), authJwt(''), projectController.exportFile);
+
 module.exports = router;
 
 /**

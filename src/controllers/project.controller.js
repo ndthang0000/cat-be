@@ -13,6 +13,8 @@ const LANGUAGE = require('../constants/language');
 const ObjectId = require('mongoose').Types.ObjectId;
 const { tokenizeSentence } = require('../utils/sentence.tokenize');
 const ACTIVITY = require('../constants/activity');
+const { default: axios } = require('axios');
+const config = require('../config/config');
 
 const createProject = catchAsync(async (req, res) => {
   req.body.userId = req.user.userId;
@@ -306,6 +308,49 @@ const removeMemberFromProject = catchAsync(async (req, res) => {
   });
 });
 
+const exportFile = catchAsync(async (req, res) => {
+  const { fileId, projectId } = req.body;
+  const { _id } = req.user;
+
+  const findProject = await projectService.getProjectById(projectId);
+  if (!findProject) {
+    return res.status(200).json({ status: false, message: `Project invalid` });
+  }
+
+  const checkPermission = projectService.checkPermissionOfUser(findProject, _id, PROJECT_ROLE.PROJECT_MANAGER);
+  if (!checkPermission.status) {
+    return res.send(checkPermission);
+  }
+
+  const findFile = await projectService.getOneFileOfProjectById(fileId);
+  if (!findFile) {
+    return res.status(200).json({ status: false, message: `File not found` });
+  }
+
+  const allSentence = await projectService.filterSentence({ fileId });
+
+  try {
+    const data = await axios.post(`${config.domain.pythonDomain}/export-file`, {
+      sentences: allSentence.map((item) => item.textSrc),
+      translated_sents: allSentence.map((item) => item.textTarget),
+      file_url: findFile.url,
+    });
+    if (data.data.status) {
+      findFile.urlTarget = data.data.data;
+      await findFile.save();
+
+      res.status(httpStatus.OK).send({ status: true, data: data.data.data });
+    } else {
+      res.status(httpStatus.OK).send({ status: false, message: 'Something went wrong !!!, please contact support' });
+    }
+  } catch (error) {
+    res.status(httpStatus.OK).send({
+      status: false,
+      message: 'Something went wrong !!!, please contact support',
+    });
+  }
+});
+
 module.exports = {
   createProject,
   getProjects,
@@ -321,4 +366,5 @@ module.exports = {
   addMemberToProject,
   removeMemberFromProject,
   getAllLanguageOfSystem,
+  exportFile,
 };

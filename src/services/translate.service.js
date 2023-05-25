@@ -92,12 +92,8 @@ const statisticFile = async (fileId) => {
   const allStatus = Object.values(SENTENCE_STATUS).map((item) => {
     return { status: item, count: 0 };
   });
-  return Object.assign(
-    allStatus,
-    data.map((item) => {
-      return { status: item._id, count: item.count };
-    })
-  );
+  allStatus.forEach((item) => (item.count = data.find((item2) => item2._id == item.status)?.count || 0));
+  return allStatus;
 };
 
 module.exports = {

@@ -140,7 +140,7 @@ const getAllSentenceOfFileOfProject = async (projectId, fileId) => {
 };
 
 const filterSentence = async (filters) => {
-  return await Sentence.find(filters);
+  return await Sentence.find(filters).sort({ index: 1 });
 };
 
 const getOneSentenceOfFileOfProjectById = async (sentenceId) => {
@@ -154,6 +154,11 @@ const getPaginateSentenceOfFile = async (filters, options) => {
 
 const getOneFileOfProjectById = async (id) => {
   return await File.findOne({ _id: id });
+};
+
+const countCompleteSentence = async (fileId) => {
+  console.log(await Sentence.countDocuments({ fileId, status: SENTENCE_STATUS.CONFIRM }));
+  return await Sentence.countDocuments({ fileId, status: SENTENCE_STATUS.CONFIRM });
 };
 
 const checkPermissionOfUser = (findProject, _id, minRole) => {
@@ -194,4 +199,5 @@ module.exports = {
   getPaginateSentenceOfFile,
   getProjectBySlug,
   filterSentence,
+  countCompleteSentence,
 };

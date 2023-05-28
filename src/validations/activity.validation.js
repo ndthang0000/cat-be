@@ -12,9 +12,8 @@ const createActivity = {
 
 const getActivities = {
   query: Joi.object().keys({
-    comment: Joi.string(),
-    userId: Joi.string(),
-    action: Joi.string(),
+    page: Joi.number(),
+    limit: Joi.number(),
     projectId: Joi.string(),
   }),
 };

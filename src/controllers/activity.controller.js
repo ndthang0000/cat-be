@@ -10,9 +10,9 @@ const createActivity = catchAsync(async (req, res) => {
 });
 
 const getActivities = catchAsync(async (req, res) => {
-  const filter = pick(req.query, ['name', 'role']);
-  const options = pick(req.query, ['sortBy', 'limit', 'page']);
-  const result = await activityService.queryActivities(filter, options);
+  const filters = { projectId: req.query.projectId };
+  const options = pick(req.query, ['limit', 'page']);
+  const result = await activityService.queryActivities(filters, options);
   res.send(result);
 });
 

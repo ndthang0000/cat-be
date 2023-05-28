@@ -20,8 +20,25 @@ const createActivity = async (activityBody) => {
  * @param {number} [options.page] - Current page (default = 1)
  * @returns {Promise<QueryResult>}
  */
-const queryActivities = async (filter, options) => {
-  const activities = await Activity.paginate(filter, options);
+const queryActivities = async (filters, options) => {
+  const filtersAgg = [
+    {
+      $match: filters,
+    },
+    {
+      $lookup: {
+        from: 'users',
+        localField: 'userId',
+        foreignField: '_id',
+        as: 'owner',
+      },
+    },
+    {
+      $unwind: '$owner',
+    },
+  ];
+
+  const activities = await Activity.paginateAgg(filtersAgg, options);
   return activities;
 };
 

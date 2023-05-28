@@ -1,21 +1,18 @@
 const express = require('express');
-const auth = require('../../middlewares/auth');
+const { authJwt } = require('../../middlewares/jwtAuth');
 const validate = require('../../middlewares/validate');
 const activitiyValidation = require('../../validations/activity.validation');
 const activitiyController = require('../../controllers/activity.controller');
 
 const router = express.Router();
 
-router
-  .route('/')
-  .post(auth(''), validate(activitiyValidation.createActivity), activitiyController.createActivity)
-  .get(auth(''), validate(activitiyValidation.getActivities), activitiyController.getActivities);
+router.get('/', authJwt(), validate(activitiyValidation.getActivities), activitiyController.getActivities);
 
-router
-  .route('/objectid/:activitiyId')
-  .get(auth(''), validate(activitiyValidation.getActivity), activitiyController.getActivity)
-  .patch(auth(''), validate(activitiyValidation.updateActivity), activitiyController.updateActivity)
-  .delete(auth(''), validate(activitiyValidation.deleteActivity), activitiyController.deleteActivity);
+// router
+//   .route('/objectid/:activitiyId')
+//   .get(auth(''), validate(activitiyValidation.getActivity), activitiyController.getActivity)
+//   .patch(auth(''), validate(activitiyValidation.updateActivity), activitiyController.updateActivity)
+//   .delete(auth(''), validate(activitiyValidation.deleteActivity), activitiyController.deleteActivity);
 
 module.exports = router;
 

@@ -2,7 +2,7 @@ const httpStatus = require('http-status');
 const pick = require('../utils/pick');
 const ApiError = require('../utils/ApiError');
 const catchAsync = require('../utils/catchAsync');
-const { translateService, projectService } = require('../services');
+const { translateService, projectService, TranslationMemoryService } = require('../services');
 const { translating } = require('../python');
 const config = require('../config/config');
 const axios = require('axios');
@@ -67,9 +67,47 @@ const getWordDictionary = catchAsync(async (req, res) => {
 });
 
 const fuzzyMatching = catchAsync(async (req, res) => {
-  const { sentence } = req.body;
-  // call python machine  translate
-  res.send({ status: true, data: [`Fuzzy matching ${sentence}`, 'Hi...'] });
+  const { sentence, projectId } = req.body;
+  const { _id } = req.user;
+
+  try {
+    const findProject = await projectService.getProjectById(projectId);
+    if (!findProject) {
+      return res.status(200).json({ status: false, message: `Project invalid` });
+    }
+
+    const checkPermission = projectService.checkPermissionOfUser(findProject, _id, PROJECT_ROLE.DEVELOPER);
+    if (!checkPermission.status) {
+      return res.send(checkPermission);
+    }
+
+    let keyName = '';
+    if (findProject.isTmReverse) keyName = 'target';
+    else keyName = 'source';
+
+    const body = {
+      query: {
+        bool: {
+          must: {
+            match: {
+              [keyName]: sentence,
+            },
+          },
+          filter: {
+            match: {
+              translationMemoryCode: findProject.translationMemoryCode,
+            },
+          },
+        },
+      },
+    };
+
+    const response = await axios.post('http://localhost:9200/cat.translationmemories/_search', body, {
+      headers: { 'Content-Type': 'application/json' },
+    });
+    const data = response.data.hits.hits.length >= 3 ? response.data.hits.hits.slice(0, 3) : response.data.hits.hits;
+    res.send({ status: true, data });
+  } catch (error) {}
 });
 
 const applyMachineForAllSentence = catchAsync(async (req, res) => {
@@ -197,6 +235,12 @@ const confirmSentence = catchAsync(async (req, res) => {
     findExitFile.percentComplete = findExitFile.percentComplete.toFixed(2);
     await findSentence.save();
     await findExitFile.save();
+    const tmBody = {
+      translationMemoryCode: findProject.translationMemoryCode,
+      source: findProject.isTmReverse ? findSentence.textTarget : findSentence.textSrc,
+      target: findProject.isTmReverse ? findSentence.textSrc : findSentence.textTarget,
+    };
+    await TranslationMemoryService.createTranslationMemory(tmBody);
     res.status(200).json({ status: true, data: true });
   } catch (error) {
     res.status(200).json({ status: false, data: null });

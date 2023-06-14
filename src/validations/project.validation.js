@@ -16,6 +16,10 @@ const createProject = {
       .valid(...Object.values(LANGUAGE)),
     description: Joi.string(),
     scope: Joi.string().valid(SCOPE.INDIVIDUAL, SCOPE.PUBLIC),
+    translationMemoryCode: Joi.string().required(),
+    isTmReverse: Joi.boolean().required(),
+    dictionaryCode: Joi.string().required(),
+    isDictReverse: Joi.boolean().required(),
   }),
 };
 

@@ -61,6 +61,7 @@ const getWordDictionary = {
 const fuzzyMatching = {
   body: Joi.object().keys({
     sentence: Joi.string().required(),
+    projectId: Joi.string().required().custom(objectId),
   }),
 };
 

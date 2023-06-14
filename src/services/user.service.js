@@ -92,6 +92,26 @@ const randomIdUser = async () => {
   return userId;
 };
 
+const addTranslationMemory = async (user, tm) => {
+  user.personalCodeTranslationMemory.push(tm);
+  return user.save();
+};
+
+const addDictionary = async (user, tm) => {
+  user.personalCodeDictionary.push(tm);
+  return user.save();
+};
+
+const getTmDict = async (user, source, target) => {
+  const tmList = user.personalCodeTranslationMemory.filter(
+    (item) => [source, target].includes(item.sourceLanguage) && [source, target].includes(item.targetLanguage)
+  );
+  const dictList = user.personalCodeDictionary.filter(
+    (item) => [source, target].includes(item.sourceLanguage) && [source, target].includes(item.targetLanguage)
+  );
+  return [tmList, dictList];
+};
+
 module.exports = {
   createUser,
   queryUsers,
@@ -101,4 +121,7 @@ module.exports = {
   deleteUserById,
   randomIdUser,
   getUserBySubId,
+  addTranslationMemory,
+  addDictionary,
+  getTmDict,
 };

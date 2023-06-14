@@ -68,6 +68,27 @@ const checkTokenValid = catchAsync(async (req, res) => {
   res.status(httpStatus.OK).send({ data: true, user: req.user });
 });
 
+const addTranslationMemory = catchAsync(async (req, res) => {
+  await userService.addTranslationMemory(req.user, req.body);
+  res.status(httpStatus.OK).send({
+    status: true,
+    message: `${req.body.name} translation memory added`,
+  });
+});
+
+const addDictionary = catchAsync(async (req, res) => {
+  await userService.addDictionary(req.user, req.body);
+  res.status(httpStatus.OK).send({
+    status: true,
+    message: `${req.body.name} dictionary added`,
+  });
+});
+
+const getTmDict = catchAsync(async (req, res) => {
+  const data = await userService.getTmDict(req.user, req.query.source, req.query.target);
+  res.status(httpStatus.OK).send(data);
+});
+
 module.exports = {
   register,
   login,
@@ -78,4 +99,7 @@ module.exports = {
   sendVerificationEmail,
   verifyEmail,
   checkTokenValid,
+  addTranslationMemory,
+  addDictionary,
+  getTmDict,
 };

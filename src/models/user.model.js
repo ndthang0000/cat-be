@@ -4,6 +4,7 @@ const bcrypt = require('bcryptjs');
 const { toJSON, paginate } = require('./plugins');
 const { roles } = require('../config/roles');
 const crypto = require('crypto');
+const LANGUAGE = require('../constants/language');
 
 const userSchema = mongoose.Schema(
   {
@@ -54,14 +55,23 @@ const userSchema = mongoose.Schema(
       type: Boolean,
       default: false,
     },
-    personalCodeDictionary: {
-      type: String,
-      default: crypto.randomUUID(), //use crypto module to create UUID for unique code
-    },
-    personalCodeTranslationMemory: {
-      type: String,
-      default: crypto.randomUUID(),
-    },
+    personalCodeDictionary: [
+      {
+        code: { type: String, default: crypto.randomUUID() }, //use crypto module to create UUID for unique code
+        // code: { type: String },
+        name: { type: String, required: true },
+        sourceLanguage: { type: String, enum: Object.values(LANGUAGE), required: true },
+        targetLanguage: { type: String, enum: Object.values(LANGUAGE), required: true },
+      },
+    ],
+    personalCodeTranslationMemory: [
+      {
+        code: { type: String, default: crypto.randomUUID() },
+        name: { type: String, required: true },
+        sourceLanguage: { type: String, enum: Object.values(LANGUAGE), required: true },
+        targetLanguage: { type: String, enum: Object.values(LANGUAGE), required: true },
+      },
+    ],
     avatar: {
       type: String,
     },

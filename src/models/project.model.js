@@ -73,6 +73,22 @@ const projectSchema = mongoose.Schema(
       min: 1,
       max: 5,
     },
+    translationMemoryCode: {
+      type: String,
+      required: true,
+    },
+    isTmReverse: {
+      type: Boolean,
+      required: true,
+    },
+    dictionaryCode: {
+      type: String,
+      required: true,
+    },
+    isDictReverse: {
+      type: Boolean,
+      required: true,
+    },
   },
   {
     timestamps: true,

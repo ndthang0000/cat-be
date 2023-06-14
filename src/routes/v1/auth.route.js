@@ -17,6 +17,10 @@ router.post('/send-verification-email', auth(), authController.sendVerificationE
 router.post('/verify-email', validate(authValidation.verifyEmail), authController.verifyEmail);
 router.get('/check-token', authJwt(), authController.checkTokenValid);
 
+router.post('/add-tm', authJwt(), validate(authValidation.addTranslationMemory), authController.addTranslationMemory);
+router.post('/add-dictionary', authJwt(), validate(authValidation.addDictionary), authController.addDictionary);
+router.get('/get-tm-dict', authJwt(), validate(authValidation.getTmDict), authController.getTmDict);
+
 module.exports = router;
 
 /**

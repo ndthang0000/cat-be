@@ -1,5 +1,6 @@
 const Joi = require('joi');
 const { password } = require('./custom.validation');
+const LANGUAGE = require('../constants/language');
 
 const register = {
   body: Joi.object().keys({
@@ -49,6 +50,37 @@ const verifyEmail = {
   }),
 };
 
+const addDictionary = {
+  body: Joi.object().keys({
+    name: Joi.string().required(),
+    sourceLanguage: Joi.string()
+      .required()
+      .valid(...Object.values(LANGUAGE)),
+    targetLanguage: Joi.string()
+      .required()
+      .valid(...Object.values(LANGUAGE)),
+  }),
+};
+
+const addTranslationMemory = {
+  body: Joi.object().keys({
+    name: Joi.string().required(),
+    sourceLanguage: Joi.string()
+      .required()
+      .valid(...Object.values(LANGUAGE)),
+    targetLanguage: Joi.string()
+      .required()
+      .valid(...Object.values(LANGUAGE)),
+  }),
+};
+
+const getTmDict = {
+  query: Joi.object().keys({
+    target: Joi.string().required(),
+    source: Joi.string().required(),
+  }),
+};
+
 module.exports = {
   register,
   login,
@@ -57,4 +89,7 @@ module.exports = {
   forgotPassword,
   resetPassword,
   verifyEmail,
+  addDictionary,
+  addTranslationMemory,
+  getTmDict,
 };

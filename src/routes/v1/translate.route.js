@@ -29,7 +29,7 @@ router.post(
   translateController.translateMachineSentence
 );
 router.post('/dictionary', validate(translateValidation.getWordDictionary), translateController.getWordDictionary);
-router.post('/fuzzy-matching', validate(translateValidation.fuzzyMatching), translateController.fuzzyMatching);
+router.post('/fuzzy-matching', authJwt(''), validate(translateValidation.fuzzyMatching), translateController.fuzzyMatching);
 router.post(
   '/apply-machine-for-all-sentence',
 

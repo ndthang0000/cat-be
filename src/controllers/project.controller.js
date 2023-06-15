@@ -15,6 +15,7 @@ const { tokenizeSentence } = require('../utils/sentence.tokenize');
 const ACTIVITY = require('../constants/activity');
 const { default: axios } = require('axios');
 const config = require('../config/config');
+const LanguageDetect = require('languagedetect');
 
 const createProject = catchAsync(async (req, res) => {
   req.body.userId = req.user.userId;
@@ -351,6 +352,14 @@ const exportFile = catchAsync(async (req, res) => {
   }
 });
 
+const detectLanguage = catchAsync(async (req, res) => {
+  const { text } = req.body;
+  const lngDetector = new LanguageDetect();
+  const result = lngDetector.detect(text, 10);
+  console.log(result);
+  res.status(200).json({ status: true, data: result[0][0].slice(0, 2) });
+});
+
 module.exports = {
   createProject,
   getProjects,
@@ -367,4 +376,5 @@ module.exports = {
   removeMemberFromProject,
   getAllLanguageOfSystem,
   exportFile,
+  detectLanguage,
 };

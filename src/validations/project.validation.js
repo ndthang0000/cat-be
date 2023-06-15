@@ -100,6 +100,12 @@ const exportFile = {
   }),
 };
 
+const detectLanguage = {
+  body: Joi.object().keys({
+    text: Joi.string().required(),
+  }),
+};
+
 module.exports = {
   createProject,
   getProjects,
@@ -110,4 +116,5 @@ module.exports = {
   addMemberToProject,
   removeMemberFromProject,
   exportFile,
+  detectLanguage,
 };

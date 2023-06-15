@@ -42,6 +42,7 @@ router.post(
 router.post('/update', validate(projectValidation.updateProject), authJwt(''), projectController.updateProject);
 
 router.post('/export-file', validate(projectValidation.exportFile), authJwt(''), projectController.exportFile);
+router.post('/detect-language', validate(projectValidation.detectLanguage), projectController.detectLanguage);
 
 module.exports = router;
 

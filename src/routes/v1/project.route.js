@@ -43,6 +43,12 @@ router.post('/update', validate(projectValidation.updateProject), authJwt(''), p
 
 router.post('/export-file', validate(projectValidation.exportFile), authJwt(''), projectController.exportFile);
 router.post('/detect-language', validate(projectValidation.detectLanguage), projectController.detectLanguage);
+router.post(
+  '/create-term-base',
+  validate(projectValidation.createNewTermBase),
+  authJwt(''),
+  projectController.createNewTermBase
+);
 
 module.exports = router;
 

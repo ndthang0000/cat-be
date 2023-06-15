@@ -106,6 +106,14 @@ const detectLanguage = {
   }),
 };
 
+const createNewTermBase = {
+  body: Joi.object().keys({
+    src: Joi.string().required().lowercase(),
+    target: Joi.string().required().lowercase(),
+    projectId: Joi.string().required(),
+  }),
+};
+
 module.exports = {
   createProject,
   getProjects,
@@ -117,4 +125,5 @@ module.exports = {
   removeMemberFromProject,
   exportFile,
   detectLanguage,
+  createNewTermBase,
 };

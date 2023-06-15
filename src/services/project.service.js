@@ -1,5 +1,5 @@
 const httpStatus = require('http-status');
-const { Project, User, File, Sentence } = require('../models');
+const { Project, User, File, Sentence, TermBase } = require('../models');
 const ApiError = require('../utils/ApiError');
 const generateImage = require('../utils/generate.image');
 const config = require('../config/config');
@@ -174,12 +174,8 @@ const checkPermissionOfUser = (findProject, _id, minRole) => {
   };
 };
 
-const fixSentenceIndex = async () => {
-  const data = await Sentence.find({ fileId: '645501975bb966420c7b6570' }).sort({ createdAt: 1 });
-  for (let i = 0; i < data.length; i++) {
-    data[i].index = i + 1;
-    await data[i].save();
-  }
+const createNewTermBase = async (data) => {
+  return await new TermBase(data).save();
 };
 
 module.exports = {
@@ -200,4 +196,5 @@ module.exports = {
   getProjectBySlug,
   filterSentence,
   countCompleteSentence,
+  createNewTermBase,
 };

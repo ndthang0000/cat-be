@@ -8,7 +8,7 @@ const termBaseSchema = mongoose.Schema(
       ref: 'Project',
       required: true,
     },
-    projectId: {
+    userId: {
       type: mongoose.Schema.Types.ObjectId,
       ref: 'User',
       required: true,

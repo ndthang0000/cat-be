@@ -354,10 +354,29 @@ const exportFile = catchAsync(async (req, res) => {
 
 const detectLanguage = catchAsync(async (req, res) => {
   const { text } = req.body;
-  const lngDetector = new LanguageDetect();
-  const result = lngDetector.detect(text, 10);
-  console.log(result);
-  res.status(200).json({ status: true, data: result[0][0].slice(0, 2) });
+  const data = await axios.post(`${config.domain.pythonDomain}/detect-language`, { sentence: text });
+  res.status(200).json(data.data);
+});
+
+const createNewTermBase = catchAsync(async (req, res) => {
+  const { projectId, src, target } = req.body;
+  const { _id } = req.user;
+  const findProject = await projectService.getProjectById(projectId);
+  if (!findProject) {
+    return res.status(200).json({ status: false, message: `Project invalid` });
+  }
+  const checkPermission = projectService.checkPermissionOfUser(findProject, _id, PROJECT_ROLE.GUEST);
+  if (!checkPermission.status) {
+    return res.send(checkPermission);
+  }
+  const data = await projectService.createNewTermBase({
+    projectId,
+    textSrc: src,
+    textTarget: target,
+    userId: _id,
+    language: `${findProject.sourceLanguage}-${findProject.targetLanguage}`,
+  });
+  res.status(200).json({ status: true, message: `Create Term Base [${data.textSrc}-${data.textTarget}]` });
 });
 
 module.exports = {
@@ -377,4 +396,5 @@ module.exports = {
   getAllLanguageOfSystem,
   exportFile,
   detectLanguage,
+  createNewTermBase,
 };

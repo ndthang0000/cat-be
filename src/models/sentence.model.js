@@ -29,6 +29,9 @@ const sentenceSchema = mongoose.Schema(
     index: {
       type: Number,
     },
+    tmId: {
+      type: String,
+    },
   },
   {
     timestamps: true,

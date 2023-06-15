@@ -102,7 +102,7 @@ const fuzzyMatching = catchAsync(async (req, res) => {
       },
     };
 
-    const response = await axios.post('http://localhost:9200/cat.translationmemories/_search', body, {
+    const response = await axios.post('http://localhost:9200/translationmemories/_search', body, {
       headers: { 'Content-Type': 'application/json' },
     });
     const data = response.data.hits.hits.length >= 3 ? response.data.hits.hits.slice(0, 3) : response.data.hits.hits;
@@ -227,6 +227,27 @@ const confirmSentence = catchAsync(async (req, res) => {
       return res.status(200).json({ status: false, message: `Sentence invalid` });
     }
 
+    let tm = {};
+    if (findSentence.tmId) {
+      // if this sentence is re-confirmed, update the tm
+      let keyName = '';
+      if (findProject.isTmReverse) keyName = 'source';
+      else keyName = 'target';
+
+      tm = await TranslationMemoryService.getTranslationMemoryById(findSentence.tmId);
+      tm[keyName] = data;
+      tm = await tm.save();
+    } else {
+      // if this sentence is comfirmed the first time, create new tm
+      const tmBody = {
+        translationMemoryCode: findProject.translationMemoryCode,
+        source: findProject.isTmReverse ? data : findSentence.textSrc,
+        target: findProject.isTmReverse ? findSentence.textSrc : data,
+      };
+      tm = await TranslationMemoryService.createTranslationMemory(tmBody);
+      findSentence.tmId = tm._id;
+    }
+
     findSentence.textTarget = data;
     findSentence.status = SENTENCE_STATUS.CONFIRM;
     findExitFile.percentComplete =
@@ -235,12 +256,12 @@ const confirmSentence = catchAsync(async (req, res) => {
     findExitFile.percentComplete = findExitFile.percentComplete.toFixed(2);
     await findSentence.save();
     await findExitFile.save();
-    const tmBody = {
-      translationMemoryCode: findProject.translationMemoryCode,
-      source: findProject.isTmReverse ? findSentence.textTarget : findSentence.textSrc,
-      target: findProject.isTmReverse ? findSentence.textSrc : findSentence.textTarget,
-    };
-    await TranslationMemoryService.createTranslationMemory(tmBody);
+
+    // create or update
+    await axios.put(`http://localhost:9200/translationmemories/_doc/${tm._id}`, tm, {
+      headers: { 'Content-Type': 'application/json' },
+    });
+
     res.status(200).json({ status: true, data: true });
   } catch (error) {
     res.status(200).json({ status: false, data: null });

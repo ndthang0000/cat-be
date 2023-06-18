@@ -29,6 +29,12 @@ router.post(
   translateController.translateMachineSentence
 );
 router.post('/dictionary', validate(translateValidation.getWordDictionary), translateController.getWordDictionary);
+router.post(
+  '/query-term-base',
+  authJwt(''),
+  validate(translateValidation.detectTermBase),
+  translateController.detectTermBase
+);
 router.post('/fuzzy-matching', authJwt(''), validate(translateValidation.fuzzyMatching), translateController.fuzzyMatching);
 router.post(
   '/apply-machine-for-all-sentence',

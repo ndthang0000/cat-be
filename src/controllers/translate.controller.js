@@ -67,13 +67,18 @@ const getWordDictionary = catchAsync(async (req, res) => {
 });
 
 const fuzzyMatching = catchAsync(async (req, res) => {
-  const { sentence, projectId } = req.body;
+  const { sentence, projectId, fileId } = req.body;
   const { _id } = req.user;
 
   try {
     const findProject = await projectService.getProjectById(projectId);
     if (!findProject) {
       return res.status(200).json({ status: false, message: `Project invalid` });
+    }
+
+    const findFile = await projectService.getOneFileOfProjectById(fileId);
+    if (!findFile) {
+      return res.status(200).json({ status: false, message: `File invalid` });
     }
 
     const checkPermission = projectService.checkPermissionOfUser(findProject, _id, PROJECT_ROLE.DEVELOPER);
@@ -106,6 +111,71 @@ const fuzzyMatching = catchAsync(async (req, res) => {
       headers: { 'Content-Type': 'application/json' },
     });
     const data = response.data.hits.hits.length >= 3 ? response.data.hits.hits.slice(0, 3) : response.data.hits.hits;
+
+    const bodyTB = {
+      query: {
+        bool: {
+          must: {
+            match: {
+              [keyName]: sentence,
+            },
+          },
+          filter: {
+            match: {
+              dictionaryCode: findProject.dictionaryCode,
+            },
+          },
+        },
+      },
+    };
+    const responseTB = await axios.post('http://localhost:9200/term-base/_search', bodyTB, {
+      headers: { 'Content-Type': 'application/json' },
+    });
+    const dataTB = responseTB.data.hits.hits.map((item) => item._source);
+
+    res.send({ status: true, data, dataTB });
+  } catch (error) {}
+});
+
+const detectTermBase = catchAsync(async (req, res) => {
+  const { sentence, projectId } = req.body;
+  const { _id } = req.user;
+
+  try {
+    const findProject = await projectService.getProjectById(projectId);
+    if (!findProject) {
+      return res.status(200).json({ status: false, message: `Project invalid` });
+    }
+
+    const checkPermission = projectService.checkPermissionOfUser(findProject, _id, PROJECT_ROLE.DEVELOPER);
+    if (!checkPermission.status) {
+      return res.send(checkPermission);
+    }
+
+    let keyName = '';
+    if (findProject.isDictReverse) keyName = 'target';
+    else keyName = 'source';
+
+    const body = {
+      query: {
+        bool: {
+          must: {
+            match: {
+              [keyName]: sentence,
+            },
+          },
+          filter: {
+            match: {
+              dictionaryCode: findProject.dictionaryCode,
+            },
+          },
+        },
+      },
+    };
+    const response = await axios.post('http://localhost:9200/term-base/_search', body, {
+      headers: { 'Content-Type': 'application/json' },
+    });
+    const data = response.data.hits.hits.map((item) => item._source);
     res.send({ status: true, data });
   } catch (error) {}
 });
@@ -289,4 +359,5 @@ module.exports = {
   applyMachineForOneSentence,
   confirmSentence,
   statisticFile,
+  detectTermBase,
 };

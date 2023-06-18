@@ -62,6 +62,14 @@ const fuzzyMatching = {
   body: Joi.object().keys({
     sentence: Joi.string().required(),
     projectId: Joi.string().required().custom(objectId),
+    fileId: Joi.string().required().custom(objectId),
+  }),
+};
+
+const detectTermBase = {
+  body: Joi.object().keys({
+    sentence: Joi.string().required(),
+    projectId: Joi.string().required().custom(objectId),
   }),
 };
 
@@ -109,4 +117,5 @@ module.exports = {
   applyMachineForOneSentence,
   confirmSentence,
   statisticFile,
+  detectTermBase,
 };

@@ -54,6 +54,10 @@ const fileSchema = mongoose.Schema(
       max: 100,
       default: 0,
     },
+    autoApplyTermBase: {
+      type: String,
+      default: true,
+    },
   },
   {
     timestamps: true,

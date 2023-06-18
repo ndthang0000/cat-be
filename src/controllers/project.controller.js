@@ -375,7 +375,24 @@ const createNewTermBase = catchAsync(async (req, res) => {
     textTarget: target,
     userId: _id,
     language: `${findProject.sourceLanguage}-${findProject.targetLanguage}`,
+    dictionaryCode: findProject.dictionaryCode,
   });
+
+  const tmBody = {
+    source: data.textSrc,
+    target: data.textTarget,
+    dictionaryCode: data.dictionaryCode,
+    id: data._id,
+  };
+  try {
+    const dataPostElastic = await axios.put(`http://localhost:9200/term-base/_doc/${tmBody.id}`, tmBody, {
+      headers: { 'Content-Type': 'application/json' },
+    });
+    console.log(dataPostElastic);
+  } catch (err) {
+    console.log(err.message);
+  }
+
   res.status(200).json({ status: true, message: `Create Term Base [${data.textSrc}-${data.textTarget}]` });
 });
 

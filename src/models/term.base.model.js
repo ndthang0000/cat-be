@@ -24,6 +24,9 @@ const termBaseSchema = mongoose.Schema(
       // template vi-en, en-vi
       type: String,
     },
+    dictionaryCode: {
+      type: String,
+    },
   },
   {
     timestamps: true,

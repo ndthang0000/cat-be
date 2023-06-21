@@ -111,7 +111,55 @@ const fuzzyMatching = catchAsync(async (req, res) => {
       headers: { 'Content-Type': 'application/json' },
     });
     const data = response.data.hits.hits.length >= 3 ? response.data.hits.hits.slice(0, 3) : response.data.hits.hits;
+    //----------------------------
+    //Part 1:
+    //handle data inside data
+    const dataTM = data.map((item) => item._source);
 
+    // call python similarity api :/similarity
+    // data in _source : { ...,source: 'abc', target: 'xyz',... }
+    const dataTMWithSimilarity = axios.post(`${config.domain.pythonDomain}/similarity`, {
+      language: findProject.language,
+      sentence1: sentence,
+      list_sentence2: dataTM.map((item) => item.source),
+    });
+
+    //add dataTMWithSimilarity into dataTM
+    dataTMWithSimilarity.forEach((item, index) => {
+      dataTM[index].similarity = item.similarity;
+    });
+
+    // ouput expect:
+    // dataTM = {
+    //   source: 'abc',
+    //   target: 'abcd',
+    //   similarity: 0.9
+    //}
+    //---------------------------------
+    //Part 2: find match_phase:
+    const bodyMatchPhrase = {
+      query: {
+        bool: {
+          must: {
+            match_phrase: {
+              [keyName]: sentence,
+            },
+          },
+          filter: {
+            match: {
+              translationMemoryCode: findProject.translationMemoryCode,
+            },
+          },
+        },
+      },
+    };
+
+    const responseMP = await axios.post('http://localhost:9200/translationmemories/_search', bodyMatchPhrase, {
+      headers: { 'Content-Type': 'application/json' },
+    });
+    const dataMP = responseMP.data.hits.hits.map((item) => item._source);
+
+    // part 3: find term base , Thang's code
     const bodyTB = {
       query: {
         bool: {
@@ -134,6 +182,7 @@ const fuzzyMatching = catchAsync(async (req, res) => {
     const dataTB = responseTB.data.hits.hits.map((item) => item._source);
 
     res.send({ status: true, data, dataTB });
+    //res.send({ status: true, dataTM, dataMP, dataTB });
   } catch (error) {}
 });
 

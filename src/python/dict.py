@@ -81,8 +81,171 @@ def get_translate(languageToLanguage,inputtext):
         return None
 
 
-test = get_translate("english-french","example")
-print(test)
+class Dict:
+    def __init__(self, Word="", Pronounce="", Description="", Data=""):
+        self.Word = Word
+        self.Pronounce = Pronounce
+        self.Description = Description
+        self.Data = Data
+
+def generate_av():
+    filename = r"uploads/anhviet109k.txt"
+    html = ""
+    idx = 0
+    result = []
+    d = Dict(Word="")
+    description_state = 0
+
+    with open(filename, "r", encoding="utf-8") as file:
+        for line in file:
+            line = line.strip()
+
+            if "@" in line:
+                line = line.replace("@", "")
+                if len(d.Word) > 0:
+                    d.Data = html
+                    result.append(d)
+
+
+                items = line.split("/")
+                data_word = items[0].strip()
+                if len(items) > 1:
+                    data_pronounce = items[1].strip()
+                else:
+                    data_pronounce = ""
+
+                description_state = 0
+                d = Dict(Word=data_word, Pronounce=data_pronounce)
+                html = f"{data_word} /{data_pronounce}/"
+
+            elif line.startswith("*  "):
+                line = line[3:]
+                html += f"\n{line}"
+
+                if description_state == 0:
+                    description_state = 1
+                    d.Description = line
+
+            elif line.startswith("- "):
+                line = line[2:]
+                html += f"\n    {line}"
+
+                if description_state <= 1:
+                    description_state = 2
+                    d.Description += f"\n   {line}"
+
+            elif line.startswith("="):
+                line = line[1:]
+                line = line.replace("+", ":")  # Replace "+" with ":"
+                html += f"\n        {line}"
+
+                if description_state <= 1:
+                    description_state = 2
+                    d.Description += f"\n   {line}"
+
+    if len(d.Word) > 0:
+        d.Data = html
+        result.append(d)
+
+    return result
+
+def generate_va():
+    filename = r"uploads/vietanh.txt"
+    html = ""
+    idx = 0
+    result = []
+    d = Dict(Word="")
+    description_state = 0
+
+    with open(filename, "r", encoding="utf-8") as file:
+        for line in file:
+            line = line.strip()
+
+            if "@" in line:
+                line = line.replace("@", "")
+                if len(d.Word) > 0:
+                    d.Data = html
+                    result.append(d)
+
+
+                items = line.split("/")
+                data_word = items[0].strip()
+                if len(items) > 1:
+                    data_pronounce = items[1].strip()
+                else:
+                    data_pronounce = ""
+
+                description_state = 0
+                d = Dict(Word=data_word, Pronounce=data_pronounce)
+                html = f"{data_word} /{data_pronounce}/"
+
+            elif line.startswith("*  "):
+                line = line[3:]
+                html += f"\n{line}"
+
+                if description_state == 0:
+                    description_state = 1
+                    d.Description = line
+
+            elif line.startswith("- "):
+                line = line[2:]
+                html += f"\n    {line}"
+
+                if description_state <= 1:
+                    description_state = 2
+                    d.Description += f"\n   {line}"
+
+            elif line.startswith("="):
+                line = line[1:]
+                line = line.replace("+", ":")  # Replace "+" with ":"
+                html += f"\n        {line}"
+
+                if description_state <= 1:
+                    description_state = 2
+                    d.Description += f"\n   {line}"
+
+    if len(d.Word) > 0:
+        d.Data = html
+        result.append(d)
+
+    return result
+
+def search_word(languagetolanguage,word):
+    if languagetolanguage == "en-vi":
+        dictionary = generate_av()
+    elif languagetolanguage == "vi-en":
+        dictionary = generate_va()
+    else:
+        print("Error: Invalid language.")
+        return None
+    results = []
+
+    for entry in dictionary:
+        if entry.Word.lower() == word.lower():
+            results.append(entry)
+
+    if len(results) == 0:
+        print("No results found.")
+    else:
+        for result in results:
+            print("Word:", result.Word)
+            print("Pronounce:", result.Pronounce)
+            print("Description:", result.Description)
+            print("Data:", result.Data)
+            print()
+    
+
+
+
+
+#file_path = r"uploads\anhviet109K.txt"
+#file_path = r"uploads\vietanh.txt"
+search_word("vi-en","ám")
+
+
+
+#test = get_translate("english-french","example")
+#print(test)
 #print(test[0]['terms'][0])
 #print(test[0]['example'][0])
 #print(test[0]['meaning'][0])

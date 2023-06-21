@@ -5,12 +5,16 @@
 # @File    : WordReplace.py
 # @Software: PyCharm
 # @Notice  :
-
+#pip install pyopenssl --upgrade
 #https://stackoverflow.com/questions/34779724/python-docx-replace-string-in-paragraph-while-keeping-style
 from docx import Document
 import os
-
-
+from boto3.s3.transfer import S3Transfer
+import boto3
+import requests
+import docx
+import io
+import tempfile
 
 class Execute:
     '''
@@ -71,8 +75,15 @@ class WordReplace:
         file: Microsoft Office word file，only support .docx type file
     '''
 
-    def __init__(self, file):
-        self.docx = Document(file)
+    def __init__(self, file_url):
+        #file_url = 'https://images-storage-bucket.s3.ap-southeast-1.amazonaws.com/upload/avatar/files/1684466053091-Dai%20hoi%20XIII.docx'
+
+        # Download the file content from the S3 server
+        response = requests.get(file_url)
+        file_content = response.content
+        #print(file_content)
+        # Open the downloaded file using python-docx
+        self.docx = docx.Document(io.BytesIO(file_content))
 
     def body_content(self, replace_dict:dict):
         print("\t☺Processing keywords in the body...")
@@ -135,6 +146,32 @@ class WordReplace:
                                 Execute(paragraph).p_replace(x, key, value)
         print("\t |Footer'tables keywords in the text are replaced!")
 
+    def extract_text_after_last_slash(self,url):
+        # Example usage
+        # url = 'https://example.com/path/to/file.docx'
+        # text = extract_text_after_last_slash(url)
+        # print(text)  # Output: file.docx
+        return url.rsplit('/', 1)[-1]
+    
+
+    def upload_file_to_s3(self,temp_file,file_url):
+    # Create an S3 client
+        S3_ACCESS_KEY = "AKIA4I73TQ6VHPIJUNET"
+        S3_SECRET_KEY = "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"
+        bucket_name = "images-storage-bucket"
+        client = boto3.client('s3',
+                        aws_access_key_id=S3_ACCESS_KEY,
+                        aws_secret_access_key=S3_SECRET_KEY)
+        transfer = S3Transfer(client)
+        # Upload the file to S3
+        fileName= self.extract_text_after_last_slash(file_url)
+
+        key= 'upload/avatar/files/'+fileName[:-5] + '_translated.docx'
+        try:
+            transfer.upload_file(temp_file.name, bucket_name, key)
+            print("File uploaded successfully.")
+        except Exception as e:
+            print("Error uploading file:", e)
 
     def save(self, filepath:str):
         '''
@@ -142,6 +179,27 @@ class WordReplace:
         :return:
         '''
         self.docx.save(filepath[:-5] + '_translated.docx')
+
+    def save_document(self, document):
+        '''
+        :document: represents the document object"docx.document"
+        :return: temp_file : Temporary file object docx (to upload to S3)
+        '''
+        doc_buffer = io.BytesIO()
+        document.save(doc_buffer)
+        doc_buffer.seek(0)
+
+        #create a temporary file to save the content of the buffer
+        temp_file = tempfile.NamedTemporaryFile(suffix='.docx', delete=False)
+        temp_file.write(doc_buffer.getvalue())
+        temp_file.close()
+        return temp_file
+    
+
+
+
+        
+
 
 
     @staticmethod
@@ -160,16 +218,7 @@ class WordReplace:
         print(fileList)
         return fileList
 
-    @staticmethod
-    def docx_file(dirFile):
-        '''
-        :param dirFile:
-        :return: List of docx files in the current directory
-        '''
-        fileList = []
-        if dirFile.endswith("docx") and dirFile[0] != "~":
-            fileList.append(dirFile)
-        return fileList
+
     
 
 
@@ -201,27 +250,77 @@ filedir ：Directory where docx files are stored. Subdirectories are supported
 # test(r"C:\Users\DELL\Desktop\New folder\vi.docx")
 
 
-def bigboy(sents,translated_sents,filename):
+def export_file(sents,translated_sents,file_url):
     replace_dict = {}
     for i in range(len(sents)):
         replace_dict[sents[i]] = translated_sents[i]
     
     print(replace_dict)
 
-    wordreplace = WordReplace(filename)
+    wordreplace = WordReplace(file_url)
     wordreplace.header_content(replace_dict)
     wordreplace.header_tables(replace_dict)
     wordreplace.body_content(replace_dict)
     wordreplace.body_tables(replace_dict)
     wordreplace.footer_content(replace_dict)
     wordreplace.footer_tables(replace_dict)
-    wordreplace.save(filename)
+    temp_file = wordreplace.save_document(wordreplace.docx)
+    #print(temp_file)
+    wordreplace.upload_file_to_s3(temp_file,file_url)
+    #wordreplace.save(file_url)
     print(f'\t☻The document processing is complete!\n')
-    
-sents=["This is A","This is B","This is C"]
-translated_sents=["Đây là A","Đây là B","Đây là C"]
 
-bigboy(sents,translated_sents,r"C:\Users\DELL\Desktop\New folder\vi.docx")
+    
+sents=["1. Đại hội XIII","- Đại hội đại biểu toàn quốc lần thứ VIII và bước đầu thực hiện công cuộc đẩy mạnh công nghiệp hoá, hiện đại hoá 1996-2001"]
+translated_sents=["1. XIII Congress","- The Eighth National Congress of Deputies and the initial implementation of the promotion of industrialization and modernization 1996-2001"]
+
+replace_dict = {}
+for i in range(len(sents)):
+    replace_dict[sents[i]] = translated_sents[i]
+        
+#remove pair {" ":" "} in replace_dict
+for key in list(replace_dict.keys()):
+    if key == "":
+        del replace_dict[key]
+    if replace_dict[key] == " ":
+        del replace_dict[key]
+
+
+print(replace_dict)
+#file_url = 'https://images-storage-bucket.s3.ap-southeast-1.amazonaws.com/upload/avatar/files/1684466053091-Dai%20hoi%20XIII.docx'
+
+#test
+#export_file(sents,translated_sents,file_url)
+
+#pip install pyopenssl --upgrade
+# from boto3.s3.transfer import S3Transfer
+# import boto3
+# #have all the variables populated which are required below
+
+# import boto3
+# def upload_file_to_s3(file_path, bucket_name):
+#     # Create an S3 client
+#     S3_ACCESS_KEY = "AKIA4I73TQ6VHPIJUNET"
+#     S3_SECRET_KEY = "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"
+#     client = boto3.client('s3',
+#                       aws_access_key_id=S3_ACCESS_KEY,
+#                       aws_secret_access_key=S3_SECRET_KEY)
+#     transfer = S3Transfer(client)
+#     # Upload the file to S3
+#     key= "upload/avatar/files/vi_translated.docx"
+#     try:
+#         transfer.upload_file(file_path, bucket_name, key)
+#         print("File uploaded successfully.")
+#     except Exception as e:
+#         print("Error uploading file:", e)
+
+
+#S3_URI = https://images-storage-bucket.s3.ap-southeast-1.amazonaws.com/
+# bucket_name = "images-storage-bucket"
+# file_path = r"C:\Users\DELL\Desktop\New folder\vi_translated.docx"
+# upload_file_to_s3(file_path, bucket_name)
+
+
 
 # Call processing section
 # for i, file in enumerate(WordReplace.docx_list(filedir),start=1):

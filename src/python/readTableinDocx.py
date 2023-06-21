@@ -30,3 +30,30 @@ def Doctable(ls, row, column):
 
 
     return new, df
+
+import requests
+import docx
+import io
+
+# Specify the URL link to the DOCX file on the S3 server
+file_url = 'https://images-storage-bucket.s3.ap-southeast-1.amazonaws.com/upload/avatar/files/1684466053091-Dai%20hoi%20XIII.docx'
+
+# Download the file content from the S3 server
+response = requests.get(file_url)
+file_content = response.content
+#print(file_content)
+# Open the downloaded file using python-docx
+document = docx.Document(io.BytesIO(file_content))
+
+print(io.BytesIO(file_content))
+# Access and manipulate the content of the document
+for paragraph in document.paragraphs:
+    print(paragraph.text)
+
+#test 1: checked
+
+#upload file to s3
+import boto3
+import os
+import uuid
+from botocore.exceptions import ClientError

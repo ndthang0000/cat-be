@@ -25,7 +25,7 @@ var upload = multer({
   fileFilter: function (req, file, cb) {
     const splitName = file.originalname.split('.');
     const dotFile = splitName[splitName.length - 1];
-    if (dotFile != 'docx') {
+    if (dotFile != 'docx' && dotFile != 'xlsx') {
       cb(null, false);
     } else {
       cb(null, true);

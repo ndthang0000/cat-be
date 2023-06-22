@@ -16,6 +16,8 @@ const ACTIVITY = require('../constants/activity');
 const { default: axios } = require('axios');
 const config = require('../config/config');
 const LanguageDetect = require('languagedetect');
+const DocxFile = require('../utils/DocxFile');
+const XlsxFile = require('../utils/XlsxFile');
 
 const createProject = catchAsync(async (req, res) => {
   req.body.userId = req.user.userId;
@@ -33,15 +35,12 @@ const createProject = catchAsync(async (req, res) => {
   // })
   // project.allMember.push(createJoinMember?._id)
   // await project.save()
-  const activityCreateProject = [
-    {
-      comment: 'create project',
-      userId: project.userId,
-      action: ACTIVITY.CREATE_PROJECT,
-      projectId: project._id,
-      fileId: '',
-    },
-  ];
+  const activityCreateProject = {
+    comment: `[${req.user.email}] create this project`,
+    userId: req.user._id,
+    action: ACTIVITY.CREATE_PROJECT,
+    projectId: project._id,
+  };
   await activityService.createActivity(activityCreateProject);
   res
     .status(httpStatus.CREATED)
@@ -92,11 +91,16 @@ const openFileOfProject = catchAsync(async (req, res) => {
     return res.status(200).json({ status: false, message: `File not found` });
   }
   if (!findFile.isTokenizeSentence) {
-    const text = await readFileWord(findFile.uniqueNameFile);
-    console.log(text.replace(/(\r\n|\n|\r)/gm, ' '));
+    const splitName = findFile.nameFile.split('.');
+    const dotFile = splitName[splitName.length - 1];
     try {
-      const dataSentence = tokenizeSentence(String(findFile._id), text.replace(/(\r\n|\n|\r)/gm, '. '));
-      console.log(dataSentence);
+      let file = '';
+      if (dotFile == 'docx') {
+        file = new DocxFile(`uploads/${findFile.uniqueNameFile}`);
+      } else if (dotFile == 'xlsx') {
+        file = new XlsxFile(`uploads/${findFile.uniqueNameFile}`);
+      }
+      const dataSentence = file.getSentences();
       const dataInsertDB = dataSentence.map((item, index) => {
         return {
           projectId: findProject._id,
@@ -152,14 +156,12 @@ const uploadFileToProject = catchAsync(async (req, res) => {
       uniqueNameFile: req.files[i].filename,
     });
     findProject.files.push(insertFile._id);
-    const activityUploadFile = [
-      {
-        comment: 'upload file',
-        userId: '',
-        action: ACTIVITY.UPLOAD_FILE,
-        projectId: '',
-      },
-    ];
+    const activityUploadFile = {
+      comment: `[${req.user.email}] upload file: ${req.files[i].originalname}`,
+      userId: _id,
+      action: ACTIVITY.UPLOAD_FILE,
+      projectId: findProject._id,
+    };
     await activityService.createActivity(activityUploadFile);
   }
   await findProject.save();
@@ -191,14 +193,12 @@ const updateProject = catchAsync(async (req, res) => {
   delete req.body._id;
   Object.assign(project, req.body);
   await project.save();
-  const activityUpdateProject = [
-    {
-      comment: 'update project',
-      userId: project.userId,
-      action: ACTIVITY.UPDATE_PROJECT,
-      projectId: project._id,
-    },
-  ];
+  const activityUpdateProject = {
+    comment: `[${req.user.email}] update this project`,
+    userId: req.user._id,
+    action: ACTIVITY.UPDATE_PROJECT,
+    projectId: project._id,
+  };
   await activityService.createActivity(activityUpdateProject);
   return res
     .status(200)
@@ -331,16 +331,22 @@ const exportFile = catchAsync(async (req, res) => {
   const allSentence = await projectService.filterSentence({ fileId });
 
   try {
-    const data = await axios.post(`${config.domain.pythonDomain}/export-file`, {
-      sentences: allSentence.map((item) => item.textSrc),
-      translated_sents: allSentence.map((item) => item.textTarget),
-      file_url: findFile.url,
-    });
-    if (data.data.status) {
-      findFile.urlTarget = data.data.data;
+    const translated_sents = allSentence.map((item) => item.textTarget);
+
+    const splitName = findFile.nameFile.split('.');
+    const dotFile = splitName[splitName.length - 1];
+
+    let file = '';
+    if (dotFile == 'docx') file = new DocxFile(`uploads/${findFile.uniqueNameFile}`);
+    else if (dotFile == 'xlsx') file = new XlsxFile(`uploads/${findFile.uniqueNameFile}`);
+    file.exportFile(translated_sents, `uploads/${findFile.uniqueNameFile}`);
+
+    const dataUpload = await uploadFile(`uploads/${findFile.uniqueNameFile}`, 'files/' + findFile.nameFile);
+    if (dataUpload.Location) {
+      findFile.urlTarget = dataUpload.Location;
       await findFile.save();
 
-      res.status(httpStatus.OK).send({ status: true, data: data.data.data });
+      res.status(httpStatus.OK).send({ status: true, data: dataUpload.Location });
     } else {
       res.status(httpStatus.OK).send({ status: false, message: 'Something went wrong !!!, please contact support' });
     }

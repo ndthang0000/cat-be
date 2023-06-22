@@ -49,6 +49,7 @@
     "prettier"
   ],
   "dependencies": {
+    "adm-zip": "^0.5.10",
     "aws-sdk": "^2.1367.0",
     "axios": "^1.4.0",
     "bcryptjs": "^2.4.3",
@@ -87,6 +88,7 @@
     "validator": "^13.0.0",
     "winston": "^3.2.1",
     "word-extractor": "^1.0.4",
+    "xmlbuilder2": "^3.1.1",
     "xss-clean": "^0.1.1"
   },
   "devDependencies": {

@@ -110,7 +110,28 @@ const fuzzyMatching = catchAsync(async (req, res) => {
     const response = await axios.post('http://localhost:9200/translationmemories/_search', body, {
       headers: { 'Content-Type': 'application/json' },
     });
-    const data = response.data.hits.hits.length >= 3 ? response.data.hits.hits.slice(0, 3) : response.data.hits.hits;
+    const data = response.data.hits.hits;
+
+    const dataTM = data.map((item) => item._source);
+    const sentence2 = dataTM.map((item) => item.source);
+
+    if (sentence2.length != 0) {
+      const dataTMWithSimilarity = await axios.post(
+        `${config.domain.pythonDomain}/similarity`,
+        {
+          language: findProject.sourceLanguage,
+          sentence1: sentence,
+          list_sentence2: sentence2,
+        },
+        {
+          headers: { 'Content-Type': 'application/json' },
+        }
+      );
+
+      dataTMWithSimilarity.data.data.forEach((item, index) => {
+        dataTM[index].similarity = item;
+      });
+    }
 
     const bodyTB = {
       query: {
@@ -133,7 +154,7 @@ const fuzzyMatching = catchAsync(async (req, res) => {
     });
     const dataTB = responseTB.data.hits.hits.map((item) => item._source);
 
-    res.send({ status: true, data, dataTB });
+    res.send({ status: true, dataTM, dataTB });
   } catch (error) {}
 });
 

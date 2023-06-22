@@ -13,15 +13,15 @@ const PROJECT_STATUS = {
 
 const PROJECT_ROLE = {
   PROJECT_MANAGER: 'PROJECT MANAGER',
-  DEVELOPER: 'DEVELOPER',
-  GUEST: 'GUEST',
-  OWNER: 'OWNER',
+  DEVELOPER: 'EDITOR',
+  GUEST: 'REVIEWER',
+  // OWNER: 'OWNER',
 };
 
 const getOneNumberRoleProject = (role) => {
-  if (role == PROJECT_ROLE.OWNER) {
-    return 1;
-  }
+  // if (role == PROJECT_ROLE.OWNER) {
+  //   return 1;
+  // }
   if (role == PROJECT_ROLE.PROJECT_MANAGER) {
     return 2;
   }

@@ -54,7 +54,8 @@ const translateMachineSentence = {
 
 const getWordDictionary = {
   body: Joi.object().keys({
-    word: Joi.string().required(),
+    sentence: Joi.string().required(),
+    projectId: Joi.string().required().custom(objectId),
   }),
 };
 

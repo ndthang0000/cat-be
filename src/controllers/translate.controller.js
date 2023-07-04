@@ -58,12 +58,33 @@ const translateMachineSentence = catchAsync(async (req, res) => {
 });
 
 const getWordDictionary = catchAsync(async (req, res) => {
-  const { word } = req.body;
+  const { sentence, projectId } = req.body;
+
+  const findProject = await projectService.getProjectById(projectId);
+  if (!findProject) {
+    return res.status(200).json({ status: false, message: `Project invalid` });
+  }
+
   // call python machine  translate
-  res.send({
-    status: true,
-    data: [`Thành công ${word}`, `word: ${word}`],
+  const data = await axios.post(`${config.domain.pythonDomain}/dictionary`, {
+    sentence,
+    languageToLanguage: findProject.sourceLanguage,
   });
+
+  const result = [];
+
+  for (const item of data.data.data) {
+    const obj = {};
+    const tokens = item.split('//<br>');
+    obj.word = tokens[0].trim();
+    obj.description = tokens[1].split('<br>');
+    for (let i = 0; i < obj.description.length; i++) {
+      obj.description[i] = obj.description[i].trim();
+    }
+    result.push(obj);
+  }
+
+  res.send({ status: true, data: result });
 });
 
 const fuzzyMatching = catchAsync(async (req, res) => {
@@ -279,9 +300,42 @@ const applyMachineForOneSentence = catchAsync(async (req, res) => {
         sentence: findSentence.textSrc,
         target: findProject.targetLanguage,
       });
+
+      let tm = {};
+      if (findSentence.tmId) {
+        // if this sentence is re-confirmed, update the tm
+        let keyName = '';
+        if (findProject.isTmReverse) keyName = 'source';
+        else keyName = 'target';
+
+        tm = await TranslationMemoryService.getTranslationMemoryById(findSentence.tmId);
+        tm[keyName] = data.data.data;
+        tm = await tm.save();
+      } else {
+        // if this sentence is comfirmed the first time, create new tm
+        const tmBody = {
+          translationMemoryCode: findProject.translationMemoryCode,
+          source: findProject.isTmReverse ? data.data.data : findSentence.textSrc,
+          target: findProject.isTmReverse ? findSentence.textSrc : data.data.data,
+        };
+        tm = await TranslationMemoryService.createTranslationMemory(tmBody);
+        findSentence.tmId = tm._id;
+      }
+
       findSentence.textTarget = data.data.data || findSentence.textSrc;
       findSentence.status = SENTENCE_STATUS.CONFIRM;
+      findExitFile.percentComplete =
+        ((await projectService.countCompleteSentence(fileId)) / findExitFile.quantitySentence) * 100;
+      console.log(findExitFile);
+      findExitFile.percentComplete = findExitFile.percentComplete.toFixed(2);
       await findSentence.save();
+      await findExitFile.save();
+
+      // create or update
+      await axios.put(`http://localhost:9200/translationmemories/_doc/${tm._id}`, tm, {
+        headers: { 'Content-Type': 'application/json' },
+      });
+
       res.status(200).json({ status: true, data: findSentence.textTarget });
     } catch (error) {
       res.status(200).json({ status: false, data: null, message: 'Something went wrong when translating' });

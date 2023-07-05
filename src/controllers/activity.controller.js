@@ -12,6 +12,7 @@ const createActivity = catchAsync(async (req, res) => {
 const getActivities = catchAsync(async (req, res) => {
   const filters = { projectId: req.query.projectId };
   const options = pick(req.query, ['limit', 'page']);
+  options.sortBy = '-createdAt';
   const result = await activityService.queryActivities(filters, options);
   res.send(result);
 });

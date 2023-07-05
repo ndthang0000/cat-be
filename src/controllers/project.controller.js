@@ -327,7 +327,12 @@ const exportFile = catchAsync(async (req, res) => {
   if (!findFile) {
     return res.status(200).json({ status: false, message: `File not found` });
   }
-
+  if (findFile.percentComplete < 100) {
+    return res.status(200).json({
+      status: false,
+      message: `File not finished, please complete all sentence to export`,
+    });
+  }
   const allSentence = await projectService.filterSentence({ fileId });
 
   try {
